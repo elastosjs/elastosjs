@@ -15,7 +15,7 @@ const Loading = () => {
       <div className="d-flex justify-content-center m-5">
         <HashLoader
           size={150}
-          color={"#ce60a5"}
+          color={"#4f789c"}
           loading={true}
         />
       </div>

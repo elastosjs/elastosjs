@@ -33,10 +33,6 @@ const FormaticAPIKey = {
   [constants.NETWORK.MAINNET]: 'pk_live_CB781950FDA18ED6'
 }
 
-
-export const fm = new Fortmatic('pk_test_AC45B19FD10F3B40', FortmaticNodeOptions)
-
-
 const getEthConfig = (network) => {
 
   const fm = new Fortmatic(FormaticAPIKey[network], FortmaticNodeOptions[network])
