@@ -1,0 +1,740 @@
+
+@import '../../../scss/variables.scss';
+
+.splash {
+
+  blockquote {
+    color: #6a737d;
+    font-size: 16px;
+    margin: 0 0 16px;
+    padding: 0 1em
+  }
+
+  blockquote > :first-child {
+    margin-top: 0
+  }
+
+  blockquote > :last-child {
+    margin-bottom: 0
+  }
+
+  code {
+    background-color: rgba(27, 31, 35, .05);
+    border-radius: 3px;
+    color: inherit;
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+    font-size: 85%;
+    margin: 0;
+    padding: 3.2px 6.4px
+  }
+
+  pre {
+    margin-bottom: 16px
+  }
+
+  pre code {
+    background-color: transparent;
+    border: 0;
+    display: inline;
+    font-size: 85%;
+    line-height: inherit;
+    margin: 0;
+    max-width: auto;
+    overflow: visible;
+    padding: 0;
+    white-space: pre;
+    word-break: normal;
+    word-wrap: normal
+  }
+
+  kbd {
+    background-color: #fafbfc;
+    border: 1px solid #d1d5da;
+    border-bottom-color: #c6cbd1;
+    border-radius: 3px;
+    box-shadow: inset 0 -1px 0 #c6cbd1;
+    color: #444d56;
+    display: inline-block;
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+    font-size: 68.75%;
+    line-height: 10px;
+    padding: 3px 5px;
+    vertical-align: middle
+  }
+
+  hr {
+    border: 1px solid #dfe2e5;
+    box-sizing: content-box;
+    margin: 1.5em 0;
+    overflow: hidden;
+    padding: 0
+  }
+
+  hr:after, hr:before {
+    content: "";
+    display: table
+  }
+
+  hr:after {
+    clear: both
+  }
+
+  body {
+    background-color: #fff;
+    min-height: 100vh;
+    text-rendering: optimizeLegibility
+  }
+
+  @media only screen and (min-width: 736px) {
+    body {
+      display: flex;
+      flex-direction: column
+    }
+  }
+
+  article:after, article:before {
+    content: "";
+    display: table
+  }
+
+  article:after {
+    clear: both
+  }
+
+  article > :first-child {
+    margin-top: 0
+  }
+
+  article > :last-child {
+    margin-bottom: 0
+  }
+
+  article iframe, article p img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%
+  }
+
+  .anchor {
+    display: block;
+    position: relative;
+    top: -80px
+  }
+
+  .hash-link {
+    line-height: 1;
+    margin-left: -20px;
+    opacity: 0;
+    padding-right: 4px;
+    transition: opacity .3s
+  }
+
+  .hash-link:hover {
+    opacity: 1 !important;
+    transition: none
+  }
+
+  .hash-link .hash-link-icon {
+    vertical-align: middle
+  }
+
+  .button {
+    border: 1px solid #fff;
+    border-radius: 3px;
+    color: #fff;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.2em;
+    padding: 10px;
+    text-decoration: none !important;
+    text-transform: uppercase;
+    transition: background .3s, color .3s
+  }
+
+  .button:hover {
+    background: #fff;
+    color: #fff
+  }
+
+  h1:hover .hash-link, h2:hover .hash-link, h3:hover .hash-link, h4:hover .hash-link {
+    opacity: .5;
+    transition: none
+  }
+
+  blockquote {
+    background-color: rgba(255, 229, 100, .3);
+    border-left: 8px solid #ffe564;
+    padding: 15px 30px 15px 15px
+  }
+
+  .wrapper {
+    margin: 0 auto;
+    max-width: 1100px;
+    padding: 0 20px
+  }
+
+  .wrapper blockquote > p:first-child {
+    padding-top: 0
+  }
+
+  .center {
+    display: block
+  }
+
+  .center, .homeContainer {
+    text-align: center
+  }
+
+  .homeContainer .homeWrapper {
+    padding: 2em 10px
+  }
+
+  .homeContainer .homeWrapper .wrapper {
+    margin: 0 auto;
+    max-width: 900px;
+    padding: 0 20px
+  }
+
+  .homeContainer .homeWrapper .projectLogo img {
+    height: 100px;
+    margin-bottom: 0
+  }
+
+  .homeContainer .homeWrapper #project_title {
+    font-size: 300%;
+    letter-spacing: -.08em;
+    line-height: 1em;
+    margin-bottom: 80px
+  }
+
+  .homeContainer .homeWrapper #project_tagline {
+    font-size: 200%;
+    letter-spacing: -.04em;
+    line-height: 1em
+  }
+
+  .projectLogo {
+    display: none;
+    pointer-events: none
+  }
+
+  .projectLogo img {
+    height: 100px;
+    margin-bottom: 0
+  }
+
+  .projectIntro {
+    margin: 40px 0
+  }
+
+  .projectTitle {
+    color: #fff;
+    font-size: 250%;
+    line-height: 1em
+  }
+
+  .projectTitle > small {
+    display: block;
+    font-weight: 400;
+    font-size: 50%;
+    line-height: 1em;
+    margin: .7em 0 1.3em
+  }
+
+  @media only screen and (min-width: 480px) {
+    .projectTitle {
+      font-size: 300%;
+      margin: .3em 0
+    }
+
+    .projectLogo img {
+      height: 200px;
+      margin-bottom: 10px
+    }
+
+    .homeContainer .homeWrapper {
+      padding-left: 10px;
+      padding-right: 10px
+    }
+  }
+
+  @media only screen and (min-width: 736px) {
+    .homeContainer .homeWrapper {
+      position: relative
+    }
+
+    .homeContainer .homeWrapper #inner {
+      max-width: 600px;
+      padding-right: 40px
+    }
+  }
+
+  @media only screen and (min-width: 1200px) {
+    .homeContainer .homeWrapper #inner {
+      max-width: 750px
+    }
+
+    .homeContainer .homeWrapper .projectLogo {
+      align-items: center;
+      bottom: 0;
+      display: flex;
+      justify-content: flex-end;
+      left: 0;
+      padding: 2em 100px 4em;
+      position: absolute;
+      right: 0;
+      top: 0
+    }
+
+    .homeContainer .homeWrapper .projectLogo img {
+      height: 100%;
+      max-height: 250px
+    }
+  }
+
+  @media only screen and (min-width: 1500px) {
+    .homeContainer .homeWrapper #inner {
+      max-width: 1100px;
+      padding-bottom: 40px;
+      padding-top: 40px
+    }
+
+    .wrapper {
+      max-width: 1400px
+    }
+  }
+
+  .mainContainer {
+    flex: 1 1 auto;
+    max-width: 100%;
+    padding: 40px 0
+  }
+
+  .mainContainer .wrapper {
+    text-align: left
+  }
+
+  .mainContainer .wrapper .allShareBlock {
+    padding: 10px 0
+  }
+
+  .mainContainer .wrapper .allShareBlock .pluginBlock {
+    margin: 12px 0;
+    padding: 0
+  }
+
+  .mainContainer .wrapper .post {
+    position: relative
+  }
+
+  .mainContainer .wrapper .post.basicPost {
+    margin-top: 30px
+  }
+
+  .mainContainer .wrapper .post .postHeader {
+    margin-bottom: 16px
+  }
+
+  .mainContainer .wrapper .post .postHeaderTitle {
+    margin-top: 0;
+    padding: 0
+  }
+
+  .mainContainer .wrapper .post .postSocialPlugins {
+    padding-top: 1em
+  }
+
+  .mainContainer .wrapper .post .docPagination {
+    background: #fff;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0
+  }
+
+  .mainContainer .wrapper .post .docPagination .pager {
+    display: inline-block;
+    width: 50%
+  }
+
+  .mainContainer .wrapper .post .docPagination .pagingNext {
+    float: right;
+    text-align: right
+  }
+
+  .mainContainer .wrapper .post .docPagination a {
+    border: none;
+    color: #fff;
+    display: block;
+    padding: 4px 12px
+  }
+
+  .mainContainer .wrapper .post .docPagination a:hover {
+    background-color: #f9f9f9;
+    color: #393939
+  }
+
+  .mainContainer .wrapper .post .docPagination a .pagerLabel {
+    display: inline
+  }
+
+  .mainContainer .wrapper .post .docPagination a .pagerTitle {
+    display: none
+  }
+
+  @media only screen and (min-width: 480px) {
+    .mainContainer .wrapper .post .docPagination a .pagerLabel {
+      display: none
+    }
+
+    .mainContainer .wrapper .post .docPagination a .pagerTitle {
+      display: inline
+    }
+  }
+
+  @media only screen and (min-width: 1024px) {
+    .mainContainer .wrapper .post {
+      display: block
+    }
+
+    .mainContainer .wrapper .posts .post {
+      width: 100%
+    }
+  }
+
+  .fixedHeaderContainer {
+    background: #fff;
+    color: #fff;
+    min-height: 50px;
+    padding: 8px 0;
+    position: fixed;
+    width: 100%;
+    z-index: 9999;
+    transform: translateZ(0)
+  }
+
+  @media only screen and (min-width: 1024px) {
+    .fixedHeaderContainer {
+      flex-shrink: 0
+    }
+  }
+
+  .fixedHeaderContainer a {
+    align-items: center;
+    border: 0;
+    color: #fff;
+    display: flex;
+    flex-flow: row nowrap;
+    height: 34px;
+    z-index: 10000
+  }
+
+  .fixedHeaderContainer header {
+    display: flex;
+    flex-flow: row nowrap;
+    position: relative;
+    text-align: left
+  }
+
+  .fixedHeaderContainer header img {
+    height: 100%;
+    margin-right: 10px
+  }
+
+  .fixedHeaderContainer header .headerTitle {
+    font-size: 1.25em;
+    margin: 0
+  }
+
+  .fixedHeaderContainer header .headerTitleWithLogo {
+    display: block;
+    font-size: 1.25em;
+    line-height: 18px;
+    margin: 0;
+    position: relative;
+    z-index: 9999
+  }
+
+  .fixedHeaderContainer header h3 {
+    color: #fff;
+    font-size: 16px;
+    margin: 0 0 0 10px;
+    text-decoration: underline
+  }
+
+  @media (max-width: 480px) {
+    .headerTitle {
+      font-size: 17px
+    }
+
+    .headerTitleWithLogo {
+      display: none !important
+    }
+  }
+
+  .promoSection {
+    display: flex;
+    flex-flow: column wrap;
+    font-size: 125%;
+    line-height: 1.6em;
+    position: relative;
+    z-index: 99
+  }
+
+  .promoSection .promoRow {
+    padding: 10px 0
+  }
+
+  .promoSection .promoRow .pluginWrapper {
+    display: block
+  }
+
+  .promoSection .promoRow .pluginWrapper.ghStarWrapper, .promoSection .promoRow .pluginWrapper.ghWatchWrapper {
+    height: 28px
+  }
+
+  .promoSection .promoRow .pluginRowBlock {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0 -2px
+  }
+
+  .promoSection .promoRow .pluginRowBlock .pluginWrapper {
+    padding: 0 2px
+  }
+
+  .promoSection .promoRow .pluginRowBlock iframe {
+    margin-left: 2px;
+    margin-top: 5px
+  }
+
+
+  .normal {
+    font-weight: 400;
+  }
+
+  .text-white {
+    color: #ffffff;
+  }
+
+
+  .docMainWrapper {
+
+    a,
+    .toc .toggleNav ul > li.navListItemActive a {
+      color: $primary_color;
+      font-weight: 400;
+
+      &:hover {
+        color: $primary_light_color !important;
+      }
+    }
+
+    h3,
+    strong {
+      font-weight: 500;
+    }
+
+    p,
+    span {
+      font-weight: 300;
+    }
+
+  }
+
+
+  .nav-footer {
+
+    background-image: url('/img/industry_identity_bg.png');
+    background-size: cover;
+    background-position: center top;
+
+  }
+
+
+  header {
+
+    .navigationSlider .slidingNav > ul.nav-site {
+
+      background-color: $background_white;
+
+      > li > a {
+        color: $text_default_color;
+        font-weight: 500;
+      }
+    }
+
+  }
+
+
+  .homeContainer {
+    background-color: $background_white;
+    text-align: left;
+
+    .projectTitle {
+      > img {
+        padding-left: 25px;
+      }
+
+      > small {
+        color: $tertiary_color;
+      }
+    }
+
+    .promoRow {
+
+      .button {
+        color: $text_default_color;
+        border-color: $primary_color;
+
+        &:hover {
+          background-color: #efefef;
+        }
+      }
+
+      > .pluginRowBlock {
+        justify-content: left;
+      }
+    }
+  }
+
+  .mainContainer {
+    .productShowcaseSection {
+      padding-top: 5vh;
+      background-color: $secondary_color;
+      color: white;
+
+      &.elaBackground {
+        background-image: url('/img/footer_bg_3.png');
+        background-position-y: 25%;
+      }
+
+      div, p, h2 {
+        color: white;
+        margin: 0;
+      }
+    }
+
+    .explainer {
+
+      p {
+        line-height: 2;
+        font-weight: 400;
+        font-size: 1.2rem;
+      }
+
+      a {
+        display: block;
+        font-size: 1.4rem;
+        color: $tertiary_color;
+        padding-bottom: 1vh;
+      }
+    }
+
+    .elastosETH {
+
+      text-align: left;
+
+      &.elaBackground {
+        background-image: url('/img/footer_bg.png');
+      }
+
+      .blockContent {
+
+        p {
+          margin-bottom: 15px;
+          font-weight: 300;
+        }
+      }
+
+      a {
+        color: $primary_light_color;
+        font-weight: 400;
+
+        &.button {
+          color: #ffffff;
+          background-color: $primary_color;
+
+          &:hover {
+            background-color: $tertiary_color;
+          }
+        }
+      }
+
+      .blockImage img {
+        max-height: 400px;
+      }
+    }
+
+    .elastosBlockchain {
+
+      .blockContent {
+        text-align: left;
+      }
+
+      ul {
+
+        li {
+          margin-bottom: 12px;
+        }
+      }
+
+      a {
+        color: $tertiary_color;
+
+        &.button {
+          color: #ffffff;
+          background-color: $primary_color;
+
+          &:hover {
+            background-color: $tertiary_color;
+          }
+        }
+
+      }
+    }
+
+    .imageAlignTop .blockImage {
+      max-width: none;
+
+      > img {
+        max-height: 100px;
+      }
+    }
+  }
+
+
+  @media only screen and (min-device-width: 360px) and (max-device-width: 736px) {
+
+  }
+
+  @media only screen and (max-width: 736px) {
+    .elastosFeatures.container {
+      border-top: 1px solid $primary_light_color;
+      padding-top: 5vh;
+      margin-top: 5vh;
+    }
+  }
+
+  @media only screen and (min-width: 1024px) {
+  }
+
+  @media only screen and (max-width: 1023px) {
+
+    // hide the Metamask logo below with of 1024px
+    .mainContainer .elastosETH .blockImage {
+      display: none;
+    }
+
+  }
+
+  @media only screen and (min-width: 1400px) {
+
+  }
+
+  @media only screen and (min-width: 1500px) {
+  }
+}
