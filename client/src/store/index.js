@@ -8,6 +8,8 @@ import storage from 'redux-persist/lib/storage' // defaults to localStorage for 
 import Fortmatic from 'fortmatic'
 import Web3 from "web3"
 
+import { fromConnection, ephemeral } from "@openzeppelin/network"
+
 import reducers from './reducers'
 
 import constants from '../constants'
@@ -33,14 +35,28 @@ const FormaticAPIKey = {
   [constants.NETWORK.MAINNET]: 'pk_live_CB781950FDA18ED6'
 }
 
-const getEthConfig = (network) => {
+/**
+ * We have TWO web3 instances,
+ *
+ * 1. ozWeb3 is from OpenZepplin and is used by Drizzle, it has no ether an uses an ephemeral key to sign GSN transactions for ElastosJS
+ * 2. fmWeb3 is from Fortmatic and is linked to the developer/user on ElastosJS, this is used by them to deploy their own SQL Smart Contracts
+ *
+ * @param network
+ * @returns {Promise<{ozWeb3: Web3Context, fmWeb3: Web3, ready: boolean, fm: WidgetMode, store: Store, drizzle: Drizzle, persistor: Persistor}>}
+ */
+const getEthConfig = async (network) => {
 
   const fm = new Fortmatic(FormaticAPIKey[network], FortmaticNodeOptions[network])
   const fmWeb3 = new Web3(fm.getProvider())
 
+  // GSN uses a special web3 too
+  const ozWeb3 = await fromConnection(FortmaticNodeOptions[network].rpcUrl, {
+    gsn: { signKey: ephemeral() }
+  })
+
   // Drizzle uses a direct web3 connection, not Fortmatic
   // this web3 is meant to call the relayer for verified ethAddresses in AWS Cognito
-  const drizzleOptions = DrizzleOptions(network, FortmaticNodeOptions)
+  const drizzleOptions = DrizzleOptions(network, ozWeb3)
 
   const persistConfig = {
     key: 'root',
@@ -69,9 +85,12 @@ const getEthConfig = (network) => {
   return {
     fm,
     fmWeb3,
+    ozWeb3,
     store,
     persistor,
-    drizzle
+    drizzle,
+
+    ready: true
   }
 }
 

@@ -10,6 +10,9 @@ import './scss/override.scss';
 import Splash from './views/Pages/Splash'
 import Dashboard from './Dashboard'
 
+import { NetworkProvider } from './context/NetworkContext'
+import { EthProvider } from './context/EthContext'
+
 // const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 
 // Containers
@@ -24,16 +27,19 @@ const Page500 = React.lazy(() => import('./views/Pages/Page500'));
 const App = (props) => {
 
   return (
-    <HashRouter>
-      <React.Suspense fallback={Loading()}>
-        <Switch>
-          <Route exact path="/" name="Splash" component={Splash}/>
-          <Route name="Dashboard" component={Dashboard}/>
-        </Switch>
-      </React.Suspense>
-    </HashRouter>
+    <NetworkProvider>
+      <EthProvider>
+        <HashRouter>
+          <React.Suspense fallback={Loading()}>
+            <Switch>
+              <Route exact path="/" name="Splash" component={Splash}/>
+              <Route name="Dashboard" component={Dashboard}/>
+            </Switch>
+          </React.Suspense>
+        </HashRouter>
+      </EthProvider>
+    </NetworkProvider>
   )
-
 }
 
 export default App

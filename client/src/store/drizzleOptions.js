@@ -1,12 +1,19 @@
-import Web3 from 'web3'
+// import Web3 from 'web3'
 
 // import Box from "../contracts/Box.json"
 
-import constants from '../constants'
+// import constants from '../constants'
 
+/**
+ * We have this file mainly to keep all the contracts in one place
+ *
+ * @param network
+ * @param web3
+ * @returns {{silent: boolean, web3: {block: boolean, customProvider: Web3 | null | module:querystring | string}, polls: {accounts: number}}}
+ */
+const options = (network, web3) => {
 
-const options = (network, FortmaticNodeOptions) => {
-
+  /*
   let web3
 
   switch (network){
@@ -23,16 +30,18 @@ const options = (network, FortmaticNodeOptions) => {
       break
 
   }
+  */
 
   return {
     web3: {
       block: false,
-      customProvider: web3
+      customProvider: web3.lib
     },
     // contracts: [Box],
     polls: {
       accounts: 5000
-    }
+    },
+    silent: true
   }
 }
 
