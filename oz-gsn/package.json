@@ -18,7 +18,10 @@
     "@openzeppelin/gsn-helpers": "~0.1.9",
     "@openzeppelin/upgrades": "^2.7.2",
     "@truffle/hdwallet-provider": "^1.0.33",
+    "axios": "^0.19.2",
     "ganache-cli": "^6.9.1",
-    "truffle-privatekey-provider": "^1.3.0"
+    "sleep-promise": "^8.0.1",
+    "truffle-privatekey-provider": "^1.3.0",
+    "web3": "^1.2.6"
   }
 }
