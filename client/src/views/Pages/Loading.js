@@ -11,7 +11,7 @@ const StyledLoading = styled.div`
 const Loading = () => {
 
   return (
-    <div className="App body">
+    <div className="App body" style={{'margin-top': '20%'}}>
       <div className="d-flex justify-content-center m-5">
         <HashLoader
           size={150}

@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap'
 
+import Loading from '../Loading'
 import styled from 'styled-components'
 
 import { EthContext } from '../../../context/EthContext'
@@ -57,7 +58,6 @@ const Login = () => {
     getCount()
   }
   */
-
   return (
     <div className="app flex-row align-items-center">
       <Container className="mt-n5">
@@ -69,10 +69,12 @@ const Login = () => {
                   <i className="fa fa-arrow-left fa-lg mr-2"></i>
                 </button>
               </Link>
-              <button className="btn btn-primary btn-pill active btn-lg" style={{float: 'right'}}>
-                <i className="fa fa-arrow-circle-right fa-lg mr-2"></i>
-                Sign Up
-              </button>
+              <Link to="/register">
+                <button className="btn btn-primary btn-pill active btn-lg" style={{float: 'right'}}>
+                  <i className="fa fa-arrow-circle-right fa-lg mr-2"></i>
+                  Sign Up
+                </button>
+              </Link>
             </div>
             <CardGroup style={{clear: 'both'}}>
               <Card className="p-4">

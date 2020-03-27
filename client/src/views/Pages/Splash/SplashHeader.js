@@ -17,7 +17,7 @@ const SplashHeader = (props) => {
       </BlankButton>
       <BlankButton target="_blank" href="https://elastos.academy">
         <button className="btn btn-link">
-          Learn About Elastos
+          Tutorials
         </button>
       </BlankButton>
     </Wrapper>

@@ -109,7 +109,8 @@ export default class SplashCover extends React.Component {
                 <small className="text-muted text-uppercase">Give Users the Best Experience</small>
                 <List>
                   <li>Let your users onboard to your dApp for free</li>
-                  <li>Built on <a target="_blank" href="https://docs.openzeppelin.com/learn/sending-gasless-transactions">OpenZeppelin GSN</a></li>
+                  <li>Use our GSN strategy or your own</li>
+                  <li>Learn more about <a href="">GSN</a></li>
                 </List>
               </CardBody>
             </Card>
@@ -211,7 +212,7 @@ export default class SplashCover extends React.Component {
             </Row>
             <Row>
               <Col sm="5">
-                Or our mainnet at:
+                Connect to our mainnet at:
               </Col>
               <Col sm="7" className="text-right">
                 <code className="ml-2">
@@ -229,6 +230,25 @@ export default class SplashCover extends React.Component {
                 </code>
               </Col>
             </Row>
+            <Row>
+              <Col sm="5">
+                Testnet Faucet:
+              </Col>
+              <Col sm="7" className="text-right">
+                <code className="ml-2">
+                  https://faucet.elaeth.io
+                </code>
+              </Col>
+            </Row>
+            {/*
+            <hr/>
+            <Row>
+              <Col style={{'white-space': 'normal'}}>
+                To transfer ELA from the Elastos mainchain to the<br/>
+                ETH Sidechain mainnet make an account and use our dashboard
+              </Col>
+            </Row>
+            */}
           </TitleInfo>
 
           <ProjectTitle siteConfig="ElastosJS" />
