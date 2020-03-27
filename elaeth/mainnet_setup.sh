@@ -2,7 +2,7 @@
 mount /dev/nvme0n1 /opt;
 
 # Step 1: Start geth
-pm2 start --name mainnet-geth -x /opt/geth --  --syncmode "full" --gcmode "archive" --rpc --rpcaddr "0.0.0.0" --rpcport "8545" --rpcapi "eth,admin,web3,net,debug,personal,txpool" --rpccorsdomain "*" -rpcvhosts="*" --nousb --ws --wsaddr "0.0.0.0" --wsport "8546" --wsorigins "*" --datadir "/opt/data"
+pm2 start --name mainnet-geth -x /opt/geth -- --syncmode "full" --gcmode "archive" --rpc --rpcaddr "0.0.0.0" --rpcport "8545" --rpcapi "eth,admin,web3,net,debug,personal,txpool" --rpccorsdomain "*" -rpcvhosts="*" --nousb --ws --wsaddr "0.0.0.0" --wsport "8546" --wsorigins "*" --datadir "/opt/data"
 # check logs
 pm2 logs mainnet-geth
 # if it does not sync block, try to remove the data/. Please backup the /opt/data/keystore if needed

@@ -2,11 +2,13 @@
 mount /dev/nvme0n1 /opt;
 
 # Step 1: Start geth
-pm2 start --name testnet-geth -x /opt/geth --  --syncmode "full" --gcmode "archive" --rpc --rpcaddr "0.0.0.0" --rpcport "8545" --rpcapi "eth,admin,web3,net,debug,personal,txpool" --rpccorsdomain "*" -rpcvhosts="*" --nousb --ws --wsaddr "0.0.0.0" --wsport "8546" --wsorigins "*" --datadir "/opt/data"
+pm2 start --name testnet-geth -x /opt/geth -- --testnet --syncmode "full" --gcmode "archive" --rpc --rpcaddr "0.0.0.0" --rpcport "8545" --rpcapi "eth,admin,web3,net,debug,personal,txpool" --rpccorsdomain "*" -rpcvhosts="*" --nousb --ws --wsaddr "0.0.0.0" --wsport "8546" --wsorigins "*" --datadir "/opt/data"
 # check logs
 pm2 logs testnet-geth
 # if it does not sync block, try to remove the data/. Please backup the /opt/data/keystore if needed
 # rm -rf /opt/data
+
+# double check that the spvconfig.json is in the main dir with the correct magic
 
 # Step 2: start explorer
 cd /opt/blockscout/docker/;

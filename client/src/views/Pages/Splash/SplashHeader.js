@@ -5,14 +5,19 @@ import styled from 'styled-components'
 const SplashHeader = (props) => {
 
   return (
-    <Wrapper>
+    <Wrapper className="HeaderWrapper">
       <ElastosLogo src="/assets/img/Elastos_Icon_RGB.png"/>
-      <Button to="/login">
+      <Button className="LoginBtn" to="/login">
         <button className="btn btn-primary" href="getting-started/intro.html">Login / Sign-Up</button>
       </Button>
-      <BlankButton href="https://docs.elastosjs.com">
+      <BlankButton target="_blank" href="https://docs.elastosjs.com">
         <button className="btn btn-link">
           Documentation
+        </button>
+      </BlankButton>
+      <BlankButton target="_blank" href="https://elastos.academy">
+        <button className="btn btn-link">
+          Learn About Elastos
         </button>
       </BlankButton>
     </Wrapper>

@@ -545,16 +545,6 @@
 
   }
 
-
-  .nav-footer {
-
-    background-image: url('/img/industry_identity_bg.png');
-    background-size: cover;
-    background-position: center top;
-
-  }
-
-
   header {
 
     .navigationSlider .slidingNav > ul.nav-site {
@@ -712,10 +702,19 @@
   }
 
   @media only screen and (max-width: 736px) {
-    .elastosFeatures.container {
-      border-top: 1px solid $primary_light_color;
-      padding-top: 5vh;
-      margin-top: 5vh;
+
+    // hide the header below 736px - TODO: should move this under?
+    .TitleInfo {
+      width: 100%;
+      margin-bottom: 24px;
+    }
+
+    .HeaderWrapper > a {
+      display: none;
+
+      &.LoginBtn {
+        display: block !important;
+      }
     }
   }
 
@@ -724,10 +723,8 @@
 
   @media only screen and (max-width: 1023px) {
 
-    // hide the Metamask logo below with of 1024px
-    .mainContainer .elastosETH .blockImage {
-      display: none;
-    }
+
+
 
   }
 
