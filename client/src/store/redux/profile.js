@@ -3,7 +3,7 @@ import _ from 'lodash'
 import drizzle, { fmWeb3 } from '../index'
 
 // import { createTable, addAddressToTable } from "../../services/contract";
-import Box from '../../contracts/Box'
+// import Box from '../../contracts/Box'
 
 function bufferToBytes32(buffer) {
   const padding = new Buffer(32 - buffer.length);
@@ -30,8 +30,7 @@ export const ProfileActionTypes = {
   SET_ETH_ADDRESS: 'SET_ETH_ADDRESS',
   LOGGING_IN: 'LOGGING_IN',
   READY: 'READY',
-  LOGOUT: 'LOGOUT',
-  SET_BOX_VALUE: 'SET_BOX_VALUE'
+  LOGOUT: 'LOGOUT'
 };
 
 /*
@@ -42,8 +41,7 @@ export const ProfileActionTypes = {
 const initialState = {
   ready: false,
   loading: true,
-  ethAddress: null,
-  boxStoreValue: 0
+  ethAddress: null
 }
 
 export const ActionCheckAccts = () => {
@@ -81,6 +79,7 @@ export const ActionCheckAccts = () => {
   }
 }
 
+/*
 export const ActionSetStore = (newVal) => {
   return async function(dispatch, getState, { fmWeb3 }){
 
@@ -115,6 +114,7 @@ export const ActionRetrieveStore = () => {
     return Promise.resolve()
   }
 }
+*/
 
 /*
 *************************************************************************************
@@ -150,12 +150,6 @@ export default {
         return {
           ...state,
           ethAddress: action.ethAddress
-        }
-
-      case ProfileActionTypes.SET_BOX_VALUE:
-        return {
-          ...state,
-          boxStoreValue: action.value
         }
     }
 

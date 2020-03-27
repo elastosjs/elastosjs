@@ -6,7 +6,7 @@ const NetworkContext = React.createContext([null, noop()])
 
 const NetworkProvider = (props) => {
 
-  const [network, setNetwork] = useState(constants.NETWORK.LOCAL)
+  const [network, setNetwork] = useState(constants.NETWORK.TESTNET)
 
   return (
     <NetworkContext.Provider value={[network, setNetwork]}>
