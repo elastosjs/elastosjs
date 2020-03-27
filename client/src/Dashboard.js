@@ -31,7 +31,7 @@ const Dashboard = () => {
 
   // We want to keep this out of redux since it resets Drizzle
   const [network, setNetwork] = useContext(NetworkContext)
-  const [ethConfig, setEthConfig] = useContext( EthContext )
+  const [ethConfig, setEthConfig] = useContext(EthContext)
 
   // fetch the ETH config only if the network changes
   useEffect( () => {

@@ -1,10 +1,54 @@
-import React from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
 
+import { EthContext } from '../../../context/EthContext'
+
+import counterJSON from '../../../contracts/Counter.json'
+
 const Login = () => {
 
+  const [ethConfig, setEthConfig] = useContext(EthContext)
+
+  const { accounts, lib } = ethConfig.ozWeb3
+  const ozWeb3Context = ethConfig.ozWeb3
+
+  // load Counter Instance
+  const [counterInstance, setCounterInstance] = useState(undefined);
+
+  if (
+    !counterInstance &&
+    ozWeb3Context &&
+    ozWeb3Context.networkId
+  ) {
+    const deployedNetwork = counterJSON.networks[ozWeb3Context.networkId.toString()];
+    const instance = new ozWeb3Context.lib.eth.Contract(counterJSON.abi, deployedNetwork.address);
+    setCounterInstance(instance);
+  }
+
+  const [count, setCount] = useState(0);
+
+  // memoize so that getCount only changes if
+  const getCount = useCallback(async () => {
+    if (counterInstance) {
+      // Get the value from the contract to prove it worked.
+      const response = await counterInstance.methods.value().call();
+      // Update state with the result.
+      setCount(response);
+    }
+  }, [counterInstance]);
+
+  useEffect(() => {
+    getCount();
+  }, [counterInstance, getCount]);
+
+  const increase = async () => {
+    await counterInstance.methods.increase().send({ from: accounts[0] });
+    getCount();
+  };
+
   return (
+    (lib && counterInstance) ?
     <div className="app flex-row align-items-center">
       <Container>
         <Row className="justify-content-center">
@@ -13,7 +57,7 @@ const Login = () => {
               <Card className="p-4">
                 <CardBody>
                   <Form>
-                    <h1>Login</h1>
+                    <h1>Login {count}</h1>
                     <p className="text-muted">Sign In to your account</p>
                     <InputGroup className="mb-3">
                       <InputGroupAddon addonType="prepend">
@@ -33,7 +77,7 @@ const Login = () => {
                     </InputGroup>
                     <Row>
                       <Col xs="6">
-                        <Button color="primary" className="px-4">Login</Button>
+                        <Button color="primary" className="px-4" onClick={() => increase()}>Login</Button>
                       </Col>
                       <Col xs="6" className="text-right">
                         <Button color="link" className="px-0">Forgot password?</Button>
@@ -58,6 +102,9 @@ const Login = () => {
           </Col>
         </Row>
       </Container>
+    </div> :
+    <div>
+      Network error
     </div>
   )
 }

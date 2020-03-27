@@ -1,0 +1,42 @@
+{
+  "name": "eth-sql",
+  "version": "1.0.0",
+  "description": "SQL for Ethereum smart contracts. Makes storage and relationship management as easy as SQL commands.",
+  "author": "Leo Vigna",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leovigna/eth-sql.git"
+  },
+  "bugs": {
+    "url": "https://github.com/leovigna/eth-sql/issues"
+  },
+  "main": "index.js",
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "files": [
+    "lib"
+  ],
+  "keywords": [
+    "SQL",
+    "Ethereum",
+    "Solidity",
+    "orm",
+    "nodejs",
+    "object relational mapper"
+  ],
+  "scripts": {
+    "test": "npm run test-unit",
+    "test-unit": "mocha --globals setImmediate,clearImmediate --exit --colors -t 300000 --reporter spec \"test/unit/**/*.js\""
+  },
+  "devDependencies": {
+    "@truffle/hdwallet-provider": "^1.0.31",
+    "chai": "^4.x",
+    "dotenv": "^8.2.0",
+    "web3": "^1.2.6"
+  },
+  "dependencies": {
+    "node-sql-parser": "^1.7.2"
+  }
+}

@@ -42,7 +42,6 @@ const FormaticAPIKey = {
  * 2. fmWeb3 is from Fortmatic and is linked to the developer/user on ElastosJS, this is used by them to deploy their own SQL Smart Contracts
  *
  * @param network
- * @returns {Promise<{ozWeb3: Web3Context, fmWeb3: Web3, ready: boolean, fm: WidgetMode, store: Store, drizzle: Drizzle, persistor: Persistor}>}
  */
 const getEthConfig = async (network) => {
 
