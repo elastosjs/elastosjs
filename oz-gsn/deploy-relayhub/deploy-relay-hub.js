@@ -10,11 +10,11 @@ async function deployRelayHub(web3, options = {}) {
   options = merge(defaultOptions, options)
 
   if ((await web3.eth.getCode(data.relayHub.address)).length > '0x0'.length) {
-    if (options.verbose) console.error(`RelayHub found at ${data.relayHub.address}`)
+    if (options.verbose) console.info(`RelayHub found at ${data.relayHub.address}`)
     return data.relayHub.address
   }
 
-  if (options.verbose) console.error(`Deploying singleton RelayHub instance`)
+  if (options.verbose) console.info(`Deploying singleton RelayHub instance`)
   await web3.eth.sendTransaction({
     from: options.from,
     to: data.relayHub.deploy.deployer,
@@ -23,11 +23,11 @@ async function deployRelayHub(web3, options = {}) {
 
   await web3.eth.sendSignedTransaction(data.relayHub.deploy.tx)
 
-  if (options.verbose) console.error(`RelayHub deployed at ${data.relayHub.address}`)
+  if (options.verbose) console.info(`RelayHub deployed at ${data.relayHub.address}`)
 
   return data.relayHub.address
 }
 
 module.exports = {
-  deployRelayHub,
+  deployRelayHub
 }

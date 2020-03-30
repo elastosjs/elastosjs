@@ -17,7 +17,7 @@
  * phrase from a file you've .gitignored so it doesn't accidentally become public.
  *
  */
-const secrets = require('./secrets.json')
+const secrets = require('../secrets.json')
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const PrivateKeyProvider = require('@truffle/hdwallet-provider')
 

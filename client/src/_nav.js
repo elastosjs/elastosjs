@@ -3,16 +3,12 @@ export default {
     {
       name: 'Dashboard',
       url: '/dashboard',
-      icon: 'icon-speedometer',
-      badge: {
-        variant: 'info',
-        text: 'NEW',
-      },
+      icon: 'icon-speedometer'
     },
     {
-      name: 'Creator',
-      url: '/creator',
-      icon: 'icon-drop',
+      name: 'Databases',
+      url: '/databases',
+      icon: 'icon-layers'
     }
     /*
     {

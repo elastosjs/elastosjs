@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Dashboard = React.lazy(() => import('./views/Dashboard'));
-const Creator = React.lazy(() => import('./views/Creator'));
+const DatabaseView = React.lazy(() => import('./views/Database'));
 
 /*
 const Breadcrumbs = React.lazy(() => import('./views/Base/Breadcrumbs'));
@@ -41,9 +41,8 @@ const User = React.lazy(() => import('./views/Users/User'));
 */
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
-  { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
-  { path: '/creator', name: 'Creator', component: Creator }
+  { path: '/databases', name: 'Databases', component: DatabaseView }
   /*
   { path: '/theme', exact: true, name: 'Theme', component: Colors },
   { path: '/theme/colors', name: 'Colors', component: Colors },

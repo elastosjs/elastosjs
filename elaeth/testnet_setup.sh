@@ -8,6 +8,9 @@ pm2 logs testnet-geth
 # if it does not sync block, try to remove the data/. Please backup the /opt/data/keystore if needed
 # rm -rf /opt/data
 
+### Note: if you accidentally run geth with the wrong network you need to restore the postgres db for blockscout
+
+
 # double check that the spvconfig.json is in the main dir with the correct magic
 
 # Step 2: start explorer

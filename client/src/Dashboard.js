@@ -60,7 +60,7 @@ const Dashboard = () => {
                 <Route exact path="/register" name="Register Page" render={props => <Register {...props}/>}/>
                 <Route exact path="/404" name="Page 404" render={props => <Page404 {...props}/>}/>
                 <Route exact path="/500" name="Page 500" render={props => <Page500 {...props}/>}/>
-                <Route exact path="/dashboard" name="Home" render={props => <DefaultLayout {...props}/>}/>
+                <Route render={props => <DefaultLayout {...props} setNetwork={setNetwork}/>}/>
               </Switch>
             </HashRouter>
           </React.Suspense>

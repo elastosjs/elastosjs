@@ -36,9 +36,9 @@ class DefaultLayout extends Component {
   render() {
     return (
       <div className="app">
-        <AppHeader setNetwork={this.props.setNetwork} fixed>
+        <AppHeader fixed>
           <Suspense  fallback={this.loading()}>
-            <DefaultHeader onLogout={e=>this.signOut(e)}/>
+            <DefaultHeader setNetwork={this.props.setNetwork} onLogout={e=>this.signOut(e)}/>
           </Suspense>
         </AppHeader>
         <div className="app-body">
