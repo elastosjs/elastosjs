@@ -28,6 +28,6 @@ const { fundRecipient } = require('./fund');
     recipient: '0xBB7B5E2f56dBbA2390f86a007199D45faBA85858'
   })
 
-  console.log(`Returned amt = ${amt}`)
+  console.log(`Funded amt = ${amt}`)
 
 })()

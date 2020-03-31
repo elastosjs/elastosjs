@@ -203,7 +203,7 @@ contract RelayHub is IRelayHub {
         bytes memory signature,
         bytes memory approvalData
     )
-    public payable returns (uint256 status, bytes memory recipientContext)
+    public returns (uint256 status, bytes memory recipientContext)
     {
         // Verify the sender's signature on the transaction - note that approvalData is *not* signed
         {
