@@ -1,4 +1,5 @@
-pragma solidity 0.5.0;
+pragma solidity >=0.4.24 <0.7.0;
+
 
 /**
  * @title Initializable
@@ -12,7 +13,7 @@ pragma solidity 0.5.0;
  * a parent initializer twice, or ensure that all initializers are idempotent,
  * because this is not dealt with automatically as with constructors.
  */
-contract Initializable {
+contract InitializableELA {
 
     /**
      * @dev Indicates that the contract has been initialized.

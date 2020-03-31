@@ -1,8 +1,11 @@
-// contracts/Counter.sol
+// contracts/CounterELA.sol
 pragma solidity ^0.5.0;
 
-import "@openzeppelin/contracts-ethereum-package/contracts/GSN/GSNRecipient.sol";
+import "./GSNRecipient.sol";
 
+/**
+We are creating a new Counter because we need a customized GSNRecipient with a different relay hub address
+*/
 contract Counter is GSNRecipient {
     uint256 public value;
 

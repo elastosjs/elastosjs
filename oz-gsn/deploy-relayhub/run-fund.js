@@ -19,9 +19,13 @@ const { fundRecipient } = require('./fund');
     verbose: true,
     from: '0x243C7B804a1CB650c3f584FaC5e33FdB61Cd26CE',
     relayHub: {
+
+      // the truffle-migrate deployed address of the relay hub
       address: '0x2EDA8d1A61824dFa812C4bd139081B9BcB972A6D'
     },
-    recipient: '0xfD0fb7D22286D9522ab526B74ae6e0683926B9Df'
+
+    // deployed smart contract we want to call with GSN
+    recipient: '0xBB7B5E2f56dBbA2390f86a007199D45faBA85858'
   })
 
   console.log(`Returned amt = ${amt}`)

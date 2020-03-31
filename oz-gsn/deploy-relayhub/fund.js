@@ -5,7 +5,7 @@ const { merge } = require('lodash')
 
 async function fundRecipient(web3, options = {}) {
   const defaultOptions = {
-    amount: ether('1'),
+    amount: ether('0.5'),
     from: await defaultFromAccount(web3, options && options.from),
     relayHubAddress: data.relayHub.address,
   }

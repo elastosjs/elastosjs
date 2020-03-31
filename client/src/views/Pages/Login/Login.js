@@ -7,7 +7,7 @@ import styled from 'styled-components'
 
 import { EthContext } from '../../../context/EthContext'
 
-// import counterJSON from '../../../contracts/Counter.json'
+import counterELAJSON from '../../../contracts/CounterELA.json'
 
 import FortmaticLogo from '../../../assets/img/fortmatic_logo.svg'
 
@@ -28,10 +28,10 @@ const Login = () => {
     ozWeb3Context &&
     ozWeb3Context.networkId
   ) {
-    const deployedNetwork = counterJSON.networks[ozWeb3Context.networkId.toString()]
+    const deployedNetwork = counterELAJSON.networks[ozWeb3Context.networkId.toString()]
 
     if (deployedNetwork){
-      const instance = new ozWeb3Context.lib.eth.Contract(counterJSON.abi, deployedNetwork.address)
+      const instance = new ozWeb3Context.lib.eth.Contract(counterELAJSON.abi, deployedNetwork.address)
       setCounterInstance(instance)
     }
   }
@@ -102,7 +102,7 @@ const Login = () => {
                     </InputGroup>
                     <Row>
                       <Col xs="6">
-                        <Button color="primary" className="px-4 mt-2" onClick={() => noop()}>Authenticate</Button>
+                        <Button color="primary" className="px-4 mt-2" onClick={() => increase()}>Authenticate</Button>
                       </Col>
                       <Col xs="6" className="text-right">
                         <Button color="link" className="px-0">Forgot password?</Button>

@@ -1,4 +1,4 @@
-pragma solidity >0.4.25 <=0.5.0;
+pragma solidity ^0.5.0;
 
 /*
  * @dev Provides information about the current execution context, including the
@@ -10,7 +10,7 @@ pragma solidity >0.4.25 <=0.5.0;
  *
  * This contract is only required for intermediate, library-like contracts.
  */
-contract Context {
+contract ContextELA {
     // Empty internal constructor, to prevent people from mistakenly deploying
     // an instance of this contract, with should be used via inheritance.
     constructor () internal { }

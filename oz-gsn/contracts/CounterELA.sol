@@ -1,9 +1,9 @@
-// contracts/Counter.sol
+// contracts/CounterELA.sol
 pragma solidity ^0.5.0;
 
-import "@openzeppelin/contracts-ethereum-package/contracts/GSN/GSNRecipient.sol";
+import "./GSNRecipientELA.sol";
 
-contract Counter is GSNRecipient {
+contract CounterELA is GSNRecipientELA {
     uint256 public value;
 
     function increase() public {

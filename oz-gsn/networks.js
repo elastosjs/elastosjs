@@ -1,6 +1,9 @@
-const { mnemonic, mainnetPrivKey } = require('./secrets.json')
+const secrets = require('../secrets.json')
 const HDWalletProvider = require('@truffle/hdwallet-provider')
 const PrivateKeyProvider = require('@truffle/hdwallet-provider')
+
+const mnemonic = secrets.mnemonic2
+const mainnetPrivKey = secrets.mainnetPrivKey
 
 module.exports = {
   networks: {
@@ -17,21 +20,24 @@ module.exports = {
         mnemonic, 'https://rpc.elaeth.io'
       ),
       network_id: 3,
-      gasPrice: 1e9
+      gasLimit: '8000000',
+      gasPrice: '1000000000'
     },
     elaethtestblack: {
       provider: () => new HDWalletProvider(
         mnemonic, 'https//183.197.227.129:20636'
       ),
       network_id: 3,
-      gas_price: 1e9
+      gasLimit: '8000000',
+      gasPrice: '1000000000'
     },
     elamain: {
       provider: () => new PrivateKeyProvider(
         mainnetPrivKey, 'https://mainrpc.elaeth.io'
       ),
       network_id: 1,
-      gas_price: 1e9
+      gasLimit: '8000000',
+      gasPrice: '1000000000'
     }
   },
 };
