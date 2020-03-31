@@ -45,12 +45,15 @@ const FormaticAPIKey = {
  */
 const getEthConfig = async (network) => {
 
+  console.log('getEthConfig')
+
   const fm = new Fortmatic(FormaticAPIKey[network], FortmaticNodeOptions[network])
   const fmWeb3 = new Web3(fm.getProvider())
 
   // GSN uses a special web3 too
   const ozWeb3 = await fromConnection(FortmaticNodeOptions[network].rpcUrl, {
-    gsn: { signKey: ephemeral() }
+    gsn: { signKey: ephemeral() },
+    pollInterval: 5000
   })
 
   // Drizzle uses a direct web3 connection, not Fortmatic

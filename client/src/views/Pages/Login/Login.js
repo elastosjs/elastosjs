@@ -53,7 +53,7 @@ const Login = () => {
   }, [counterInstance, getCount])
 
   const increase = async () => {
-    await counterInstance.methods.increase().send({ from: accounts[0] })
+    await counterInstance.methods.increase().send({ from: accounts[0], gasPrice: '10200000000' })
     getCount()
   }
 
