@@ -17,7 +17,6 @@ const Login = () => {
 
   const [canLogin, setCanLogin] = useState(false)
 
-  /*
   const { accounts, lib } = ethConfig.ozWeb3
   const ozWeb3Context = ethConfig.ozWeb3
 
@@ -57,7 +56,7 @@ const Login = () => {
     await counterInstance.methods.increase().send({ from: accounts[0] })
     getCount()
   }
-  */
+
   return (
     <div className="app flex-row align-items-center">
       <Container className="mt-n5">
@@ -72,7 +71,7 @@ const Login = () => {
               <Link to="/register">
                 <button className="btn btn-primary btn-pill active btn-lg" style={{float: 'right'}}>
                   <i className="fa fa-arrow-circle-right fa-lg mr-2"></i>
-                  Sign Up
+                  Sign Up {count}
                 </button>
               </Link>
             </div>

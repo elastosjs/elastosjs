@@ -22,6 +22,8 @@ chmod a+x /app/bin/RelayHttpServer
 ```
 
 ## Get certificate and cron it
+
+### NOTE: for this I didn't use certonly, easier to let it setup the basics, then copy in the details from below (/etc/nginx/sites-available/relayer)
 ```
 sudo certbot certonly --nginx
 sudo echo "/usr/bin/certbot renew --quiet" > /etc/cron.monthly/certbot
