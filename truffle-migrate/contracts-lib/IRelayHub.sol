@@ -1,4 +1,4 @@
-pragma solidity 0.5.0;
+pragma solidity ^0.5.0;
 
 contract IRelayHub {
     // Relay management
@@ -93,7 +93,7 @@ contract IRelayHub {
         uint256 nonce,
         bytes memory signature,
         bytes memory approvalData
-    ) public returns (uint256 status, bytes memory recipientContext);
+    ) public view returns (uint256 status, bytes memory recipientContext);
 
     // Preconditions for relaying, checked by canRelay and returned as the corresponding numeric values.
     enum PreconditionCheck {

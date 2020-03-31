@@ -1,4 +1,4 @@
-pragma solidity 0.5.0;
+pragma solidity ^0.5.0;
 
 import "../contracts-lib/IRelayHub.sol";
 import "../contracts-lib/IRelayRecipient.sol";
@@ -203,7 +203,7 @@ contract RelayHub is IRelayHub {
         bytes memory signature,
         bytes memory approvalData
     )
-    public returns (uint256 status, bytes memory recipientContext)
+    public view returns (uint256 status, bytes memory recipientContext)
     {
         // Verify the sender's signature on the transaction - note that approvalData is *not* signed
         {
