@@ -32,6 +32,8 @@ const Register = () => {
 
   const [canRegister, setCanRegister] = useState(false)
 
+  const [pollFortmatic, setPollFortmatic] = useState()
+
   const [progress, setProgress] = useState({
     val: 10,
     msg: 'Step 1'
@@ -48,6 +50,8 @@ const Register = () => {
 
     dataCommitted: false,
   })
+
+  const [ethAddress, setEthAddress] = useState('')
 
   const [modalErrorData, setModalErrorData] = useState({
     isOpen: false,
@@ -171,13 +175,28 @@ const Register = () => {
   /**
    * Check if Fortmatic is connected
    */
-  useEffect(() => {
+  useEffect(async () => {
 
     if (ethConfig){
+      const isFortmaticLoggedIn = await ethConfig.fm.user.isLoggedIn()
+
       debugger
     }
 
-  }, [ethConfig.fmWeb3.isFortmatic])
+  }, [])
+
+  /**
+   * Connect Fortmatic
+   */
+  const fortmaticConnect = async () => {
+
+    const ethAddress = await ethConfig.fmWeb3.currentProvider.enable()
+
+    setEthAddress(ethAddress)
+
+    debugger
+
+  }
 
   return (
     <div className="app flex-row align-items-center">
@@ -185,7 +204,7 @@ const Register = () => {
         <Row className="justify-content-center">
           <Col md="8">
             <div className="mb-3">
-              <Link to="/">
+              <Link to="/login">
                 <button className="btn btn-tertiary btn-lg">
                   <i className="fa fa-arrow-left fa-lg mr-2"></i>
                 </button>
@@ -285,7 +304,7 @@ const Register = () => {
                         https://fortmatic.com
                       </a>
                     </p>
-                    <FortmaticBtn className="px-4 mt-5" tabIndex={-1} onClick={() => ethConfig.fmWeb3.currentProvider.enable()}>
+                    <FortmaticBtn className="px-4 mt-5" tabIndex={-1} onClick={fortmaticConnect}>
                       Connect Fortmatic
                     </FortmaticBtn>
                   </div>

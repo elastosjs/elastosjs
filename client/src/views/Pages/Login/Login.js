@@ -7,7 +7,7 @@ import styled from 'styled-components'
 
 import { EthContext } from '../../../context/EthContext'
 
-// import counterELAJSON from '../../../contracts/CounterELA.json'
+import counterELAJSON from '../../../contracts/CounterELA.json'
 
 import FortmaticLogo from '../../../assets/img/fortmatic_logo.svg'
 
@@ -17,10 +17,10 @@ const Login = () => {
 
   const [canLogin, setCanLogin] = useState(false)
 
+  /*
   const { accounts, lib } = ethConfig.ozWeb3
   const ozWeb3Context = ethConfig.ozWeb3
 
-  /*
   // load Counter Instance
   const [counterInstance, setCounterInstance] = useState(undefined)
 
