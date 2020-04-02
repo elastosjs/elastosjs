@@ -23,14 +23,6 @@ module.exports = {
       gasLimit: '8000000',
       gasPrice: '1000000000'
     },
-    elaethtestblack: {
-      provider: () => new HDWalletProvider(
-        mnemonic, 'https//183.197.227.129:20636'
-      ),
-      network_id: 3,
-      gasLimit: '8000000',
-      gasPrice: '1000000000'
-    },
     elamain: {
       provider: () => new PrivateKeyProvider(
         mainnetPrivKey, 'https://mainrpc.elaeth.io'

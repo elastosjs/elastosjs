@@ -1,13 +1,14 @@
 {
   "manifestVersion": "2.2",
   "contracts": {
-    "CounterELA": "CounterELA"
+    "Box": "Box"
   },
   "dependencies": {},
   "name": "oz-gsn-test",
   "version": "1.0.0",
   "compiler": {
     "compilerSettings": {
+      "evmVersion": "byzantium",
       "optimizer": {
         "enabled": false,
         "runs": "200"
@@ -17,7 +18,7 @@
       "enabled": false
     },
     "manager": "openzeppelin",
-    "solcVersion": "0.5.17",
+    "solcVersion": "0.5.0",
     "artifactsDir": "build/contracts",
     "contractsDir": "contracts"
   },
