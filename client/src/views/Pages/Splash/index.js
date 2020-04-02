@@ -19,7 +19,7 @@ const Splash = (props) => {
 
       </div>
       <NavFooter className="nav-footer" id="footer">
-        <section className="row" style={{'padding-left': '25px', 'padding-top': '45px'}}>
+        <section className="row" style={{paddingLeft: '25px', paddingTop: '45px'}}>
           <Col lg="4">
             <h5>Developer Resources</h5>
             <a href="https://developer.elastos.org" target="_blank">

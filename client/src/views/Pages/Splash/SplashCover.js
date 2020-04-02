@@ -182,6 +182,10 @@ export default class SplashCover extends React.Component {
             <a href="https://t.me/elastosgroup" target="_blank">
               <button className="btn btn-primary text-uppercase">Join Us On Telegram <i className="fa fa-telegram"/></button>
             </a>
+
+            <a href="https://elastos.academy" target="_blank" style={{marginLeft: '15px'}}>
+              <button className="btn btn-elastos text-uppercase">Learn More @ Elastos.Academy</button>
+            </a>
           </Col>
         </Row>
 
@@ -212,7 +216,7 @@ export default class SplashCover extends React.Component {
             </Row>
             <Row>
               <Col sm="5">
-                Connect to our mainnet at:
+                Connect to our Mainnet at:
               </Col>
               <Col sm="7" className="text-right">
                 <code className="ml-2">
@@ -238,6 +242,12 @@ export default class SplashCover extends React.Component {
                 <code className="ml-2">
                   https://faucet.elaeth.io
                 </code>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <br/>
+                <h4>IMPORTANT NOTE: <code>--evm-version byzantium</code></h4>
               </Col>
             </Row>
             {/*

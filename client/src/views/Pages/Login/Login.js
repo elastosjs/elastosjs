@@ -7,7 +7,7 @@ import styled from 'styled-components'
 
 import { EthContext } from '../../../context/EthContext'
 
-import counterELAJSON from '../../../contracts/CounterELA.json'
+// import counterELAJSON from '../../../contracts/CounterELA.json'
 
 import FortmaticLogo from '../../../assets/img/fortmatic_logo.svg'
 
@@ -20,6 +20,7 @@ const Login = () => {
   const { accounts, lib } = ethConfig.ozWeb3
   const ozWeb3Context = ethConfig.ozWeb3
 
+  /*
   // load Counter Instance
   const [counterInstance, setCounterInstance] = useState(undefined)
 
@@ -56,6 +57,7 @@ const Login = () => {
     await counterInstance.methods.increase().send({ from: accounts[0], gasPrice: '10200000000' })
     getCount()
   }
+  */
 
   return (
     <div className="app flex-row align-items-center">
@@ -69,9 +71,9 @@ const Login = () => {
                 </button>
               </Link>
               <Link to="/register">
-                <button className="btn btn-primary btn-pill active btn-lg" style={{float: 'right'}}>
-                  <i className="fa fa-arrow-circle-right fa-lg mr-2"></i>
-                  Sign Up {count}
+                <button className="btn btn-elastos btn-pill active btn-lg" style={{float: 'right'}}>
+                  {/* <i className="fa fa-arrow-circle-right fa-lg mr-2"></i> */}
+                  Sign Up
                 </button>
               </Link>
             </div>
@@ -102,7 +104,7 @@ const Login = () => {
                     </InputGroup>
                     <Row>
                       <Col xs="6">
-                        <Button color="primary" className="px-4 mt-2" onClick={() => increase()}>Authenticate</Button>
+                        <Button color="primary" className="px-4 mt-2" onClick={() => noop()}>Authenticate</Button>
                       </Col>
                       <Col xs="6" className="text-right">
                         <Button color="link" className="px-0">Forgot password?</Button>

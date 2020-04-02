@@ -1,1 +1,14 @@
 // Here you can add other styles
+
+@import "./flip-card.scss";
+
+.btn-elastos {
+  background-color: $primary_color;
+  color: #fff;
+
+  &:hover {
+    color: #fff;
+    background-color: $primary_color_light;
+  }
+}
+

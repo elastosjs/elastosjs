@@ -5,7 +5,11 @@ import "./OZ_ELA/OwnableELA.sol";
 import "./GSN_ELA/GSNRecipientELA.sol";
 import "./GSN_ELA/IRelayHubELA.sol";
 
+/**
+This is a test contract for GSN
+*/
 contract CounterELA is OwnableELA, GSNRecipientELA {
+
     uint256 public value;
 
     function initialize() public initializer {
