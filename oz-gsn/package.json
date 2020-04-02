@@ -14,9 +14,9 @@
   },
   "devDependencies": {
     "@openzeppelin/cli": "^2.8.0",
-    "@openzeppelin/contracts-ethereum-package": "~2.2.1",
+    "@openzeppelin/contracts-ethereum-package": "^2.5.0",
     "@openzeppelin/gsn-helpers": "~0.1.9",
-    "@openzeppelin/upgrades": "^2.7.2",
+    "@openzeppelin/upgrades": "^2.8.0",
     "@truffle/hdwallet-provider": "^1.0.33",
     "axios": "^0.19.2",
     "ganache-cli": "^6.9.1",
