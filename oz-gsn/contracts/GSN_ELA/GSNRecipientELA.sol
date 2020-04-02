@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "./InitializableELA.sol";
+import "../OZ_ELA/InitializableELA.sol";
 import "./IRelayRecipientELA.sol";
 import "./GSNContextELA.sol";
 import "./bouncers/GSNBouncerBaseELA.sol";

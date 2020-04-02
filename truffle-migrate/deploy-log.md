@@ -35,3 +35,6 @@ This was from running node run-relay-hub.js
       
       
 TODO: migrate all of this to OZ and use deploy only
+
+
+2019-04-01 - first working CounterELA (+1) at 0xBB7B5E2f56dBbA2390f86a007199D45faBA85858 - see CounterELA.json

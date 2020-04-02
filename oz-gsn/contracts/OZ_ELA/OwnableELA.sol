@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
-import "../GSN_ELA/InitializableELA.sol";
-import "../GSN_ELA/ContextELA.sol";
+import "./InitializableELA.sol";
+import "./ContextELA.sol";
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -12,7 +12,7 @@ import "../GSN_ELA/ContextELA.sol";
  * `onlyOwner`, which can be aplied to your functions to restrict their use to
  * the owner.
  */
-contract Ownable is InitializableELA, ContextELA {
+contract OwnableELA is InitializableELA, ContextELA {
     address private _owner;
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);

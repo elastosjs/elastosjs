@@ -1,0 +1,24 @@
+{
+  "contracts": {},
+  "solidityLibs": {},
+  "proxies": {
+    "oz-gsn-test/CounterELA": [
+      {
+        "address": "0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab",
+        "kind": "NonProxy",
+        "bytecodeHash": "1610abeedd68adfc7d8ea2908c824b07159c9f8d700bc3cc0a923fdfd638c8ba"
+      },
+      {
+        "address": "0xCfEB869F69431e42cdB54A4F4f105C19C080A601",
+        "kind": "NonProxy",
+        "bytecodeHash": "3ff4128eddd69f2f5062884427e16c3ac073ee0273d0519d59bbbcc55f26ca57"
+      },
+      {
+        "address": "0x0290FB167208Af455bB137780163b7B7a9a10C16",
+        "kind": "NonProxy",
+        "bytecodeHash": "f77bf8b8b0e7d493bff0e1612891bea59a57c018c1ecb1024f85b6b69ebb18b7"
+      }
+    ]
+  },
+  "manifestVersion": "2.2"
+}

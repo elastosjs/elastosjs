@@ -11,6 +11,8 @@ const provider = new HDWalletProvider(
 
 const web3 = new Web3(provider)
 
+const recipientContract = process.argv[2]
+
 const { fundRecipient } = require('./fund');
 
 (async function(){
@@ -25,9 +27,11 @@ const { fundRecipient } = require('./fund');
     },
 
     // deployed smart contract we want to call with GSN
-    recipient: '0xBB7B5E2f56dBbA2390f86a007199D45faBA85858'
+    recipient: recipientContract
   })
 
-  console.log(`Funded amt = ${amt}`)
+  console.log(`Funded amt = ${web3.utils.fromWei(amt)} ETH`)
+
+  process.exit(1)
 
 })()

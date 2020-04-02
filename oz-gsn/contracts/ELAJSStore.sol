@@ -7,9 +7,13 @@ import "./OZ_ELA/OwnableELA.sol";
 // we use our own GSN contract because we have a different relay hub address
 import "./GSN_ELA/GSNRecipientELA.sol";
 
-contract ELAJSStore is Ownable, GSNRecipientELA {
+contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     using SafeMath for uint256;
+
+    function initialize(address sender) public initializer {
+        OwnableELA.initialize(sender);
+    }
 
     // We won't do any pre or post processing, so leave _preRelayedCall and _postRelayedCall empty
     function _preRelayedCall(bytes memory context) internal returns (bytes32) {

@@ -1,0 +1,39 @@
+{
+  "contracts": {},
+  "solidityLibs": {},
+  "proxies": {
+    "oz-gsn-test/CounterELA": [
+      {
+        "address": "0x05d308eC656eDB729b69600b7Da14d82DA76ca75",
+        "kind": "NonProxy",
+        "bytecodeHash": "a33359b9baaf984764e9a2b9ff19b47309d1141b85b31751943bb46f66578230"
+      },
+      {
+        "address": "0xc8A7D0257fDc0520DA2A04d11be69a037D80E6ba",
+        "kind": "NonProxy",
+        "bytecodeHash": "4bb73bd3582ae04f3a777fade07309dd5b04c4d0d3d52b3f0db06ce090e1299b"
+      },
+      {
+        "address": "0xb563838425f4ae031541a13E159f0d3188083F54",
+        "kind": "NonProxy",
+        "bytecodeHash": "2d2b71c9c435873edb8100aae3e5d44e5e6ecf7e11daee20a64acd8410caf498"
+      },
+      {
+        "address": "0x508F92e218a634633F358B6F45b9Bc2029399847",
+        "kind": "NonProxy",
+        "bytecodeHash": "fb58084bcd81bad2ad47109758f19969be69b9b959b1bcc39e668adc5728b545"
+      },
+      {
+        "address": "0x91bcAB9e3Fe386C3F8491bAB2B66C43f4D3CB812",
+        "kind": "NonProxy",
+        "bytecodeHash": "3e90c55756f470ff5cee9fe380743438b852904962ad0c4371598957c804d169"
+      },
+      {
+        "address": "0x9d6a20032160238b5E470253f662009702E5f854",
+        "kind": "NonProxy",
+        "bytecodeHash": "6e7d1e68162e923601d4feb523d28ac7977558b37bf7de245b63bfce82d1c64b"
+      }
+    ]
+  },
+  "manifestVersion": "2.2"
+}
