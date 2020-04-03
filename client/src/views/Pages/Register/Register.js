@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react'
 import {
   Button,
   Card,
@@ -6,33 +6,28 @@ import {
   CardHeader,
   Col,
   Container,
-  Form,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
   Row,
   Progress,
   CardGroup,
-  Modal, ModalBody, ModalFooter, ModalHeader,
-  Popover, PopoverHeader, PopoverBody
 } from 'reactstrap';
+import { connect } from 'react-redux'
+
 import { Link } from 'react-router-dom'
 import FortmaticLogo from '../../../assets/img/fortmatic_logo.svg'
 import styled from 'styled-components'
-import _ from 'lodash'
 
 import { colors } from '../../../config'
 
 import { EthContext } from '../../../context/EthContext'
+
+import RegisterForm from './RegisterForm'
+import Loading, { LoadingOverlay } from '../Loading'
 
 const Register = () => {
 
   const [ethConfig, setEthConfig] = useContext(EthContext)
 
   const [canRegister, setCanRegister] = useState(false)
-
-  const [pollFortmatic, setPollFortmatic] = useState()
 
   const [progress, setProgress] = useState({
     val: 10,
@@ -51,100 +46,10 @@ const Register = () => {
     dataCommitted: false,
   })
 
-  const [ethAddress, setEthAddress] = useState('')
+  const [ethAddress, setEthAddress] = useState(false)
 
-  const [modalErrorData, setModalErrorData] = useState({
-    isOpen: false,
-    msgs: []
-  })
+  const [isRegistering, setIsRegistering] = useState(false)
 
-  const handleEmailChange = (ev) => {
-    const email = ev.target.value
-
-    setElajsAcct({ ...elajsAcct, email: email, emailInvalid: !(email && email.length > 5 && validateEmail(email))} )
-  }
-
-  const handlePw = async (ev) => {
-    const pw = ev.target.value
-
-    if (pw.length < 8){
-      setElajsAcct({ ...elajsAcct, passwordInvalid: true, passwordInvalidMsg: ''} )
-      return
-    }
-
-    if (/[ ]/.test(pw)){
-      setElajsAcct({ ...elajsAcct, passwordInvalid: true, passwordInvalidMsg: 'No spaces allowed'} )
-      return
-    }
-
-    if (!(/\d/.test(pw))){
-      setElajsAcct({ ...elajsAcct, passwordInvalid: true, passwordInvalidMsg: 'Must include at least 1 number'} )
-      return
-    }
-
-    // else set to valid
-    setElajsAcct({ ...elajsAcct, password: pw, passwordInvalid: false, passwordInvalidMsg: ''} )
-
-  }
-
-  // if the password changes it definitely invalidates the passwordConfirm being valid
-  useEffect(() => {
-    if (!elajsAcct.passwordConfirmInvalid){
-      handlePwConfirm('')
-    }
-  }, [elajsAcct.password])
-
-  const handlePwConfirm = (pwConfirm) => {
-
-    if (elajsAcct.password.length < 8){
-      return
-    }
-
-    if (elajsAcct.password !== pwConfirm){
-      setElajsAcct({ ...elajsAcct, passwordConfirmInvalid: true} )
-      return
-    }
-
-    // else set to valid
-    setElajsAcct({ ...elajsAcct, passwordConfirmInvalid: false} )
-  }
-
-  const handleCreateAcct = () => {
-
-    let errors = []
-
-    if (elajsAcct.email.length < 6 || elajsAcct.emailInvalid){
-      errors.push('Email is invalid')
-    }
-
-    if (elajsAcct.password.length < 8){
-      errors.push('Password must be 8 chars or more')
-    } else if (elajsAcct.passwordInvalid){
-      errors.push(`Password is invalid - ${elajsAcct.passwordInvalidMsg}`)
-    } else if (elajsAcct.passwordConfirmInvalid){
-      errors.push('Your passwords do not match')
-    }
-
-    // if at this point
-    if (errors.length){
-      setModalErrorData({ msgs: errors, isOpen: true })
-      return
-    }
-
-    // if we reach here all is good with the registration fields
-    toggleCommitAcct()
-  }
-
-  /**
-   * We commit the registration fields by setting `elajsAcct.dataCommitted` to true
-   */
-  const toggleCommitAcct = () => {
-    setElajsAcct({
-      ...elajsAcct,
-
-      dataCommitted: !elajsAcct.dataCommitted
-    })
-  }
 
   useEffect(() => {
 
@@ -170,18 +75,39 @@ const Register = () => {
     }
   }, [progress.val])
 
-  const modalErrorToggle = () => setModalErrorData({ ...modalErrorData, isOpen: false} )
-
   /**
-   * Check if Fortmatic is connected
+   * Check if Fortmatic is already connected, if so we just get the ethAddress,
+   * this only needs to run once, we must always set it to '' or an ethAddress
+   * because we have a third initial state of === false, which shows the loader
    */
-  useEffect(async () => {
+  useEffect(() => {
 
-    if (ethConfig){
-      const isFortmaticLoggedIn = await ethConfig.fm.user.isLoggedIn()
+    (async () => {
 
-      debugger
-    }
+      let ethAddress = ''
+
+      await (async () => {
+
+        if (!ethConfig || !ethConfig.fm){
+          return
+        }
+
+        const isFortmaticLoggedIn = await ethConfig.fm.user.isLoggedIn()
+        if (!isFortmaticLoggedIn){
+          return
+        }
+
+        const ethAccounts = await ethConfig.fmWeb3.eth.getAccounts()
+
+        if (ethAccounts.length === 0){
+          return
+        }
+
+        ethAddress = ethAccounts[0]
+      })()
+
+      setEthAddress(ethAddress)
+    })()
 
   }, [])
 
@@ -193,13 +119,34 @@ const Register = () => {
     const ethAddress = await ethConfig.fmWeb3.currentProvider.enable()
 
     setEthAddress(ethAddress)
+  }
 
-    debugger
+  // Once Fortmatic is connected and the account is ready we set canRegister to true
+  useEffect(() => {
+
+    if (!ethAddress.length || !elajsAcct.dataCommitted){
+      return
+    }
+
+    // TODO: better final validity checks
+    if (elajsAcct.email.length < 6 || elajsAcct.password.length < 8){
+      return
+    }
+
+    setCanRegister(true)
+
+  }, [ethAddress, elajsAcct.dataCommitted])
+
+  /**
+   * Final Register Call
+   */
+  const handleRegister = () => {
 
   }
 
   return (
     <div className="app flex-row align-items-center">
+      {isRegistering && <LoadingOverlay/>}
       <Container className="mt-n5">
         <Row className="justify-content-center">
           <Col md="8">
@@ -227,93 +174,49 @@ const Register = () => {
               </Progress>
             </RegisterHeader>
             <CardGroup style={{clear: 'both'}}>
+              {/*
+              ******************************************************************************************************************
+              ElastosJS Acct
+              ******************************************************************************************************************
+              */}
               <Card className={'flip-card ' + (elajsAcct.dataCommitted ? 'flip-card-active' : '')} style={{borderTopLeftRadius: 0}}>
-                <div className="flip-card-inner">
-                  <CardBody className="flip-card-front p-4">
-                    <h2>ElastosJS Auth</h2>
-                    <p className="text-muted">
-                      This is your ElastosJS account
-                      <i className="fa fa-question-circle fa-lg ml-1"></i>
-                    </p>
-                    <InputGroup className="mb-4">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <i className="icon-envelope"></i>
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="email" placeholder="Email" autoComplete="email" onChange={handleEmailChange} invalid={elajsAcct.emailInvalid}/>
-                    </InputGroup>
-                    <InputGroup className="mb-3">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <i className="icon-lock"></i>
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input id="pwInput" type="password" placeholder="Password (8 chars+, 1+ number)" autoComplete="password" onChange={handlePw} invalid={elajsAcct.passwordInvalid}/>
-                      <Popover placement="bottom" isOpen={elajsAcct.passwordInvalidMsg.length} target="pwInput">
-                        <PopoverHeader>Password Error</PopoverHeader>
-                        <PopoverBody>{elajsAcct.passwordInvalidMsg}</PopoverBody>
-                      </Popover>
-                    </InputGroup>
-                    <InputGroup className="mb-4">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <i className="icon-lock"></i>
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input id="pwConfirmInput" type="password" placeholder="Confirm Password" onChange={(ev) => handlePwConfirm(ev.target.value)} invalid={elajsAcct.passwordConfirmInvalid} autoComplete="confirm password" />
-                      <Popover placement="bottom" isOpen={elajsAcct.passwordConfirmInvalid} target="pwConfirmInput">
-                        <PopoverBody>Passwords do not match</PopoverBody>
-                      </Popover>
-                    </InputGroup>
-                    <Row>
-                      <Col>
-                        <Button color="primary" className="px-4 mt-2" onClick={handleCreateAcct}>Create ElastosJS Account</Button>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                  <CardBody className="flip-card-back p-4">
-                    <h4 className="mt-5">
-                      ElastosJS Account<br/>
-                      Created
-                    </h4>
-
-                    <p className="text-left p-4 mt-2">
-                      <b>Your Email:</b> {elajsAcct.email}
-                      <br/>
-                      <br/>
-                    </p>
-
-                    <Row className="mt-3">
-                      <Col>
-                        <button className="btn btn-elastos px-4 mt-5" onClick={toggleCommitAcct}>Edit Details</button>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </div>
+                <RegisterForm setElajsAcct={setElajsAcct} elajsAcct={elajsAcct}/>
               </Card>
-              <Card className="bg-tertiary p-4" style={{ width: '44%', borderTopRightRadius: 0 }}>
+              {/*
+              ******************************************************************************************************************
+              Fortmatic Connect
+              ******************************************************************************************************************
+              */}
+              <Card className="bg-tertiary px-4" style={{ width: '44%', borderTopRightRadius: 0 }}>
                 <CardBody>
                   <div>
                     <h2>Connect</h2>
 
                     <img src={FortmaticLogo}/>
 
-                    <p className="text-muted py-4">
-                      Your encryption keys and wallet is managed by Fortmatic, learn more at <a href="https://fortmatic.com" target="_blank">
+                    <p className="text-muted py-4" style={{marginBottom: '40px'}}>
+                      Your encryption keys and wallet is managed by Fortmatic, learn more at{' '}
+                      <a href="https://fortmatic.com" target="_blank">
                         https://fortmatic.com
                       </a>
                     </p>
-                    <FortmaticBtn className="px-4 mt-5" tabIndex={-1} onClick={fortmaticConnect}>
-                      Connect Fortmatic
-                    </FortmaticBtn>
+
+                    {ethAddress === false ? <Loading size="50"/> : (ethAddress ?
+                      <FortmaticBtn className="px-4" tabIndex={-1} disabled>
+                        <div>Fortmatic Connected</div>
+                        <i className="cui-circle-check icons font-2xl ml-2"></i>
+                      </FortmaticBtn> :
+                      <FortmaticBtn className="px-4" tabIndex={-1} onClick={fortmaticConnect}>
+                        Connect Fortmatic
+                      </FortmaticBtn>)
+                    }
                   </div>
                 </CardBody>
               </Card>
             </CardGroup>
             <Card className="text-right">
               <CardBody>
-                <button className="btn btn-primary mb-2" onClick={() => window.location.hash='dashboard'} disabled={canRegister ? '' : 'disabled'}>
+                <button className="btn btn-primary mb-2" onClick={handleRegister} disabled={canRegister ? '' : 'disabled'}>
                   Continue
                   <i className="fa fa-sign-in fa-lg ml-1"></i>
                 </button>
@@ -323,32 +226,27 @@ const Register = () => {
           </Col>
         </Row>
       </Container>
-      {/* lib && counterInstance */}
-      <Modal isOpen={modalErrorData.isOpen} toggle={modalErrorToggle} style={{marginTop: '20%'}}>
-        <ModalHeader>
-          Please correct the following errors
-        </ModalHeader>
-        <ModalBody>
-          <ul>
-            {_.map(modalErrorData.msgs, (msg) => <ErrorMsg key={msg}>
-              {msg}
-            </ErrorMsg>)}
-          </ul>
-        </ModalBody>
-        <ModalFooter>
-          <button className="btn btn-elastos btn-block" onClick={modalErrorToggle}>Close</button>
-        </ModalFooter>
-      </Modal>
     </div>
   )
 }
 
-export default Register;
+const mapStateToProps = (state) => {
+  return {
+    profile: state.root.profile,
+  }
+}
+
+export default connect(mapStateToProps)(Register)
 
 
 const FortmaticBtn = styled(Button)`
   background-color: #6851ff;
   color: white;
+  
+  display: flex;
+  align-items: center;
+  
+  margin-top: 88px;
 
   &:hover {
     background-color: #8469ff;
@@ -363,16 +261,8 @@ const RegisterHeader = styled(CardHeader)`
   background-color: ${colors.secondary_color};
 `
 
-const ErrorMsg = styled.li`
-  margin-top: 8px;
-  margin-left: 16px;
-`
-
-
 function noop(){
 
 }
 
-function validateEmail(email){
-  return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
-}
+
