@@ -9,10 +9,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@openzeppelin/network": "^0.4.2",
     "sol-datastructs": "*"
   },
   "devDependencies": {
+    "@openzeppelin/cli": "^2.8.0",
+    "@openzeppelin/gsn-helpers": "^0.2.3",
     "eth-ens-namehash": "^2.0.8",
+    "ganache-cli": "^6.9.1",
     "sha3": "^2.1.2",
     "web3": "^1.2.6"
   }

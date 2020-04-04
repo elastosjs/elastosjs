@@ -1,0 +1,24 @@
+{
+  "manifestVersion": "2.2",
+  "contracts": {},
+  "dependencies": {},
+  "name": "oz-store",
+  "version": "0.0.1",
+  "compiler": {
+    "compilerSettings": {
+      "evmVersion": "byzantium",
+      "optimizer": {
+        "enabled": false,
+        "runs": "200"
+      }
+    },
+    "typechain": {
+      "enabled": false
+    },
+    "manager": "openzeppelin",
+    "solcVersion": "0.5.0",
+    "artifactsDir": "build/contracts",
+    "contractsDir": "contracts"
+  },
+  "telemetryOptIn": true
+}
