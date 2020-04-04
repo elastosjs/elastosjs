@@ -1,0 +1,19 @@
+{
+  "name": "oz-store",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "sol-datastructs": "*"
+  },
+  "devDependencies": {
+    "eth-ens-namehash": "^2.0.8",
+    "sha3": "^2.1.2",
+    "web3": "^1.2.6"
+  }
+}

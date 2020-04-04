@@ -44,6 +44,28 @@ const initialState = {
   ethAddress: null
 }
 
+/**
+ * Final Register Call
+ *
+ * - usually we send the password to the back-end, add a salt and hash it, but in this
+ *   scenario we don't have a backend.
+ *
+ * - Also we are saving the hash to a public smart contract, so the security is low anyway,
+ *   in this scenario the real security lies in the Fortmatic account which is the gatekeeper
+ *   between any paid actions
+ */
+export const ActionRegister = () => {
+  return async function(dispatch, getState, { ozWeb3 }){
+
+    const state = getState()
+
+    const salt = state.root.profile.ethAddress
+
+  }
+}
+
+// export const ActionSetEth
+
 export const ActionCheckAccts = () => {
   return async function(dispatch, getState, { fmWeb3 }){
 
@@ -144,6 +166,13 @@ export default {
         return {
           ...state,
           loading: true
+        }
+
+      case ProfileActionTypes.REGISTER:
+        return {
+          ...state,
+          email: action.email,
+          ethAddress: action.ethAddress
         }
 
       case ProfileActionTypes.SET_ETH_ADDRESS:

@@ -23,7 +23,9 @@ import { EthContext } from '../../../context/EthContext'
 import RegisterForm from './RegisterForm'
 import Loading, { LoadingOverlay } from '../Loading'
 
-const Register = () => {
+import { ProfileActionTypes, ActionRegister } from '../../../store/redux/profile'
+
+const Register = (props) => {
 
   const [ethConfig, setEthConfig] = useContext(EthContext)
 
@@ -107,6 +109,10 @@ const Register = () => {
       })()
 
       setEthAddress(ethAddress)
+
+      if (ethAddress){
+        setProgress({...progress, val: progress.val += 45})
+      }
     })()
 
   }, [])
@@ -119,6 +125,8 @@ const Register = () => {
     const ethAddress = await ethConfig.fmWeb3.currentProvider.enable()
 
     setEthAddress(ethAddress)
+
+    setProgress({...progress, val: progress.val += 45})
   }
 
   // Once Fortmatic is connected and the account is ready we set canRegister to true
@@ -139,10 +147,38 @@ const Register = () => {
 
   /**
    * Final Register Call
+   * - usually we send the password to the back-end, add a salt and hash it, but in this
+   *   scenario we don't have a backend.
+   * - Also we are saving the hash to a public smart contract
    */
-  const handleRegister = () => {
+  const handleRegister = async () => {
 
+    setIsRegistering(true)
+
+    await props.dispatch({
+      action: ProfileActionTypes.SET_ETH_ADDRESS,
+      ethAddress: ethAddress
+    })
+
+    await props.dispatch(ActionRegister())
+
+    // check props.profile
   }
+
+  // waiting for registration,
+  // once we have both the
+  useEffect(() => {
+
+    if (!isRegistering){
+      return
+    }
+
+    if (props.profile.email.length && props.profile.ethAddress.length){
+      debugger
+      window.location.hash = 'dashboard'
+    }
+
+  }, [isRegistering, props.profile])
 
   return (
     <div className="app flex-row align-items-center">
