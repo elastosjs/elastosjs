@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "sh test.sh"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +16,7 @@
     "@openzeppelin/cli": "^2.8.0",
     "@openzeppelin/contracts-ethereum-package": "^2.5.0",
     "@openzeppelin/gsn-helpers": "^0.2.3",
+    "@openzeppelin/test-helpers": "^0.5.5",
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
     "eth-ens-namehash": "^2.0.8",

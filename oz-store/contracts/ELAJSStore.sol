@@ -34,7 +34,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     function _initialize() internal {
 
         // test = 0x04f740db81dc36c853ab4205bddd785f46e79ccedca351fc6dfcbd8cc9a33dd6
-        setTableMetadata(0x04f740db81dc36c853ab4205bddd785f46e79ccedca351fc6dfcbd8cc9a33dd6, 2, 1, 0x1dF62f291b2E969fB0849d99D9Ce41e2F137006e);
+        // setTableMetadata(0x04f740db81dc36c853ab4205bddd785f46e79ccedca351fc6dfcbd8cc9a33dd6, 2, 1, 0x1dF62f291b2E969fB0849d99D9Ce41e2F137006e);
     }
 
     /*
@@ -63,7 +63,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         require(_table.containsKey(tableKey) == false, "Table already exists");
 
         uint40 autoIncrement = 1;
-        address delegate = 0x0;
+        address delegate = address(0x0);
 
         // first set the metadata
         setTableMetadata(tableKey, permission, autoIncrement, delegate);
@@ -74,12 +74,14 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     // ************************************* CRUD FUNCTIONS *************************************
 
     /**
-     * Prior to insert, we check the permissions, if it's good then we return the autoIncrement
+     * @dev Prior to insert, we check the permissions, if it's good then we return the autoIncrement
      * and then increment it
+     *
+     * @param tableKey the namehashed table key
      */
-    function preInsert(bytes32 tableKey) {
+    function preInsert(bytes32 tableKey) public returns (uint40){
 
-        (uint8 permission, uint40 autoIncrement, address delegate) = getTableMetadata(tableKey);
+        (uint256 permission, uint256 autoIncrement, address delegate) = getTableMetadata(tableKey);
 
         // if permission = 0, system table we can't do anything
         require(permission > 0, "Cannot insert into system table");
@@ -87,15 +89,23 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // if permission = 1, we must be the owner
         require(permission == 1 && isOwner() == false, "Only owner can insert into this table");
 
-        setTableMetadata(tableKey, permission, autoIncrement + 1, delegate);
+        setTableMetadata(tableKey, uint8(permission), uint40(autoIncrement + 1), delegate);
 
-        return autoIncrement;
+        return uint40(autoIncrement);
+    }
+
+    /**
+     * @dev Table actual insert call
+     */
+    function insertTable(bytes32 tableKey, uint40 id, bytes32 tableIdKey, bytes32[] memory fields, bytes32[] memory fieldKeys, bytes32[] memory values) public {
+
     }
 
 
     // ************************************* _TABLE FUNCTIONS *************************************
     function getTableMetadata(bytes32 _tableKey)
         view
+        public
         returns (uint256 permission, uint256 autoIncrement, address delegate)
     {
         uint256 tableMetadata = uint256(_table.getValueForKey(_tableKey));

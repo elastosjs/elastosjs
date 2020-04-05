@@ -20,6 +20,8 @@ npx oz-gsn fund-recipient --recipient $contractAddr --amount 500000000000000000
 
 print_progress "contractAddr = $contractAddr"
 
+sed -i '' -e "s!^\(ELAJSSTORE_CONTRACT_ADDR=\).*!\1$contractAddr!" ./env/test.env
+
 END=`date +%s`
 
 print_success "\nDone. Runtime: $((END-START)) seconds."
