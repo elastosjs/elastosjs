@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "sh test.sh"
+    "test": "sh ./test.sh"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +17,7 @@
     "@openzeppelin/contracts-ethereum-package": "^2.5.0",
     "@openzeppelin/gsn-helpers": "^0.2.3",
     "@openzeppelin/test-helpers": "^0.5.5",
+    "@truffle/hdwallet-provider": "^1.0.34",
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
     "eth-ens-namehash": "^2.0.8",

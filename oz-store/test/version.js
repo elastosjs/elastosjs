@@ -2,13 +2,9 @@
 const chai = require('chai')
 const expect = chai.expect
 
-const secrets = require('../../secrets.json')
 const ELAJSStoreJSON = require('../build/contracts/ELAJSStore.json')
 
 const { fromConnection, ephemeral } = require("@openzeppelin/network")
-const Web3 = require('web3')
-
-const devPrivKey = secrets.devPrivKey
 
 describe('Tests (GSN Sanity Check) for Version', () => {
 
@@ -27,15 +23,13 @@ describe('Tests (GSN Sanity Check) for Version', () => {
 
     const instance = new ozWeb3.lib.eth.Contract(ELAJSStoreJSON.abi, process.env.ELAJSSTORE_CONTRACT_ADDR)
 
-    let version = await instance.methods.version().call()
-
-    expect(parseInt(version)).to.be.equal(0)
+    const initialVersion = await instance.methods.version().call()
 
     await instance.methods.increaseVersion().send({ from: ozWeb3.accounts[0], gasPrice: '10000000000' })
 
-    version = await instance.methods.version().call()
+    const newVersion = await instance.methods.version().call()
 
-    expect(parseInt(version)).to.be.equal(1)
+    expect(parseInt(newVersion)).to.be.equal(parseInt(initialVersion) + 1)
 
   })
 
