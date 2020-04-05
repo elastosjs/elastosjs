@@ -1,7 +1,36 @@
 const namehash = require('eth-ens-namehash')
 const { Keccak } = require('sha3')
 const web3 = require('Web3')
+const _ = require('lodash')
 const sha3 = new Keccak(256)
+
+function namehash2(input){
+  if (input === ''){
+    return new Buffer.alloc(32)
+  }
+
+  const inputSplit = input.split('.')
+
+  const label = inputSplit.shift()
+  const remainder = inputSplit.join('.')
+
+  const labelSha3 = sha3.update(label).digest()
+
+  sha3.reset()
+
+  const iter = sha3.update(Buffer.concat([namehash2(remainder), labelSha3])).digest()
+  sha3.reset() // TODO: figure out why this needs to be here
+  return iter
+}
+
+if (process.argv.length > 2){
+  console.log(web3.utils.bytesToHex(namehash2(process.argv[2])))
+  process.exit(1)
+}
+
+console.log('\n\nTEST')
+
+sha3.reset()
 
 /**
  * This demonstrates how namehash works
@@ -15,6 +44,7 @@ const sha3 = new Keccak(256)
 
 // BASE EXAMPLE
 const baseHash = namehash.hash('')
+console.log(web3.utils.bytesToHex(new Buffer.alloc(32)))
 console.log(baseHash)
 // 0x0000000000000000000000000000000000000000000000000000000000000000
 
@@ -86,3 +116,5 @@ console.log(web3.utils.bytesToHex(node2))
 console.log(namehash.hash('foo.eth'))
 // 0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae
 
+
+console.log(namehash.hash('sub.foo.eth'))

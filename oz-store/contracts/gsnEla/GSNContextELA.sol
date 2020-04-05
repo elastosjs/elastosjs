@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
-import "../OZ_ELA/InitializableELA.sol";
-import "../OZ_ELA/ContextELA.sol";
+import "../ozEla/InitializableELA.sol";
+import "../ozEla/ContextELA.sol";
 
 /*
  * @dev Enables GSN support on `Context` contracts by recognizing calls from
