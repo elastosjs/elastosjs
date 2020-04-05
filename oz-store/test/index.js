@@ -17,7 +17,7 @@ describe('ELAJS Store Tests', function(){
     await new Promise((resolve) => {
       setTimeout(() => {
         resolve()
-      }, 5000)
+      }, 1000)
     })
 
     console.log('DONE setup')

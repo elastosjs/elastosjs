@@ -10,10 +10,9 @@ const Web3 = require('web3')
 
 const devPrivKey = secrets.devPrivKey
 
-describe('Tests for Create Table', () => {
+describe('Tests (GSN Sanity Check) for Version', () => {
 
-  /*
-  let ozWeb3, web3
+  let ozWeb3
 
   before(async () => {
 
@@ -22,19 +21,22 @@ describe('Tests for Create Table', () => {
       pollInterval: 5000
     })
 
-    web3 = new Web3(new PrivateKeyProvider(
-      devPrivKey, process.env.PROVIDER_URL
-    ))
-
   })
 
-  it('Should fail to create a table, because only owner can', async () => {
+  it('Should increase version by 1', async () => {
 
-    const instance = new web3.eth.Contract(ELAJSStoreJSON.abi, process.env.ELAJSSTORE_CONTRACT_ADDR)
+    const instance = new ozWeb3.lib.eth.Contract(ELAJSStoreJSON.abi, process.env.ELAJSSTORE_CONTRACT_ADDR)
+
+    let version = await instance.methods.version().call()
+
+    expect(parseInt(version)).to.be.equal(0)
 
     await instance.methods.increaseVersion().send({ from: ozWeb3.accounts[0], gasPrice: '10000000000' })
 
+    version = await instance.methods.version().call()
+
+    expect(parseInt(version)).to.be.equal(1)
+
   })
-   */
 
 })

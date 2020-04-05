@@ -57,7 +57,10 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     */
 
     // ************************************* SCHEMA FUNCTIONS *************************************
-    function createTable(bytes32 tableKey, uint8 permission) public {
+    /**
+     * @dev create a new table, only the owner may create this
+     */
+    function createTable(bytes32 tableKey, uint8 permission) public onlyOwner {
 
         // check if table exists
         require(_table.containsKey(tableKey) == false, "Table already exists");
