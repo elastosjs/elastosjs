@@ -133,7 +133,24 @@ describe('Tests for Insert Public Table', () => {
       }
     }
 
-    console.log(results)
+    expect(results.length).to.be.equal(2)
+
+    results.forEach((row) => {
+
+      expect(row.length).to.be.equal(3)
+
+      let [firstName, lastName, age] = row
+
+      if (firstName === 'Clarence'){
+        expect(lastName).to.be.equal('Liu')
+        expect(age).to.be.equal(33)
+      } else if (firstName === 'Mary'){
+        expect(lastName).to.be.equal('Jane')
+        expect(age).to.be.equal(25)
+      } else {
+        assert.fail('Unexpected Row')
+      }
+    })
   })
 
 })
