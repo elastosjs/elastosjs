@@ -121,6 +121,8 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     public insertCheck(tableKey, idKey, idTableKey){
 
+        require(table.containsKey(id) == false, "id already exists");
+
         // add an id entry to the table's set of ids for the row
         table.addValueForKey(tableKey, id);
 
@@ -134,7 +136,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     /**
      * @dev Table actual insert call
-     * TODO: id collision check
      */
     function insert(
         bytes32 tableKey,
@@ -148,6 +149,8 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         bytes32[] memory values)
 
     public insertCheck(tableKey, idKey, idTableKey){
+
+        require(table.containsValueForKey(tableKey, id) == false, "id already exists");
 
         uint len = fieldKeys.length;
 

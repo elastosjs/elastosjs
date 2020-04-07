@@ -77,6 +77,7 @@ describe('Tests for Insert Private Table', () => {
 
     try {
       await ephemeralInstance.methods.getTableMetadata(namehash('blah')).call()
+      assert.fail()
     } catch (err){
       assert.exists(err, 'get non-existing table did not return error')
     }
@@ -105,6 +106,7 @@ describe('Tests for Insert Private Table', () => {
         from: ozWeb3.accounts[0],
         gasPrice: '10000000000'
       })
+      assert.fail()
     } catch (err){
       assert.exists(err)
     }
@@ -150,6 +152,7 @@ describe('Tests for Insert Private Table', () => {
         from: ozWeb3.accounts[0],
         gasPrice: '10000000000'
       })
+      assert.fail()
     } catch (err){
       assert.exists(err)
     }

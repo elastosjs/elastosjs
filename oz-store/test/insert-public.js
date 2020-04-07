@@ -69,6 +69,7 @@ describe('Tests for Insert Public Table', () => {
         from: web3.eth.personal.currentProvider.addresses[0],
         gasPrice: '10000000000'
       })
+      assert.fail()
     } catch (err){
       expect(err.message).to.be.equals('VM Exception while processing transaction: revert table does not exist')
     }
@@ -83,6 +84,17 @@ describe('Tests for Insert Public Table', () => {
       from: ozWeb3.accounts[0],
       gasPrice: '10000000000'
     })
+
+    try {
+      await ephemeralInstance.methods.insert(tableKey, idTableKey, idKey, id, fieldKeys, fieldIdTableKeys, values).send({
+        from: ozWeb3.accounts[0],
+        gasPrice: '10000000000'
+      })
+      assert.fail('Should not be able to re-insert same id')
+
+    } catch (err){
+      expect(err.message).to.be.equal('Error: Error estimating gas usage for transaction (Returned error: VM Exception while processing transaction: revert id already exists). Make sure the transaction is valid, or set a fixed gas value.')
+    }
 
   })
 
