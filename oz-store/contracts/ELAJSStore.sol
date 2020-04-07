@@ -72,40 +72,64 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     // ************************************* CRUD FUNCTIONS *************************************
 
     /**
-     * @dev Prior to insert, we check the permissions and autoIncrement
-     * TODO: use the schema and determine the proper type of data to insert
-     *
-     * @param tableKey the namehashed table key
+     * @dev Table level permission checks
      */
-    function insertTest(
-        bytes32 tableKey,
-        bytes32 id,
-        bytes32 idKey,
-        bytes32 idTableKey,
-        bytes32 dataKey,
-        uint256 val)
-    public {
+    modifier insertCheck(bytes32 tableKey, bytes32 idKey, bytes32 idTableKey) {
 
-        // this fetches the autoIncrement
         (uint256 permission, address delegate) = getTableMetadata(tableKey);
 
         // if permission = 0, system table we can't do anything
         require(permission > 0, "Cannot insert into system table");
 
-        // if permission = 1, we must be the owner
-        require(permission == 1 && (isOwner() == true || delegate == _msgSender()), "Only owner/delegate can insert into this table");
+        // if permission = 1, we must be the owner/delegate
+        require(permission > 1 || isOwner() == true || delegate == _msgSender(), "Only owner/delegate can insert into this table");
 
-        // IF this is a public table, for a new row, we add an entry in `elajsRowOwner` claiming this [id].[table] for the msg.sender
+        // permissions check, is the idTableKey a subhash of the id and table?
+        require(isNamehashSubOf(idKey, tableKey, idTableKey) == true, "idTableKey not a subhash [id].[table]");
+
+        // IF this is a public table, for a each row, we add an entry in `elajsRowOwner` claiming this [id].[table] for the msg.sender
         if (permission > 1) {
             elajsRowOwner[idTableKey] = _msgSender();
         }
 
-        // add an id entry to the set for the table
+        _;
+    }
+
+    /**
+     * @dev Prior to insert, we check the permissions and autoIncrement
+     * TODO: use the schema and determine the proper type of data to insert
+     *
+     * @param tableKey the namehashed [table] name string
+     * @param idKey the sha3 hashed idKey
+     * @param idTableKey the namehashed [id].[table] name string
+     *
+     * @param id as the raw string (unhashed)
+     *
+     *
+     */
+    function insertTestVal(
+
+        bytes32 tableKey,
+        bytes32 idTableKey,
+        bytes32 fieldIdTableKey,
+
+        bytes32 idKey,
+        bytes32 fieldKey,
+
+        bytes32 id,
+        uint256 val)
+
+    public insertCheck(tableKey, idKey, idTableKey){
+
+        // add an id entry to the table's set of ids for the row
         table.addValueForKey(tableKey, id);
+
+        // now check if the full field + id + table is a subhash
+        require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
 
         // finally set the data
         // we won't serialize the type, that's way too much redundant data
-        elajsStore[dataKey] = bytes32(val);
+        elajsStore[fieldIdTableKey] = bytes32(val);
     }
 
     /**
@@ -113,11 +137,31 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
      */
     function insert(
         bytes32 tableKey,
+        bytes32 idTableKey,
+
+        bytes32 idKey,
         bytes32 id,
-        bytes32 tableIdKey,
+
         bytes32[] memory fieldKeys,
+        bytes32[] memory fieldIdTableKeys,
         bytes32[] memory values)
-    public {
+
+    public insertCheck(tableKey, idKey, idTableKey){
+
+        uint len = fieldKeys.length;
+
+        require(fieldKeys.length == values.length, "fields, values array length mismatch");
+
+        // add an id entry to the table's set of ids for the row
+        table.addValueForKey(tableKey, id);
+
+        for (uint i = 0; i < len; i++) {
+
+            // for each row check if the full field + id + table is a subhash
+            require(isNamehashSubOf(fieldKeys[i], idTableKey, fieldIdTableKeys[i]) == true, "fieldKey not a subhash [field].[id].[table]");
+
+            elajsStore[fieldIdTableKeys[i]] = bytes32(values[i]);
+        }
 
     }
 
