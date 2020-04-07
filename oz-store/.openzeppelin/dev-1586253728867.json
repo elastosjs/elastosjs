@@ -122,6 +122,51 @@
         "address": "0xdFc8050206A480F517E5D22b226b81051c0b1334",
         "kind": "NonProxy",
         "bytecodeHash": "3d1550864f09c0a41b4ab6f6c4710b134a44144e22eb3db2190d5b8a47e00efe"
+      },
+      {
+        "address": "0x06362D9Cd157fd80d210360a269B56B4Eb9394b9",
+        "kind": "NonProxy",
+        "bytecodeHash": "722706728c0b72a5d400053ba534c93e8bbba1085267db80847d82b44910d391"
+      },
+      {
+        "address": "0x7e98876e57f330429088b17070B936a50754b0ae",
+        "kind": "NonProxy",
+        "bytecodeHash": "722706728c0b72a5d400053ba534c93e8bbba1085267db80847d82b44910d391"
+      },
+      {
+        "address": "0xa7E5aEC48A4C959bA3D3ED5Faf34Eee21f06a03F",
+        "kind": "NonProxy",
+        "bytecodeHash": "722706728c0b72a5d400053ba534c93e8bbba1085267db80847d82b44910d391"
+      },
+      {
+        "address": "0xB32DeAE2D1976Aec4caaD09A41Fb6b4e70Eac2a0",
+        "kind": "NonProxy",
+        "bytecodeHash": "9ba3cf113089e79164aaee92813bf9847f9376aa97566e05c718c6d3502e82fb"
+      },
+      {
+        "address": "0x1c1F50850c586F75269CB7FB788dFa9853b5671f",
+        "kind": "NonProxy",
+        "bytecodeHash": "9ba3cf113089e79164aaee92813bf9847f9376aa97566e05c718c6d3502e82fb"
+      },
+      {
+        "address": "0xb3953a15FB0a7CB7998B75bf0abA7303022e25D8",
+        "kind": "NonProxy",
+        "bytecodeHash": "9ba3cf113089e79164aaee92813bf9847f9376aa97566e05c718c6d3502e82fb"
+      },
+      {
+        "address": "0x96751c36B358A73fe4D8e74Ed64827d2Ec863f1d",
+        "kind": "NonProxy",
+        "bytecodeHash": "9ba3cf113089e79164aaee92813bf9847f9376aa97566e05c718c6d3502e82fb"
+      },
+      {
+        "address": "0x2A10827e79b5D7667fA6B86a48C33d41079b5390",
+        "kind": "NonProxy",
+        "bytecodeHash": "9ba3cf113089e79164aaee92813bf9847f9376aa97566e05c718c6d3502e82fb"
+      },
+      {
+        "address": "0x3a936D6Ec8e28f7254A1603D33d040eE044a8340",
+        "kind": "NonProxy",
+        "bytecodeHash": "9ba3cf113089e79164aaee92813bf9847f9376aa97566e05c718c6d3502e82fb"
       }
     ]
   },

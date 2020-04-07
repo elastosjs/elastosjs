@@ -1,0 +1,19 @@
+{
+  "contracts": {},
+  "solidityLibs": {},
+  "proxies": {
+    "oz-store/ELAJSStore": [
+      {
+        "address": "0xd9D9d47E903dB9645428eF178FcEF1ceC4baB483",
+        "kind": "NonProxy",
+        "bytecodeHash": "9ba3cf113089e79164aaee92813bf9847f9376aa97566e05c718c6d3502e82fb"
+      },
+      {
+        "address": "0x9F1Cdfa4501a5B601E39141B1dF10B4ba3EAB978",
+        "kind": "NonProxy",
+        "bytecodeHash": "9ba3cf113089e79164aaee92813bf9847f9376aa97566e05c718c6d3502e82fb"
+      }
+    ]
+  },
+  "manifestVersion": "2.2"
+}

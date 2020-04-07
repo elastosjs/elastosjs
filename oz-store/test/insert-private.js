@@ -118,9 +118,9 @@ describe('Tests for Insert Private Table', () => {
     sha3.reset()
     const id = Web3.utils.randomHex(32)
     const idStr = id.substring(2)
-    console.log(`id = ${idStr}`)
+    // console.log(`id = ${idStr}`)
     const idKey = sha3.update(idStr).digest()
-    console.log(`idKey = ${idKey.toString('hex')}`)
+    // console.log(`idKey = ${idKey.toString('hex')}`)
 
     sha3.reset()
 
@@ -130,11 +130,11 @@ describe('Tests for Insert Private Table', () => {
     const namehashConcat = sha3.update(Buffer.concat([Buffer.from(TEST_NAMEHASH.substring(2), 'hex'), idKey])).digest()
     const idTableKey = namehash.hash(`${idStr}.test`)
 
-    console.log(`table = ${TEST_NAMEHASH}`)
+    // console.log(`table = ${TEST_NAMEHASH}`)
 
     expect(Web3.utils.bytesToHex(namehashConcat)).to.be.equal(idTableKey)
 
-    console.log(`idTableKey = ${idTableKey}`)
+    // console.log(`idTableKey = ${idTableKey}`)
 
     const fieldStr = 'my_field'
     const fieldIdTableKey = namehash.hash(`${fieldStr}.${idStr}.test`)
@@ -143,7 +143,7 @@ describe('Tests for Insert Private Table', () => {
 
     const fieldKey = sha3.update(fieldStr).digest()
 
-    console.log(`dataKey = ${fieldIdTableKey}`)
+    // console.log(`dataKey = ${fieldIdTableKey}`)
 
     try {
       await ephemeralInstance.methods.insertTestVal(TEST_NAMEHASH, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
@@ -160,58 +160,9 @@ describe('Tests for Insert Private Table', () => {
     })
 
     // check for value
-    const val = await ephemeralInstance.methods.getValTest(fieldIdTableKey).call()
+    const val = await ephemeralInstance.methods.getRowValue(fieldIdTableKey).call()
 
     expect(Web3.utils.hexToNumber(val)).to.be.equal(VAL)
-  })
-
-  it('Should insert multiple fields/cols for a row', async () => {
-    // don't need to implement this for now
-
-    const TABLE_STR = 'user'
-    const values = [Web3.utils.asciiToHex('Clarence'), Web3.utils.asciiToHex('Liu'), Web3.utils.numberToHex(33)]
-    const fields = ['firstName', 'lastName', 'age']
-    const fieldKeys = []
-    const fieldIdTableKeys = []
-
-    sha3.reset()
-
-    const id = Web3.utils.randomHex(32)
-    const idStr = id.substring(2)
-    const idKey = sha3.update(idStr).digest()
-
-    sha3.reset()
-
-    const tableKey = namehash.hash(TABLE_STR)
-    const idTableKey = namehash.hash(`${idStr}.${TABLE_STR}`)
-
-    for (let i = 0; i < fields.length; i++){
-      sha3.reset()
-      fieldKeys.push(sha3.update(fields[i]).digest())
-      fieldIdTableKeys.push(namehash.hash(`${fields[i]}.${idStr}.${TABLE_STR}`))
-    }
-
-    try {
-      await ownerInstance.methods.insertTestVal(tableKey, idTableKey, fieldIdTableKeys[0], idKey, fieldKeys[0], id, values[2]).send({
-        from: web3.eth.personal.currentProvider.addresses[0],
-        gasPrice: '10000000000'
-      })
-    } catch (err){
-      expect(err.message).to.be.equals('VM Exception while processing transaction: revert table does not exist')
-    }
-
-    // now create the table, this will be a public table - still need the ownerInstance to create it
-    await ownerInstance.methods.createTable(tableKey, 2).send({
-      from: web3.eth.personal.currentProvider.addresses[0],
-      gasPrice: '10000000000'
-    })
-
-    await ephemeralInstance.methods.insert(tableKey, idTableKey, idKey, id, fieldKeys, fieldIdTableKeys, values).send({
-      from: ozWeb3.accounts[0],
-      gasPrice: '10000000000'
-    })
-
-
   })
 
 })

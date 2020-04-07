@@ -134,6 +134,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     /**
      * @dev Table actual insert call
+     * TODO: id collision check
      */
     function insert(
         bytes32 tableKey,
@@ -165,16 +166,14 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     }
 
-    function getValTest(bytes32 dataKey) public view returns (bytes32) {
+    function getRowValue(bytes32 dataKey) public view returns (bytes32) {
         return bytes32(elajsStore[dataKey]);
     }
 
-    /**
-     * Getting a row,
-     */
-    function getRow(bytes32 tableKey, bytes32 idKey, bytes32) public {
-
+    function getTableIds(bytes32 tableKey) external view returns (bytes32[] memory){
+        return table.getBytes32ArrayForKey(tableKey);
     }
+
 
     function isNamehashSubOf(bytes32 subKey, bytes32 base, bytes32 target) public pure returns (bool) {
 
