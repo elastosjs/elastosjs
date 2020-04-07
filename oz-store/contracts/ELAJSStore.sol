@@ -1,6 +1,8 @@
 pragma solidity ^0.5.0;
 
 import "sol-datastructs/src/contracts/PolymorphicDictionaryLib.sol";
+
+// this is included by PolymorphicDictionaryLib, but added here for verbosity
 import "sol-datastructs/src/contracts/Bytes32DictionaryLib.sol";
 
 // import "./oz/EnumerableSetDictionary.sol";
@@ -16,14 +18,21 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     uint8 public version;
 
-    // table = Mapping of bytes32 to a PolymorphicDict
-    mapping(bytes32 => PolymorphicDictionaryLib.PolymorphicDictionary) table;
-
-    // _table = system table (OneToOneFixed) of each table's metadata marshaled
+    // _table = system table (bytes32 Dict) of each table's metadata marshaled
     // 8 bits - permissions (00 = system, 01 = private, 10 = public, 11 = shared - owner can always edit)
-    // 40 bits - autoIncrement (uint40) - 5 bytes = ~1 trillion rows
     // 20 bytes - address delegate - other address allowed to edit, unimplemented (likely implemented as multi-sig address)
-    Bytes32DictionaryLib.Bytes32Dictionary private _table;
+    Bytes32DictionaryLib.Bytes32Dictionary internal _table;
+
+    // table = dict where the key is the table, and the value is a set of byte32 ids
+    PolymorphicDictionaryLib.PolymorphicDictionary internal table;
+
+    // ownership of each row (id) - key = namehash([id].[table]) - value = address
+    // this isn't used for private tables
+    mapping(bytes32 => address) internal elajsRowOwner;
+
+    // ultimately namehash([field].[id].[table]) gives us a bytes32 which maps to the single data value
+    mapping(bytes32 => bytes32) internal elajsStore;
+
 
     function initialize() public initializer {
         OwnableELA.initialize(msg.sender);
@@ -37,24 +46,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // setTableMetadata(0x04f740db81dc36c853ab4205bddd785f46e79ccedca351fc6dfcbd8cc9a33dd6, 2, 1, 0x1dF62f291b2E969fB0849d99D9Ce41e2F137006e);
     }
 
-    /*
-    function containsKey(bytes32 key) external view returns (bool) {
-        return root.containsKey(key);
-    }
-
-
-    function containsKey2() external view returns (bool) {
-        return root.containsKey(_tableKey);
-    }
-
-    function containsKey3() external view returns (bool) {
-        return root.containsKey(0x24fe0be17f2ee45be39dc4c76c3eb2620ec5b3c9a3d673c7271a7d6a8df67fb3);
-    }
-
-    function getTableData(bytes32 key) external view returns (uint256){
-        return root.getUInt256ForKey(key);
-    }
-    */
 
     // ************************************* SCHEMA FUNCTIONS *************************************
     /**
@@ -65,43 +56,94 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // check if table exists
         require(_table.containsKey(tableKey) == false, "Table already exists");
 
-        uint40 autoIncrement = 1;
         address delegate = address(0x0);
 
-        // first set the metadata
-        setTableMetadata(tableKey, permission, autoIncrement, delegate);
+        // claim the key slot and set the metadata
+        setTableMetadata(tableKey, permission, delegate);
 
-        //
+        table.addKey(tableKey, PolymorphicDictionaryLib.DictionaryType.OneToManyFixed);
+
+    }
+
+    function tableExists(bytes32 tableKey) public view returns (bool) {
+        return table.containsKey(tableKey);
     }
 
     // ************************************* CRUD FUNCTIONS *************************************
 
     /**
-     * @dev Prior to insert, we check the permissions, if it's good then we return the autoIncrement
-     * and then increment it
+     * @dev Prior to insert, we check the permissions and autoIncrement
+     * TODO: use the schema and determine the proper type of data to insert
      *
      * @param tableKey the namehashed table key
      */
-    function preInsert(bytes32 tableKey) public returns (uint40){
+    function insertTest(
+        bytes32 tableKey,
+        bytes32 id,
+        bytes32 idKey,
+        bytes32 idTableKey,
+        bytes32 dataKey,
+        uint256 val)
+    public {
 
-        (uint256 permission, uint256 autoIncrement, address delegate) = getTableMetadata(tableKey);
+        // this fetches the autoIncrement
+        (uint256 permission, address delegate) = getTableMetadata(tableKey);
 
         // if permission = 0, system table we can't do anything
         require(permission > 0, "Cannot insert into system table");
 
         // if permission = 1, we must be the owner
-        require(permission == 1 && isOwner() == false, "Only owner can insert into this table");
+        require(permission == 1 && (isOwner() == true || delegate == _msgSender()), "Only owner/delegate can insert into this table");
 
-        setTableMetadata(tableKey, uint8(permission), uint40(autoIncrement + 1), delegate);
+        // IF this is a public table, for a new row, we add an entry in `elajsRowOwner` claiming this [id].[table] for the msg.sender
+        if (permission > 1) {
+            elajsRowOwner[idTableKey] = _msgSender();
+        }
 
-        return uint40(autoIncrement);
+        // add an id entry to the set for the table
+        table.addValueForKey(tableKey, id);
+
+        // finally set the data
+        // we won't serialize the type, that's way too much redundant data
+        elajsStore[dataKey] = bytes32(val);
     }
 
     /**
      * @dev Table actual insert call
      */
-    function insertTable(bytes32 tableKey, uint40 id, bytes32 tableIdKey, bytes32[] memory fields, bytes32[] memory fieldKeys, bytes32[] memory values) public {
+    function insert(
+        bytes32 tableKey,
+        bytes32 id,
+        bytes32 tableIdKey,
+        bytes32[] memory fieldKeys,
+        bytes32[] memory values)
+    public {
 
+    }
+
+    function getValTest(bytes32 dataKey) public view returns (bytes32) {
+        return bytes32(elajsStore[dataKey]);
+    }
+
+    /**
+     * Getting a row,
+     */
+    function getRow(bytes32 tableKey, bytes32 idKey, bytes32) public {
+
+    }
+
+    function isNamehashSubOf(bytes32 subKey, bytes32 base, bytes32 target) public pure returns (bool) {
+
+        bytes memory concat = new bytes(64);
+
+        assembly {
+            mstore(add(concat, 64), subKey)
+            mstore(add(concat, 32), base)
+        }
+
+        bytes32 result = keccak256(concat);
+
+        return result == target;
     }
 
 
@@ -109,21 +151,21 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     function getTableMetadata(bytes32 _tableKey)
         view
         public
-        returns (uint256 permission, uint256 autoIncrement, address delegate)
+        returns (uint256 permission, address delegate)
     {
+        require(_table.containsKey(_tableKey) == true, "table does not exist");
+
         uint256 tableMetadata = uint256(_table.getValueForKey(_tableKey));
 
         permission = uint256(uint8(tableMetadata));
-        autoIncrement = uint256(uint40(tableMetadata>>8));
-        delegate = address(tableMetadata>>48);
+        delegate = address(tableMetadata>>8);
     }
 
-    function setTableMetadata(bytes32 _tableKey, uint8 permission, uint40 autoIncrement, address delegate) public returns (bool) {
+    function setTableMetadata(bytes32 _tableKey, uint8 permission, address delegate) private onlyOwner returns (bool) {
         uint256 tableMetadata;
 
         tableMetadata |= permission;
-        tableMetadata |= autoIncrement<<8;
-        tableMetadata |= uint160(delegate)<<48;
+        tableMetadata |= uint160(delegate)<<8;
 
         return _table.setValueForKey(_tableKey, bytes32(tableMetadata));
     }

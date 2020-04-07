@@ -1,0 +1,34 @@
+{
+  "contracts": {},
+  "solidityLibs": {},
+  "proxies": {
+    "oz-store/ELAJSStore": [
+      {
+        "address": "0xcCdb6CcFE8E19632B562B0C81b1DcE0412FF61c5",
+        "kind": "NonProxy",
+        "bytecodeHash": "c2f891e893cf7620ec0bed66c280a0d03990649abf7c4aa62b430adb96f98574"
+      },
+      {
+        "address": "0x466fcbC689D8506D29095745DA8B8578E3D9CD33",
+        "kind": "NonProxy",
+        "bytecodeHash": "c2f891e893cf7620ec0bed66c280a0d03990649abf7c4aa62b430adb96f98574"
+      },
+      {
+        "address": "0x954362345DBaDB23A1cb4BbA7B3ebdc0B4b0103B",
+        "kind": "NonProxy",
+        "bytecodeHash": "c2f891e893cf7620ec0bed66c280a0d03990649abf7c4aa62b430adb96f98574"
+      },
+      {
+        "address": "0x366b3001D730E58D45895cf635D5582f8B88Abe9",
+        "kind": "NonProxy",
+        "bytecodeHash": "c2f891e893cf7620ec0bed66c280a0d03990649abf7c4aa62b430adb96f98574"
+      },
+      {
+        "address": "0x88cC476310C2C0e2768666Fc4165dC5E10324fe3",
+        "kind": "NonProxy",
+        "bytecodeHash": "c2f891e893cf7620ec0bed66c280a0d03990649abf7c4aa62b430adb96f98574"
+      }
+    ]
+  },
+  "manifestVersion": "2.2"
+}

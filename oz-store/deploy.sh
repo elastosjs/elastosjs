@@ -20,6 +20,7 @@ npx oz-gsn fund-recipient --recipient $contractAddr --amount 500000000000000000
 
 print_progress "contractAddr = $contractAddr"
 
+# we write the updated contract address to the test.env file so it can use it on next run
 sed -i '' -e "s!^\(ELAJSSTORE_CONTRACT_ADDR=\).*!\1$contractAddr!" ./env/test.env
 
 END=`date +%s`
