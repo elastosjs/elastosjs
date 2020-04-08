@@ -42,8 +42,8 @@ describe('Tests for Insert Public Table', () => {
 
   it('Should insert multiple fields/cols for a row', async () => {
 
-    const values = [strToBytes32('Clarence'), strToBytes32('Liu'), uintToBytes32(33)]
-    const fields = ['firstName', 'lastName', 'age']
+    const values = [strToBytes32('Clarence'), strToBytes32('Liu'), uintToBytes32(33), Buffer.from('4db5e4ba80417f817626fc96c52c6b5edbe5f305306d0490f2f2ea5e7dbb97f7', 'hex')]
+    const fields = ['firstName', 'lastName', 'age', 'email']
     const fieldKeys = []
     const fieldIdTableKeys = []
 
@@ -101,8 +101,8 @@ describe('Tests for Insert Public Table', () => {
   it('Should insert multiple fields/cols for a row - 2', async () => {
     // don't need to implement this for now
 
-    const values = [strToBytes32('Mary'), strToBytes32('Jane'), uintToBytes32(25)]
-    const fields = ['firstName', 'lastName', 'age']
+    const values = [strToBytes32('Mary'), strToBytes32('Jane'), uintToBytes32(25), Buffer.from('9cadf48a23e6f477150251983b0c9f3c9c9b57d17f770d3b6b99b5b19ca10c32', 'hex')]
+    const fields = ['firstName', 'lastName', 'age', 'email']
     const fieldKeys = []
     const fieldIdTableKeys = []
 
@@ -136,20 +136,28 @@ describe('Tests for Insert Public Table', () => {
 
       results.push([])
 
-      for (let j = 0; j < 3; j++){
+      for (let j = 0; j < values.length; j++){
         let fieldIdTableKey = namehash.hash(`${fields[j]}.${ids[i].substring(2)}.user`)
 
         let val = await ephemeralInstance.methods.getRowValue(fieldIdTableKey).call()
 
-        results[i].push(j < 2 ? Web3.utils.hexToString(val) : Web3.utils.hexToNumber(val))
+        if (j < 2){
+          results[i].push(Web3.utils.hexToString(val))
+        } else if (j === 2){
+          results[i].push(Web3.utils.hexToNumber(val))
+        } else if (j === 3){
+          results[i].push(val)
+        }
       }
     }
+
+    console.log(results);
 
     expect(results.length).to.be.equal(2)
 
     results.forEach((row) => {
 
-      expect(row.length).to.be.equal(3)
+      expect(row.length).to.be.equal(4)
 
       let [firstName, lastName, age] = row
 

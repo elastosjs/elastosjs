@@ -31,6 +31,14 @@ const bytes32ToUint = (buf) => {
   return parseInt(buf4.readUInt32BE().toString(10))
 }
 
+// @param hexStr should not have a leading 0x prefix!
+const hexToBytes = (hexStr) => {
+  return Buffer.from(hexStr, 'hex')
+}
+
+const bytes32ToHex = (input) => {
+  return input
+}
 
 export {
   strToBytes32,
