@@ -11,12 +11,29 @@ import "./ozEla/OwnableELA.sol";
 import "./gsnEla/GSNRecipientELA.sol";
 import "./gsnEla/IRelayHubELA.sol";
 
+contract DateTime {
+    function getYear(uint timestamp) public pure returns (uint16);
+    function getMonth(uint timestamp) public pure returns (uint8);
+    function getDay(uint timestamp) public pure returns (uint8);
+}
+
 contract ELAJSStore is OwnableELA, GSNRecipientELA {
+
+    // DateTime Contract address
+    address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
+
+    // Initialize the DateTime contract ABI with the already deployed contract
+    DateTime dateTime = DateTime(dateTimeAddr);
+
+    // This counts the number of times this contract was called via GSN (expended owner gas) for rate limiting
+    // mapping is a keccak256('YYYY-MM-DD') => uint (TODO: we can probably compress this by week (4 bytes per day -> 28 bytes)
+    mapping(bytes32 => uint256) public gsnCounter;
+
+    // Max times we allow this to be called per day
+    uint40 public gsnMaxCallsPerDay;
 
     using PolymorphicDictionaryLib for PolymorphicDictionaryLib.PolymorphicDictionary;
     using Bytes32DictionaryLib for Bytes32DictionaryLib.Bytes32Dictionary;
-
-    uint8 public version;
 
     // _table = system table (bytes32 Dict) of each table's metadata marshaled
     // 8 bits - permissions (00 = system, 01 = private, 10 = public, 11 = shared - owner can always edit)
@@ -34,6 +51,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     mapping(bytes32 => bytes32) internal elajsStore;
 
 
+    // ************************************* SETUP FUNCTIONS *************************************
     function initialize() public initializer {
         OwnableELA.initialize(msg.sender);
         GSNRecipientELA.initialize();
@@ -42,10 +60,10 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     function _initialize() internal {
 
+        gsnMaxCallsPerDay = 1000;
         // test = 0x04f740db81dc36c853ab4205bddd785f46e79ccedca351fc6dfcbd8cc9a33dd6
         // setTableMetadata(0x04f740db81dc36c853ab4205bddd785f46e79ccedca351fc6dfcbd8cc9a33dd6, 2, 1, 0x1dF62f291b2E969fB0849d99D9Ce41e2F137006e);
     }
-
 
     // ************************************* SCHEMA FUNCTIONS *************************************
     /**
@@ -128,6 +146,9 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
         // now check if the full field + id + table is a subhash
         require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
+
+        // increment counter
+        increaseGsnCounter();
 
         // finally set the data
         // we won't serialize the type, that's way too much redundant data
@@ -220,14 +241,13 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     // ************************************* MISC FUNCTIONS *************************************
 
-    function increaseVersion() public {
-        version += 1;
-    }
-
     function() external payable {}
 
     // ************************************* GSN FUNCTIONS *************************************
 
+    /**
+     * As a first layer of defense we employ a max number of checks per day
+     */
     function acceptRelayedCall(
         address relay,
         address from,
@@ -239,7 +259,35 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         bytes calldata approvalData,
         uint256 maxPossibleCharge
     ) external view returns (uint256, bytes memory) {
+
+        // TODO: check gsnCounter and compare to limit
+
         return _approveRelayedCall();
+    }
+
+    function setGsnMaxCallsPerDay(uint256 max) external onlyOwner {
+        gsnMaxCallsPerDay = uint40(max);
+    }
+
+    function increaseGsnCounter() internal {
+
+        bytes memory curDate = new bytes(4);
+
+        uint16 year = dateTime.getYear(now);
+        uint8 month = dateTime.getMonth(now);
+        uint8 day = dateTime.getDay(now);
+
+        assembly {
+            mstore(add(curDate, 4), year)
+            mstore(add(curDate, 2), month)
+            mstore(add(curDate, 1), day)
+        }
+
+        bytes32 curDateHashed = keccak256(curDate);
+
+        uint256 curCounter = gsnCounter[curDateHashed];
+
+        gsnCounter[curDateHashed] = curCounter + 1;
     }
 
     // We won't do any pre or post processing, so leave _preRelayedCall and _postRelayedCall empty

@@ -12,15 +12,14 @@ const HDWalletProvider = require('@truffle/hdwallet-provider')
 
 const { fromConnection, ephemeral } = require("@openzeppelin/network")
 const Web3 = require('web3')
-const _ = require('lodash')
 const namehash = require('../scripts/namehash')
 
-// const mnemonic = secrets.mnemonicDev
-const mnemonic = secrets.mnemonic2
+const mnemonic = secrets.mnemonicDev
+// const mnemonic = secrets.mnemonic2
 
 const { strToBytes32, uintToBytes32 } = require('elajs')
 
-describe.skip('Tests for Insert Private Table', () => {
+describe('Tests for Insert Private Table', () => {
 
   let ozWeb3, web3, ephemeralInstance, ownerInstance
 

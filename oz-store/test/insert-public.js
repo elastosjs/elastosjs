@@ -15,8 +15,8 @@ const Web3 = require('web3')
 const _ = require('lodash')
 const namehash = require('../scripts/namehash')
 
-// const mnemonic = secrets.mnemonicDev
-const mnemonic = secrets.mnemonic2
+const mnemonic = secrets.mnemonicDev
+// const mnemonic = secrets.mnemonic2
 
 const { strToBytes32, uintToBytes32 } = require('elajs')
 
@@ -48,7 +48,6 @@ describe('Tests for Insert Public Table', () => {
 
     sha3.reset()
     const id = Web3.utils.randomHex(32)
-    console.log(id)
     const idStr = id.substring(2)
     const idKey = sha3.update(idStr).digest()
 
