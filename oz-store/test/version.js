@@ -25,7 +25,10 @@ describe('Tests (GSN Sanity Check) for Version', () => {
 
     const initialVersion = await instance.methods.version().call()
 
-    await instance.methods.increaseVersion().send({ from: ozWeb3.accounts[0], gasPrice: '10000000000' })
+    await instance.methods.increaseVersion().send({
+      from: ozWeb3.accounts[0],
+      gasPrice: '1020000000'
+    })
 
     const newVersion = await instance.methods.version().call()
 

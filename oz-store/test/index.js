@@ -1,8 +1,25 @@
 
 const requireDirectory = require('require-directory')
 
+if (!process.env.NODE_ENV){
+  console.error('missing NODE_ENV')
+  process.exit(0)
+}
+
+let envPath
+
+switch (process.env.NODE_ENV){
+  case 'development':
+    envPath = '/../env/test.env'
+    break
+
+  case 'elaethtest':
+    envPath = '/../env/elaethtest.env'
+    break
+}
+
 require('dotenv').config({
-  path: __dirname+'/../env/test.env'
+  path: __dirname + envPath
 })
 
 console.log(process.env.PROVIDER_URL)

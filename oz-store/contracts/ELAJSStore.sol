@@ -107,7 +107,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
      *
      *
      */
-    function insertTestVal(
+    function insertVal(
 
         bytes32 tableKey,
         bytes32 idTableKey,
@@ -117,7 +117,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         bytes32 fieldKey,
 
         bytes32 id,
-        uint256 val)
+        bytes32 val)
 
     public insertCheck(tableKey, idKey, idTableKey){
 
@@ -135,8 +135,9 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     }
 
     /**
-     * @dev Table actual insert call
+     * @dev Table actual insert call, NOTE this doesn't work on testnet currently due to a gas limit issue
      */
+    /*
     function insert(
         bytes32 tableKey,
         bytes32 idTableKey,
@@ -168,6 +169,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         }
 
     }
+    */
 
     function getRowValue(bytes32 dataKey) public view returns (bytes32) {
         return bytes32(elajsStore[dataKey]);
@@ -266,6 +268,10 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         uint256 balance = getRelayHub().balanceOf(address(this));
         relayHub.withdraw(balance, dest);
         return balance;
+    }
+
+    function getGSNBalance() public view returns (uint256) {
+        return getRelayHub().balanceOf(address(this));
     }
 
     function getRelayHub() internal view returns (IRelayHubELA) {
