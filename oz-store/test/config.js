@@ -14,14 +14,14 @@ switch (process.env.NODE_ENV){
     envPath = '/../env/test.env'
     mnemonic = secrets.mnemonicDev
     gasPrice = '1000000000'
-    gasLimit = 250000
+    gasLimit = 7000000
     break
 
   case 'elaethtest':
     envPath = '/../env/elaethtest.env'
     mnemonic = secrets.mnemonic2
     gasPrice = '1000000000'
-    gasLimit = 250000
+    gasLimit = 7000000
     break
 }
 

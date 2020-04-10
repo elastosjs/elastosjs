@@ -527,6 +527,51 @@
         "address": "0xE050d3435c3D72B6D6Bd4eF7fC0C90c168aAfeD1",
         "kind": "NonProxy",
         "bytecodeHash": "e14ab4c68765f882aa2fb8702a242793a0c4a113e85432fdb974db3de5fedc54"
+      },
+      {
+        "address": "0xE674aF4E6ecD252c9e36cCb471aB143961109C86",
+        "kind": "NonProxy",
+        "bytecodeHash": "e939cdeb8f516e503a1508753a7a420d1a1ed92e9afe710f934683cc461f8a8a"
+      },
+      {
+        "address": "0x1214B5f46e6152f2198aA382eCd37735437b65EF",
+        "kind": "NonProxy",
+        "bytecodeHash": "e939cdeb8f516e503a1508753a7a420d1a1ed92e9afe710f934683cc461f8a8a"
+      },
+      {
+        "address": "0x1B1821959d2C989CE723E5f0B80Fb7E5E9C926F8",
+        "kind": "NonProxy",
+        "bytecodeHash": "e939cdeb8f516e503a1508753a7a420d1a1ed92e9afe710f934683cc461f8a8a"
+      },
+      {
+        "address": "0x45A341aaC01d81cf2bEbf39D29c3508B8806e5C8",
+        "kind": "NonProxy",
+        "bytecodeHash": "e939cdeb8f516e503a1508753a7a420d1a1ed92e9afe710f934683cc461f8a8a"
+      },
+      {
+        "address": "0x920F147F9a18E538B8311bA9Cd0eD38D65DF8B7F",
+        "kind": "NonProxy",
+        "bytecodeHash": "e939cdeb8f516e503a1508753a7a420d1a1ed92e9afe710f934683cc461f8a8a"
+      },
+      {
+        "address": "0xca9F27B3B735271F5131Ef29fFCe440e1C63A1D8",
+        "kind": "NonProxy",
+        "bytecodeHash": "e939cdeb8f516e503a1508753a7a420d1a1ed92e9afe710f934683cc461f8a8a"
+      },
+      {
+        "address": "0x5aa59f402e34af4B0bF97808378bB2cE1B0fe7ac",
+        "kind": "NonProxy",
+        "bytecodeHash": "40225726ef8bbebec4763a4499f42eefc1ef808cf9aea5a2c23998730ff52a91"
+      },
+      {
+        "address": "0xA798eA50919cD26d31d79F5E913F7b9Ca56Ab6F7",
+        "kind": "NonProxy",
+        "bytecodeHash": "40225726ef8bbebec4763a4499f42eefc1ef808cf9aea5a2c23998730ff52a91"
+      },
+      {
+        "address": "0x82B405484A55F8d0646E8c9101Fe6A13090A92e3",
+        "kind": "NonProxy",
+        "bytecodeHash": "ab9d9607dd28ceb9ec5931082c915696e1fc135b31bb7c13d66e17b482ae36b5"
       }
     ],
     "oz-store/DateTime": [

@@ -32,13 +32,15 @@ describe('Tests for Insert Public Table', () => {
     ozWeb3 = await fromConnection(process.env.PROVIDER_URL, {
       gsn: { signKey: ephemeral() },
       pollInterval: 5000,
-      fixedGasPrice: config.gasPrice
+      fixedGasPrice: config.gasPrice,
+      fixedGasLimit: config.gasLimit
     })
 
     ozWeb3Other = await fromConnection(process.env.PROVIDER_URL, {
       gsn: { signKey: ephemeral() },
       pollInterval: 5000,
-      fixedGasPrice: config.gasPrice
+      fixedGasPrice: config.gasPrice,
+      fixedGasLimit: config.gasLimit
     })
 
     web3 = new Web3(new HDWalletProvider(
@@ -62,7 +64,7 @@ describe('Tests for Insert Public Table', () => {
 
   })
 
-  it.skip('Should INSERT a test value (str) with 1 field to an ID', async () => {
+  it('Should INSERT a test value (str) with 1 field to an ID', async () => {
 
     const VAL_RAW = 'Clarence'
     const VAL = strToBytes32(VAL_RAW)
@@ -122,7 +124,7 @@ describe('Tests for Insert Public Table', () => {
     }
   })
 
-  it.skip('Should INSERT a test value (int, str) with multiple fields to an ID', async () => {
+  it('Should INSERT a test value (int, str) with multiple fields to an ID', async () => {
 
     const VAL_RAW = 5121
     const VAL = uintToBytes32(VAL_RAW)
@@ -182,7 +184,7 @@ describe('Tests for Insert Public Table', () => {
 
   })
 
-  it.skip('Should UPDATE a test value (str)', async () => {
+  it('Should UPDATE a test value (str)', async () => {
 
     const VAL_RAW = 'Mary'
     const VAL = strToBytes32(VAL_RAW)
@@ -220,39 +222,45 @@ describe('Tests for Insert Public Table', () => {
     const fieldIdTableKey = namehash.hash(`${fieldStr}.${idStr}.user`)
 
     // check for id in table
-    // let tableIds = await ephemeralInstance.methods.getTableIds(tableKey).call()
+    let tableIds = await ephemeralInstance.methods.getTableIds(tableKey).call()
 
-    // expect(tableIds.length).to.be.equal(0)
+    expect(tableIds.length).to.be.equal(2)
 
-    // sha3.reset()
+    sha3.reset()
 
     const fieldKey = Web3.utils.bytesToHex(sha3.update(fieldStr).digest())
 
     // check for value
-    // let val = await ephemeralInstance.methods.getRowValue(fieldIdTableKey).call()
+    let val = await ephemeralInstance.methods.getRowValue(fieldIdTableKey).call()
 
     // this was the updated value
-    // expect(Web3.utils.hexToString(val)).to.be.equal('Mary')
+    expect(Web3.utils.hexToString(val)).to.be.equal('Mary')
 
-    console.log(tableKey, idTableKey, idKey, fieldKey, id, [fieldKey], [fieldIdTableKey])
+    // console.log(tableKey, idTableKey, idKey, fieldKey, id, [fieldKey], [fieldIdTableKey])
 
     // await ephemeralInstance.methods.deleteVal(tableKey, idTableKey, idKey, fieldKey, id, [fieldKey], [fieldIdTableKey]).send({
-    await ephemeralInstance.methods.deleteVal(tableKey, idTableKey, idKey, id, [fieldKey], [fieldIdTableKey]).send({
+    await ephemeralInstance.methods.deleteVal(tableKey, idTableKey, idKey, id, fieldKey, fieldIdTableKey).send({
+      from: ozWeb3.accounts[0]
+    })
+
+    await ephemeralInstance.methods.deleteRow(tableKey, idTableKey, idKey, id).send({
       from: ozWeb3.accounts[0]
     })
 
     console.log('delete done')
 
-    /*
+
     tableIds = await ephemeralInstance.methods.getTableIds(tableKey).call()
 
     expect(tableIds.length).to.be.equal(1)
 
-
+    /*
     // check for value
     val = await ephemeralInstance.methods.getRowValue(fieldIdTableKey).call()
 
     expect(Web3.utils.hexToNumber(val)).to.be.equal(0)
+
+    console.log(val)
 
     // remove the id from the array
     fieldIdTableKeys.shift()
@@ -260,13 +268,17 @@ describe('Tests for Insert Public Table', () => {
     for (let i = 0; i < fieldIdTableKeys.length; i++){
       let val = await ephemeralInstance.methods.getRowValue(fieldIdTableKeys[i]).call()
 
+      console.log(val)
+
       expect(Web3.utils.hexToNumber(val)).to.not.be.equal(0)
     }
 
+    console.log('delete starting')
 
     // await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, fieldKey, id2, fieldKeys, fieldIdTableKeys).send({
-    await ephemeralInstance.methods.deleteVal(tableKey, id, fieldKeys, fieldIdTableKeys).send({
-      from: ozWeb3.accounts[0]
+    await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id, fieldKeys, fieldIdTableKeys).send({
+      from: ozWeb3.accounts[0],
+      gas: 7000000
     })
 
     for (let i = 0; i < fieldIdTableKeys.length; i++){
@@ -278,7 +290,7 @@ describe('Tests for Insert Public Table', () => {
     tableIds = await ephemeralInstance.methods.getTableIds(tableKey).call()
 
     expect(tableIds.length).to.be.equal(0)
-     */
+    */
   })
 
   // doesn't work on testnet

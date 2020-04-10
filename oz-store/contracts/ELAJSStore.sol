@@ -210,6 +210,13 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     }
 
+    modifier deleteCheck(bytes32 tableKey, bytes32 idTableKey, bytes32 idKey, bytes32 id) {
+
+        require(table.containsValueForKey(tableKey, id) == true, "id doesn't exist");
+
+        _;
+    }
+
     /**
      * @dev TODO: add modifier checks based on update
      *
@@ -224,38 +231,55 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         bytes32 idKey,
         bytes32 id,
 
-        bytes32[] memory fieldKeys,
-        bytes32[] memory fieldIdTableKeys)
+        bytes32 fieldKey,
+        bytes32 fieldIdTableKey
 
-    public {
+    ) public deleteCheck(tableKey, idTableKey, idKey, id){
 
-        // require(table.containsValueForKey(tableKey, id) == true, "id doesn't exist for DELETE");
 
-        require(fieldKeys.length == fieldIdTableKeys.length, "fields, id array length mismatch");
 
-        uint8 len = uint8(fieldKeys.length);
+        // check if the full field + id + table is a subhash (permissions)
+        require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
+
+        // zero out the data
+        elajsStore[fieldIdTableKey] = bytes32(0);
 
         // increment counter
         // increaseGsnCounter();
 
-
+        // we can't really pass in enough data to make a loop worthwhile
+        /*
+        uint8 len = uint8(fieldKeys.length);
+        require(fieldKeys.length == fieldIdTableKeys.length, "fields, id array length mismatch");
         for (uint8 i = 0; i < len; i++) {
 
             // for each row check if the full field + id + table is a subhash
-            require(isNamehashSubOf(fieldKeys[i], idTableKey, fieldIdTableKeys[i]) == true, "fieldKey not a subhash [field].[id].[table]");
+            // require(isNamehashSubOf(fieldKeys[i], idTableKey, fieldIdTableKeys[i]) == true, "fieldKey not a subhash [field].[id].[table]");
 
             // zero out the data
             elajsStore[fieldIdTableKeys[i]] = bytes32(0);
         }
-
-
-        // remove the id
-        // table.removeValueForKey(tableKey, id);
+        */
 
     }
 
+    function deleteRow(
+
+        bytes32 tableKey,
+        bytes32 idTableKey,
+
+        bytes32 idKey,
+        bytes32 id
+
+    ) public deleteCheck(tableKey, idTableKey, idKey, id){
+
+        // remove the id
+        table.removeValueForKey(tableKey, id);
+    }
+
     /**
-     * @dev Table actual insert call, NOTE this doesn't work on testnet currently due to a gas limit issue
+     * @dev Table actual insert call, NOTE this doesn't work on testnet currently due to a stack size issue,
+     *      but it can work with a paid transaction I guess
      */
     /*
     function insert(
@@ -291,6 +315,9 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     }
     */
 
+    /**
+     * @dev all data is public, so no need for security checks, we leave the data type handling to the client
+     */
     function getRowValue(bytes32 dataKey) public view returns (bytes32) {
         return bytes32(elajsStore[dataKey]);
     }
