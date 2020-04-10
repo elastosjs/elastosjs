@@ -27,8 +27,8 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     bytes32 constant public schemasTables = 0x736368656d61732e7075626c69632e7461626c65730000000000000000000000;
 
     // DateTime Contract address
-    address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
-    // address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
+    // address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
+    address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
 
     // Initialize the DateTime contract ABI with the already deployed contract
     DateTime dateTime = DateTime(dateTimeAddr);
@@ -55,8 +55,8 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     // Schema dictionary, key (schemasPublicTables) points to a set of table names
     using TableLib for TableLib.Table;
     using TableLib for bytes;
-    using ColumnLib for ColumnLib.Column;
-    using ColumnLib for bytes;
+    // using ColumnLib for ColumnLib.Column;
+    // using ColumnLib for bytes;
 
     // namehash([tableName]) => encoded table schema
     // ownership of each row (id) - key = namehash([id].[table]) which has a value that is the owner's address
