@@ -146,7 +146,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
 
         // increment counter
-        // increaseGsnCounter();
+        increaseGsnCounter();
 
         // add an id entry to the table's set of ids for the row
         table.addValueForKey(tableKey, id);
@@ -202,7 +202,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
 
         // increment counter
-        // increaseGsnCounter();
+        increaseGsnCounter();
 
         // set data (overwrite)
         elajsStore[fieldIdTableKey] = bytes32(val);
@@ -259,11 +259,11 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // check if the full field + id + table is a subhash (permissions)
         require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
 
+        // increment counter
+        increaseGsnCounter();
+
         // zero out the data
         elajsStore[fieldIdTableKey] = bytes32(0);
-
-        // increment counter
-        // increaseGsnCounter();
 
         // we can't really pass in enough data to make a loop worthwhile
         /*
@@ -289,6 +289,9 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         bytes32 id
 
     ) public deleteCheck(tableKey, idTableKey, idKey, id){
+
+        // increment counter
+        increaseGsnCounter();
 
         // remove the id
         table.removeValueForKey(tableKey, id);
@@ -335,7 +338,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     /**
      * @dev all data is public, so no need for security checks, we leave the data type handling to the client
      */
-    function getRowValue(bytes32 dataKey) public view returns (bytes32) {
+    function getRowValue(bytes32 dataKey) external view returns (bytes32) {
         return bytes32(elajsStore[dataKey]);
     }
 
@@ -351,7 +354,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     }
 
 
-    function isNamehashSubOf(bytes32 subKey, bytes32 base, bytes32 target) public pure returns (bool) {
+    function isNamehashSubOf(bytes32 subKey, bytes32 base, bytes32 target) internal pure returns (bool) {
 
         bytes memory concat = new bytes(64);
 
@@ -419,25 +422,32 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         gsnMaxCallsPerDay = uint40(max);
     }
 
+    /*
+    event GsnCounterIncrease (
+        address indexed _from,
+        bytes4 indexed curDate
+    );
+    */
+
     function increaseGsnCounter() internal {
 
-        bytes memory curDate = new bytes(4);
+        uint256 curDate;
 
         uint16 year = dateTime.getYear(now);
         uint8 month = dateTime.getMonth(now);
         uint8 day = dateTime.getDay(now);
 
-        assembly {
-            mstore(add(curDate, 4), year)
-            mstore(add(curDate, 2), month)
-            mstore(add(curDate, 1), day)
-        }
+        curDate |= year;
+        curDate |= uint256(month)<<16;
+        curDate |= uint256(day)<<24;
 
-        bytes32 curDateHashed = keccak256(curDate);
+        bytes32 curDateHashed = keccak256(abi.encodePacked(curDate));
 
         uint256 curCounter = gsnCounter[curDateHashed];
 
         gsnCounter[curDateHashed] = curCounter + 1;
+
+        // emit GsnCounterIncrease(_msgSender(), bytes4(uint32(curDate)));
     }
 
     // We won't do any pre or post processing, so leave _preRelayedCall and _postRelayedCall empty

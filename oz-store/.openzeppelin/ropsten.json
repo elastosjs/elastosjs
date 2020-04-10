@@ -622,6 +622,21 @@
         "address": "0x1C0749DDC99Bfc76A6923D6cB9E17F172cc6b126",
         "kind": "NonProxy",
         "bytecodeHash": "533915a4be92e9f07e5b67a153fe33919e04a956371484e0f241c4959aa858f1"
+      },
+      {
+        "address": "0xA0525712395707aD36c9F73C5b618a6C7Fd6042a",
+        "kind": "NonProxy",
+        "bytecodeHash": "5e99f160beae2501ab53afaec5bab4b987181e919c82381ebc3e0e43d5d3c404"
+      },
+      {
+        "address": "0x5E56B5877b4Cf9520bB97D2A7EfD05BF5Fe14B55",
+        "kind": "NonProxy",
+        "bytecodeHash": "9bc20dee61e942a0ef5323ae1b683481624e6532038ea20b649aee87f1699e92"
+      },
+      {
+        "address": "0x0d52f09beeCb318C70B00490FFe15b230192AaEA",
+        "kind": "NonProxy",
+        "bytecodeHash": "9bc20dee61e942a0ef5323ae1b683481624e6532038ea20b649aee87f1699e92"
       }
     ],
     "oz-store/DateTime": [

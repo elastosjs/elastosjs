@@ -135,6 +135,16 @@ describe('Tests for Insert Public Table', () => {
     } catch (err){
       expect(err.message).to.not.equal('manual error')
     }
+
+    /*
+    const results = await ephemeralInstance.getPastEvents('GsnCounterIncrease', {})
+
+    console.log(results)
+
+    ephemeralInstance.events.GsnCounterIncrease({}).on('data', (ev) => console.log(ev));
+    */
+
+
   })
 
   it('Should INSERT a test value (int, str) with multiple fields to an ID', async () => {
