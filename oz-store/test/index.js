@@ -11,12 +11,6 @@ describe('ELAJS Store Tests', function(){
 
     console.log('Setting up smart contracts')
 
-    await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve()
-      }, 1000)
-    })
-
     console.log('DONE setup')
 
   })

@@ -3,8 +3,6 @@ const chai = require('chai')
 const expect = chai.expect
 const assert = chai.assert
 
-const { sleep } = require('await-asleep')
-
 const { Keccak } = require('sha3')
 const sha3 = new Keccak(256)
 
@@ -70,8 +68,6 @@ describe('Tests for Insert Public Table', () => {
 
     const fieldStr = 'firstName'
     const fieldIdTableKey = namehash.hash(`${fieldStr}.${idStr}.user`)
-
-    fieldIdTableKeys.push(fieldIdTableKey)
 
     sha3.reset()
 
@@ -180,28 +176,23 @@ describe('Tests for Insert Public Table', () => {
     const fieldKey2 = sha3.update(fieldStr2).digest()
     fieldKeys.push(fieldKey2)
 
-
-    console.log('Promise.all - START')
-    await Promise.all([(async () => {
+    /*
+    await Promise.all([
+      (async () => {
         await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
           from: ozWeb3.accounts[0]
         })
-        console.log('val 1 saved')
       })(),
       (async () => {
 
-        await sleep(1500)
-
+        await new Promise((resolve) => setTimeout(resolve, config.transactionDelay))
         await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey2, idKey, fieldKey2, id, VAL2).send({
           from: ozWeb3.accounts[0]
         })
-        console.log('val 2 saved')
       })()
     ])
-    console.log('Promise.all - END')
+    */
 
-
-    /*
     await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
       from: ozWeb3.accounts[0]
     })
@@ -209,7 +200,6 @@ describe('Tests for Insert Public Table', () => {
     await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey2, idKey, fieldKey2, id, VAL2).send({
       from: ozWeb3.accounts[0]
     })
-     */
 
     // check for value
     let val = -1, val2 = -1
@@ -290,7 +280,7 @@ describe('Tests for Insert Public Table', () => {
       from: ozWeb3.accounts[0]
     })
 
-    console.log('delete done')
+    // console.log('delete done')
 
 
     tableIds = await ephemeralInstance.methods.getTableIds(tableKey).call()
@@ -303,7 +293,7 @@ describe('Tests for Insert Public Table', () => {
 
     expect(Web3.utils.hexToNumber(val)).to.be.equal(0)
 
-    console.log(val)
+    // console.log(val)
 
     // remove the id from the array
     fieldIdTableKeys.shift()
@@ -311,27 +301,40 @@ describe('Tests for Insert Public Table', () => {
     for (let i = 0; i < fieldIdTableKeys.length; i++){
       let val = await ephemeralInstance.methods.getRowValue(fieldIdTableKeys[i]).call()
 
-      console.log(val)
-
       expect(Web3.utils.hexToNumber(val)).to.not.be.equal(0)
     }
 
-    console.log('delete 2 starting')
+    // console.log('delete 2 starting')
 
+    /*
     await Promise.all([
-      await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id2, fieldKeys[0], fieldIdTableKeys[0]).send({
-        from: ozWeb3.accounts[0]
-      }),
-      await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id2, fieldKeys[1], fieldIdTableKeys[1]).send({
-        from: ozWeb3.accounts[0]
-      })
+      (async () => {
+        await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id2, fieldKeys[0], fieldIdTableKeys[0]).send({
+          from: ozWeb3.accounts[0]
+        })
+      })(),
+      (async () => {
+        await new Promise((resolve) => setTimeout(resolve, config.transactionDelay))
+        await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id2, fieldKeys[1], fieldIdTableKeys[1]).send({
+          from: ozWeb3.accounts[0]
+        })
+      })()
     ])
+     */
+
+    await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id2, fieldKeys[0], fieldIdTableKeys[0]).send({
+      from: ozWeb3.accounts[0]
+    })
+
+    await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id2, fieldKeys[1], fieldIdTableKeys[1]).send({
+      from: ozWeb3.accounts[0]
+    })
 
     await ephemeralInstance.methods.deleteRow(tableKey, id2TableKey, id2Key, id2).send({
       from: ozWeb3.accounts[0]
     })
 
-    console.log('delete 2 done')
+    // console.log('delete 2 done')
 
     for (let i = 0; i < fieldIdTableKeys.length; i++){
       let val = await ephemeralInstance.methods.getRowValue(fieldIdTableKeys[i]).call()
@@ -387,13 +390,6 @@ describe('Tests for Insert Public Table', () => {
     await ownerInstance.methods.createTable(tableKey, 2).send({
       from: web3.eth.personal.currentProvider.addresses[0],
       gasPrice: config.gasPrice
-    })
-
-    // sleep 10s
-    await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve()
-      }, 10000)
     })
 
     console.log(tableKey, idTableKey, idKey, id, fieldKeys, fieldIdTableKeys, values)

@@ -7,7 +7,7 @@ if (!process.env.NODE_ENV){
   process.exit(0)
 }
 
-let envPath, mnemonic, gasPrice, gasLimit
+let envPath, mnemonic, gasPrice, gasLimit, transactionDelay
 
 switch (process.env.NODE_ENV){
   case 'development':
@@ -15,6 +15,7 @@ switch (process.env.NODE_ENV){
     mnemonic = secrets.mnemonicDev
     gasPrice = '1000000000'
     gasLimit = 7000000
+    transactionDelay = 1500
     break
 
   case 'elaethtest':
@@ -22,6 +23,7 @@ switch (process.env.NODE_ENV){
     mnemonic = secrets.mnemonic2
     gasPrice = '1000000000'
     gasLimit = 7000000
+    transactionDelay = 15000
     break
 }
 
@@ -32,5 +34,6 @@ require('dotenv').config({
 module.exports = {
   mnemonic,
   gasPrice,
-  gasLimit
+  gasLimit,
+  transactionDelay
 }
