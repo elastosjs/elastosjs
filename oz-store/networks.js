@@ -20,7 +20,7 @@ module.exports = {
         mnemonic, 'https://rpc.elaeth.io'
       ),
       network_id: 3,
-      gasLimit: '8000000',
+      gas: '8000000',
       gasPrice: '1000000000'
     }/*,
     elamain: {

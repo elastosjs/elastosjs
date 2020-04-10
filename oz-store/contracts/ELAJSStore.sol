@@ -20,7 +20,8 @@ contract DateTime {
 contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     // DateTime Contract address
-    address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
+    // address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
+    address public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
 
     // Initialize the DateTime contract ABI with the already deployed contract
     DateTime dateTime = DateTime(dateTimeAddr);
@@ -97,10 +98,10 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         (uint256 permission, address delegate) = getTableMetadata(tableKey);
 
         // if permission = 0, system table we can't do anything
-        require(permission > 0, "Cannot insert into system table");
+        require(permission > 0, "Cannot INSERT into system table");
 
         // if permission = 1, we must be the owner/delegate
-        require(permission > 1 || isOwner() == true || delegate == _msgSender(), "Only owner/delegate can insert into this table");
+        require(permission > 1 || isOwner() == true || delegate == _msgSender(), "Only owner/delegate can INSERT into this table");
 
         // permissions check, is the idTableKey a subhash of the id and table?
         require(isNamehashSubOf(idKey, tableKey, idTableKey) == true, "idTableKey not a subhash [id].[table]");
@@ -139,20 +140,118 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     public insertCheck(tableKey, idKey, idTableKey){
 
-        require(table.containsKey(id) == false, "id already exists");
-
-        // add an id entry to the table's set of ids for the row
-        table.addValueForKey(tableKey, id);
+        // How does this handle multiple fields for a row? Actually why isn't this failing on multiple inserts?
+        // require(table.containsValueForKey(tableKey, id) == false, "id already exists");
 
         // now check if the full field + id + table is a subhash
         require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
 
         // increment counter
-        increaseGsnCounter();
+        // increaseGsnCounter();
+
+        // add an id entry to the table's set of ids for the row
+        table.addValueForKey(tableKey, id);
 
         // finally set the data
         // we won't serialize the type, that's way too much redundant data
         elajsStore[fieldIdTableKey] = bytes32(val);
+    }
+
+    modifier updateCheck(bytes32 tableKey, bytes32 idKey, bytes32 idTableKey) {
+
+        (uint256 permission, address delegate) = getTableMetadata(tableKey);
+
+        // if permission = 0, system table we can't do anything
+        require(permission > 0, "Cannot UPDATE system table");
+
+        // if permission = 1, we must be the owner/delegate
+        require(permission > 1 || isOwner() == true || delegate == _msgSender(), "Only owner/delegate can UPDATE into this table");
+
+        // permissions check, is the idTableKey a subhash of the id and table?
+        require(isNamehashSubOf(idKey, tableKey, idTableKey) == true, "idTableKey not a subhash [id].[table]");
+
+        // permissions check (public table = 2, shared table = 3),
+        // if 2 or 3 is the _msg.sender() the row owner? But if 3 owner() is always allowed
+        if (permission >= 2) {
+            if (isOwner() || delegate == _msgSender()){
+                // pass
+            } else {
+                require(elajsRowOwner[idTableKey] == _msgSender(), "Sender not owner of row");
+            }
+        }
+
+        _;
+    }
+
+    function updateVal(
+
+        bytes32 tableKey,
+        bytes32 idTableKey,
+        bytes32 fieldIdTableKey,
+
+        bytes32 idKey,
+        bytes32 fieldKey,
+
+        bytes32 id,
+        bytes32 val)
+
+    public updateCheck(tableKey, idKey, idTableKey) {
+
+        require(table.containsValueForKey(tableKey, id) == true, "id doesn't exist, use INSERT");
+
+        // now check if the full field + id + table is a subhash
+        require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
+
+        // increment counter
+        // increaseGsnCounter();
+
+        // set data (overwrite)
+        elajsStore[fieldIdTableKey] = bytes32(val);
+
+    }
+
+    /**
+     * @dev TODO: add modifier checks based on update
+     *
+     * TODO: this needs to properly remove the row when there are multiple ids
+     *
+     */
+    function deleteVal(
+
+        bytes32 tableKey,
+        bytes32 idTableKey,
+
+        bytes32 idKey,
+        bytes32 id,
+
+        bytes32[] memory fieldKeys,
+        bytes32[] memory fieldIdTableKeys)
+
+    public {
+
+        // require(table.containsValueForKey(tableKey, id) == true, "id doesn't exist for DELETE");
+
+        require(fieldKeys.length == fieldIdTableKeys.length, "fields, id array length mismatch");
+
+        uint8 len = uint8(fieldKeys.length);
+
+        // increment counter
+        // increaseGsnCounter();
+
+
+        for (uint8 i = 0; i < len; i++) {
+
+            // for each row check if the full field + id + table is a subhash
+            require(isNamehashSubOf(fieldKeys[i], idTableKey, fieldIdTableKeys[i]) == true, "fieldKey not a subhash [field].[id].[table]");
+
+            // zero out the data
+            elajsStore[fieldIdTableKeys[i]] = bytes32(0);
+        }
+
+
+        // remove the id
+        // table.removeValueForKey(tableKey, id);
+
     }
 
     /**
@@ -176,7 +275,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
         uint len = fieldKeys.length;
 
-        require(fieldKeys.length == values.length, "fields, values array length mismatch");
+        require(fieldKeys.length == fieldIdTableKeys.length == values.length, "fields, values array length mismatch");
 
         // add an id entry to the table's set of ids for the row
         table.addValueForKey(tableKey, id);
@@ -196,7 +295,14 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         return bytes32(elajsStore[dataKey]);
     }
 
+    /**
+     * @dev Warning this produces an Error: overflow (operation="setValue", fault="overflow", details="Number can only safely store up to 53 bits")
+     *      if the table doesn't exist
+     */
     function getTableIds(bytes32 tableKey) external view returns (bytes32[] memory){
+
+        require(table.containsKey(tableKey) == true, "table not created");
+
         return table.getBytes32ArrayForKey(tableKey);
     }
 

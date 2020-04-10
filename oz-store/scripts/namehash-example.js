@@ -9,6 +9,8 @@ function namehash2(input){
     return new Buffer.alloc(32)
   }
 
+  sha3.reset()
+
   const inputSplit = input.split('.')
 
   const label = inputSplit.shift()

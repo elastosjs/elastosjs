@@ -6,7 +6,6 @@ const assert = chai.assert
 const { Keccak } = require('sha3')
 const sha3 = new Keccak(256)
 
-const secrets = require('../../secrets.json')
 const ELAJSStoreJSON = require('../build/contracts/ELAJSStore.json')
 const HDWalletProvider = require('@truffle/hdwallet-provider')
 
@@ -14,12 +13,11 @@ const { fromConnection, ephemeral } = require("@openzeppelin/network")
 const Web3 = require('web3')
 const namehash = require('../scripts/namehash')
 
-const mnemonic = secrets.mnemonicDev
-// const mnemonic = secrets.mnemonic2
+const config = require('./config')
 
 const { strToBytes32, uintToBytes32 } = require('elajs')
 
-describe('Tests for Insert Private Table', () => {
+describe.skip('Tests for Insert Private Table', () => {
 
   let ozWeb3, web3, ephemeralInstance, ownerInstance
 
@@ -35,7 +33,7 @@ describe('Tests for Insert Private Table', () => {
     })
 
     web3 = new Web3(new HDWalletProvider(
-      mnemonic, process.env.PROVIDER_URL
+      config.mnemonic, process.env.PROVIDER_URL
     ))
 
     ephemeralInstance = new ozWeb3.lib.eth.Contract(ELAJSStoreJSON.abi, process.env.ELAJSSTORE_CONTRACT_ADDR)
@@ -54,8 +52,7 @@ describe('Tests for Insert Private Table', () => {
     try {
       await ephemeralInstance.methods.createTable(TEST_NAMEHASH, 1).send({
         from: ozWeb3.accounts[0],
-        gas: '8000000',
-        gasPrice: '1020000000'
+        gasPrice: config.gasPrice
       })
 
       assert.fail('Should not allow createTable')
@@ -66,12 +63,12 @@ describe('Tests for Insert Private Table', () => {
 
   })
 
-  it('Should create the table', async () => {
+  it('Should CREATE the table', async () => {
 
     // This is a private table!
     await ownerInstance.methods.createTable(TEST_NAMEHASH, 1).send({
       from: web3.eth.personal.currentProvider.addresses[0],
-      gasPrice: '1020000000'
+      gasPrice: config.gasPrice
     })
 
     // check if it was created
@@ -100,7 +97,7 @@ describe('Tests for Insert Private Table', () => {
 
   })
 
-  it('Should fail because only owner can insert on this table', async () => {
+  it('Should FAIL because only owner can INSERT on this table', async () => {
 
     const id = Web3.utils.randomHex(32)
     const idStr = id.substring(2)
@@ -108,7 +105,7 @@ describe('Tests for Insert Private Table', () => {
     try {
       await ephemeralInstance.methods.insertTest(TEST_NAMEHASH, id, namehash.hash(`${idStr}.test`), 7).send({
         from: ozWeb3.accounts[0],
-        gasPrice: '1020000000'
+        gasPrice: config.gasPrice
       })
       assert.fail()
     } catch (err){
@@ -117,7 +114,7 @@ describe('Tests for Insert Private Table', () => {
 
   })
 
-  it('Should insert a test value (uint)', async () => {
+  it('Should INSERT a test value (uint)', async () => {
 
     const VAL_RAW = 9
     const VAL = uintToBytes32(VAL_RAW)
@@ -155,7 +152,7 @@ describe('Tests for Insert Private Table', () => {
     try {
       await ephemeralInstance.methods.insertVal(TEST_NAMEHASH, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
         from: ozWeb3.accounts[0],
-        gasPrice: '1020000000'
+        gasPrice: config.gasPrice
       })
       assert.fail()
     } catch (err){
@@ -164,7 +161,7 @@ describe('Tests for Insert Private Table', () => {
 
     await ownerInstance.methods.insertVal(TEST_NAMEHASH, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
       from: web3.eth.personal.currentProvider.addresses[0],
-      gasPrice: '1020000000'
+      gasPrice: config.gasPrice
     })
 
     // check for value
@@ -173,7 +170,7 @@ describe('Tests for Insert Private Table', () => {
     expect(Web3.utils.hexToNumber(val)).to.be.equal(VAL_RAW)
   })
 
-  it('Should insert a test value (str)', async () => {
+  it('Should INSERT a test value (str)', async () => {
 
     const VAL_RAW = 'Clarence'
     const VAL = strToBytes32(VAL_RAW)
@@ -211,7 +208,7 @@ describe('Tests for Insert Private Table', () => {
     try {
       await ephemeralInstance.methods.insertVal(TEST_NAMEHASH, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
         from: ozWeb3.accounts[0],
-        gasPrice: '1020000000'
+        gasPrice: config.gasPrice
       })
       assert.fail()
     } catch (err){
@@ -220,7 +217,7 @@ describe('Tests for Insert Private Table', () => {
 
     await ownerInstance.methods.insertVal(TEST_NAMEHASH, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
       from: web3.eth.personal.currentProvider.addresses[0],
-      gasPrice: '1020000000'
+      gasPrice: config.gasPrice
     })
 
     // check for value
