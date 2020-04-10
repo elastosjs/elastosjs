@@ -140,8 +140,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     public insertCheck(tableKey, idKey, idTableKey){
 
-        // How does this handle multiple fields for a row? Actually why isn't this failing on multiple inserts?
-        // require(table.containsValueForKey(tableKey, id) == false, "id already exists");
+        require(elajsStore[fieldIdTableKey] == bytes32(0), "id+field already exists");
 
         // now check if the full field + id + table is a subhash
         require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
@@ -214,6 +213,27 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
         require(table.containsValueForKey(tableKey, id) == true, "id doesn't exist");
 
+        (uint256 permission, address delegate) = getTableMetadata(tableKey);
+
+        // if permission = 0, system table we can't do anything
+        require(permission > 0, "Cannot DELETE from system table");
+
+        // if permission = 1, we must be the owner/delegate
+        require(permission > 1 || isOwner() == true || delegate == _msgSender(), "Only owner/delegate can DELETE from this table");
+
+        // permissions check, is the idTableKey a subhash of the id and table?
+        require(isNamehashSubOf(idKey, tableKey, idTableKey) == true, "idTableKey not a subhash [id].[table]");
+
+        // permissions check (public table = 2, shared table = 3),
+        // if 2 or 3 is the _msg.sender() the row owner? But if 3 owner() is always allowed
+        if (permission >= 2) {
+            if (isOwner() || delegate == _msgSender()){
+                // pass
+            } else {
+                require(elajsRowOwner[idTableKey] == _msgSender(), "Sender not owner of row");
+            }
+        }
+
         _;
     }
 
@@ -235,8 +255,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         bytes32 fieldIdTableKey
 
     ) public deleteCheck(tableKey, idTableKey, idKey, id){
-
-
 
         // check if the full field + id + table is a subhash (permissions)
         require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
@@ -260,7 +278,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
             elajsStore[fieldIdTableKeys[i]] = bytes32(0);
         }
         */
-
     }
 
     function deleteRow(

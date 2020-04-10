@@ -3,6 +3,8 @@ const chai = require('chai')
 const expect = chai.expect
 const assert = chai.assert
 
+const { sleep } = require('await-asleep')
+
 const { Keccak } = require('sha3')
 const sha3 = new Keccak(256)
 
@@ -64,6 +66,36 @@ describe('Tests for Insert Public Table', () => {
 
   })
 
+  it('Should create a table', async () => {
+
+    const fieldStr = 'firstName'
+    const fieldIdTableKey = namehash.hash(`${fieldStr}.${idStr}.user`)
+
+    fieldIdTableKeys.push(fieldIdTableKey)
+
+    sha3.reset()
+
+    const fieldKey = sha3.update(fieldStr).digest()
+
+    try {
+      await ownerInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, 'blah').send({
+        from: web3.eth.personal.currentProvider.addresses[0],
+        gasPrice: config.gasPrice
+      })
+      throw new Error('manual error')
+    } catch (err){
+      // expect(err.message).to.be.equals('VM Exception while processing transaction: revert table does not exist')
+      expect(err.message).to.not.equal('manual error')
+    }
+
+    // now create the table, this will be a public table - still need the ownerInstance to create it
+    await ownerInstance.methods.createTable(tableKey, 2).send({
+      from: web3.eth.personal.currentProvider.addresses[0],
+      gasPrice: config.gasPrice
+    })
+
+  })
+
   it('Should INSERT a test value (str) with 1 field to an ID', async () => {
 
     const VAL_RAW = 'Clarence'
@@ -77,23 +109,6 @@ describe('Tests for Insert Public Table', () => {
     sha3.reset()
 
     const fieldKey = sha3.update(fieldStr).digest()
-
-    try {
-      await ownerInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
-        from: web3.eth.personal.currentProvider.addresses[0],
-        gasPrice: config.gasPrice
-      })
-      assert.fail()
-    } catch (err){
-      // expect(err.message).to.be.equals('VM Exception while processing transaction: revert table does not exist')
-      assert.exists(err)
-    }
-
-    // now create the table, this will be a public table - still need the ownerInstance to create it
-    await ownerInstance.methods.createTable(tableKey, 2).send({
-      from: web3.eth.personal.currentProvider.addresses[0],
-      gasPrice: config.gasPrice
-    })
 
     // estimate gas - doesn't work?
     /*
@@ -114,13 +129,15 @@ describe('Tests for Insert Public Table', () => {
 
     expect(Web3.utils.hexToString(val)).to.be.equal(VAL_RAW)
 
-    // try to insert into the same slot, should fail because ID exists
     try {
+      // try to insert into the same slot, should fail because ID exists
       await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
         from: ozWeb3.accounts[0]
       })
+      throw new Error('manual error')
+
     } catch (err){
-      assert.exists(err)
+      expect(err.message).to.not.equal('manual error')
     }
   })
 
@@ -164,22 +181,48 @@ describe('Tests for Insert Public Table', () => {
     fieldKeys.push(fieldKey2)
 
 
+    console.log('Promise.all - START')
+    await Promise.all([(async () => {
+        await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
+          from: ozWeb3.accounts[0]
+        })
+        console.log('val 1 saved')
+      })(),
+      (async () => {
+
+        await sleep(1500)
+
+        await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey2, idKey, fieldKey2, id, VAL2).send({
+          from: ozWeb3.accounts[0]
+        })
+        console.log('val 2 saved')
+      })()
+    ])
+    console.log('Promise.all - END')
+
+
+    /*
     await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
       from: ozWeb3.accounts[0]
     })
 
-    // check for value
-    const val = await ephemeralInstance.methods.getRowValue(fieldIdTableKey).call()
-
-    expect(Web3.utils.hexToNumber(val)).to.be.equal(VAL_RAW)
-
     await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey2, idKey, fieldKey2, id, VAL2).send({
       from: ozWeb3.accounts[0]
     })
+     */
 
     // check for value
-    const val2 = await ephemeralInstance.methods.getRowValue(fieldIdTableKey2).call()
+    let val = -1, val2 = -1
 
+    await Promise.all([(async () => {
+        val = await ephemeralInstance.methods.getRowValue(fieldIdTableKey).call()
+      })(),
+      (async () => {
+        val2 = await ephemeralInstance.methods.getRowValue(fieldIdTableKey2).call()
+      })()
+    ])
+
+    expect(Web3.utils.hexToNumber(val)).to.be.equal(VAL_RAW)
     expect(Web3.utils.hexToString(val2)).to.be.equal(VAL2_RAW)
 
   })
@@ -200,9 +243,9 @@ describe('Tests for Insert Public Table', () => {
       await ephemeralInstanceOther.methods.updateVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
         from: ozWeb3Other.accounts[0]
       })
+      throw new Error('manual error')
     } catch (err){
-      // TODO: better error differentiation
-      assert.exists(err)
+      expect(err.message).to.not.equal('manual error')
     }
 
     await ephemeralInstance.methods.updateVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
@@ -254,7 +297,7 @@ describe('Tests for Insert Public Table', () => {
 
     expect(tableIds.length).to.be.equal(1)
 
-    /*
+
     // check for value
     val = await ephemeralInstance.methods.getRowValue(fieldIdTableKey).call()
 
@@ -273,13 +316,22 @@ describe('Tests for Insert Public Table', () => {
       expect(Web3.utils.hexToNumber(val)).to.not.be.equal(0)
     }
 
-    console.log('delete starting')
+    console.log('delete 2 starting')
 
-    // await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, fieldKey, id2, fieldKeys, fieldIdTableKeys).send({
-    await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id, fieldKeys, fieldIdTableKeys).send({
-      from: ozWeb3.accounts[0],
-      gas: 7000000
+    await Promise.all([
+      await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id2, fieldKeys[0], fieldIdTableKeys[0]).send({
+        from: ozWeb3.accounts[0]
+      }),
+      await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id2, fieldKeys[1], fieldIdTableKeys[1]).send({
+        from: ozWeb3.accounts[0]
+      })
+    ])
+
+    await ephemeralInstance.methods.deleteRow(tableKey, id2TableKey, id2Key, id2).send({
+      from: ozWeb3.accounts[0]
     })
+
+    console.log('delete 2 done')
 
     for (let i = 0; i < fieldIdTableKeys.length; i++){
       let val = await ephemeralInstance.methods.getRowValue(fieldIdTableKeys[i]).call()
@@ -290,7 +342,7 @@ describe('Tests for Insert Public Table', () => {
     tableIds = await ephemeralInstance.methods.getTableIds(tableKey).call()
 
     expect(tableIds.length).to.be.equal(0)
-    */
+
   })
 
   // doesn't work on testnet
