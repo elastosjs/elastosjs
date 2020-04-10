@@ -1,6 +1,8 @@
 
 #!/bin/sh
 
+# For ELA Testnet only - I am hardcoding my testnet address too
+
 START=`date +%s`
 
 print_progress () {

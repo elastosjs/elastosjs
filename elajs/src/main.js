@@ -1,4 +1,6 @@
 
+import _ from 'lodash'
+
 const strToBytes32 = (input) => {
 
   const targetBuf = new Buffer.alloc(32)
@@ -11,8 +13,9 @@ const strToBytes32 = (input) => {
   return targetBuf
 }
 
+// TODO: this needs to trim leading zeroes
 const bytes32ToStr = (buf) => {
-  return buf.toString()
+  return _.trimStart(buf.toString(), '\u0000')
 }
 
 const uintToBytes32 = (input) => {

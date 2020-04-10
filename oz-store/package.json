@@ -11,7 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "@openzeppelin/network": "^0.4.2",
-    "sol-datastructs": "*"
+    "sol-datastructs": "*",
+    "sol-sql": "0.0.1-alpha.2"
   },
   "devDependencies": {
     "@openzeppelin/cli": "^2.8.0",

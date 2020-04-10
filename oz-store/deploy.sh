@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# This is for local development only
+
 START=`date +%s`
 
 print_progress () {
@@ -16,7 +18,7 @@ contractAddr=`npx oz deploy ELAJSStore --network development --kind regular`
 
 npx oz send-tx --to $contractAddr --network development --method initialize
 
-npx oz-gsn fund-recipient --recipient $contractAddr --amount 500000000000000000
+npx oz-gsn fund-recipient --recipient $contractAddr --amount 100000000000000000
 
 print_progress "contractAddr = $contractAddr"
 

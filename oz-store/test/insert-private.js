@@ -17,6 +17,7 @@ const config = require('./config')
 
 const { strToBytes32, uintToBytes32 } = require('elajs')
 
+// THESE NO LONGER WORK - not updated
 describe.skip('Tests for Insert Private Table', () => {
 
   let ozWeb3, web3, ephemeralInstance, ownerInstance

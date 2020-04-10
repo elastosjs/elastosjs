@@ -1,11 +1,14 @@
 pragma solidity ^0.5.0;
+pragma experimental ABIEncoderV2;
 
 import "sol-datastructs/src/contracts/PolymorphicDictionaryLib.sol";
 
-// this is included by PolymorphicDictionaryLib, but added here for verbosity
 import "sol-datastructs/src/contracts/Bytes32DictionaryLib.sol";
+import "sol-datastructs/src/contracts/Bytes32SetDictionaryLib.sol";
 
 // import "./oz/EnumerableSetDictionary.sol";
+
+import "sol-sql/src/contracts/src/structs/TableLib.sol";
 
 import "./ozEla/OwnableELA.sol";
 import "./gsnEla/GSNRecipientELA.sol";
@@ -17,11 +20,15 @@ contract DateTime {
     function getDay(uint timestamp) public pure returns (uint8);
 }
 
+// TODO: good practice to have functinons not callable externally and internally
 contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
+    // key to our table list
+    bytes32 constant public schemasTables = 0x736368656d61732e7075626c69632e7461626c65730000000000000000000000;
+
     // DateTime Contract address
-    // address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
-    address public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
+    address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
+    // address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
 
     // Initialize the DateTime contract ABI with the already deployed contract
     DateTime dateTime = DateTime(dateTimeAddr);
@@ -35,21 +42,26 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     using PolymorphicDictionaryLib for PolymorphicDictionaryLib.PolymorphicDictionary;
     using Bytes32DictionaryLib for Bytes32DictionaryLib.Bytes32Dictionary;
+    using Bytes32SetDictionaryLib for Bytes32SetDictionaryLib.Bytes32SetDictionary;
 
     // _table = system table (bytes32 Dict) of each table's metadata marshaled
     // 8 bits - permissions (00 = system, 01 = private, 10 = public, 11 = shared - owner can always edit)
-    // 20 bytes - address delegate - other address allowed to edit, unimplemented (likely implemented as multi-sig address)
-    Bytes32DictionaryLib.Bytes32Dictionary internal _table;
+    // 20 bytes - address delegate - other address allowed to edit
+    mapping(bytes32 => bytes32) internal _table;
 
-    // table = dict where the key is the table, and the value is a set of byte32 ids
-    PolymorphicDictionaryLib.PolymorphicDictionary internal table;
+    // table = dict, where the key is the table, and the value is a set of byte32 ids
+    Bytes32SetDictionaryLib.Bytes32SetDictionary internal table;
 
-    // ownership of each row (id) - key = namehash([id].[table]) - value = address
-    // this isn't used for private tables
-    mapping(bytes32 => address) internal elajsRowOwner;
+    // Schema dictionary, key (schemasPublicTables) points to a set of table names
+    using TableLib for TableLib.Table;
+    using TableLib for bytes;
+    using ColumnLib for ColumnLib.Column;
+    using ColumnLib for bytes;
 
+    // namehash([tableName]) => encoded table schema
+    // ownership of each row (id) - key = namehash([id].[table]) which has a value that is the owner's address
     // ultimately namehash([field].[id].[table]) gives us a bytes32 which maps to the single data value
-    mapping(bytes32 => bytes32) internal elajsStore;
+    PolymorphicDictionaryLib.PolymorphicDictionary internal database;
 
 
     // ************************************* SETUP FUNCTIONS *************************************
@@ -60,32 +72,62 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     }
 
     function _initialize() internal {
-
         gsnMaxCallsPerDay = 1000;
-        // test = 0x04f740db81dc36c853ab4205bddd785f46e79ccedca351fc6dfcbd8cc9a33dd6
-        // setTableMetadata(0x04f740db81dc36c853ab4205bddd785f46e79ccedca351fc6dfcbd8cc9a33dd6, 2, 1, 0x1dF62f291b2E969fB0849d99D9Ce41e2F137006e);
     }
 
     // ************************************* SCHEMA FUNCTIONS *************************************
     /**
      * @dev create a new table, only the owner may create this
+     *
+     * @param tableKey this is the namehash of tableName
      */
-    function createTable(bytes32 tableKey, uint8 permission) public onlyOwner {
+    function createTable(
+
+        bytes32 tableName,
+        bytes32 tableKey,
+        uint8 permission,
+        bytes32[] memory _columnName,
+        bytes32[] memory _columnDtype
+
+    ) public onlyOwner {
 
         // check if table exists
-        require(_table.containsKey(tableKey) == false, "Table already exists");
+        require(_table[tableKey] == 0, "Table already exists");
 
         address delegate = address(0x0);
 
         // claim the key slot and set the metadata
         setTableMetadata(tableKey, permission, delegate);
 
-        table.addKey(tableKey, PolymorphicDictionaryLib.DictionaryType.OneToManyFixed);
+        // table stores the row ids set as the value, set up the key
+        table.addKey(tableKey);
+
+        // now insert the schema
+        TableLib.Table memory tableSchema = TableLib.create(
+            tableName,
+            _columnName,
+            _columnDtype
+        );
+
+        createTable(tableKey, tableSchema);
 
     }
 
     function tableExists(bytes32 tableKey) public view returns (bool) {
         return table.containsKey(tableKey);
+    }
+
+    function createTable(bytes32 tableKey, TableLib.Table memory tableSchema) internal returns (bool) {
+        bytes memory encoded = tableSchema.encode();
+
+        // we store the encoded table schema on the base tableKey
+        return database.setValueForKey(tableKey, encoded);
+    }
+
+    // EXPERIMENTAL
+    function getTable(bytes32 _name) public view returns (TableLib.Table memory) {
+        bytes memory encoded = database.getBytesForKey(_name);
+        return encoded.decodeTable();
     }
 
     // ************************************* CRUD FUNCTIONS *************************************
@@ -106,9 +148,9 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // permissions check, is the idTableKey a subhash of the id and table?
         require(isNamehashSubOf(idKey, tableKey, idTableKey) == true, "idTableKey not a subhash [id].[table]");
 
-        // IF this is a public table, for a each row, we add an entry in `elajsRowOwner` claiming this [id].[table] for the msg.sender
+        // IF this is a public table, for a each row, we add an entry in for idTableKey claiming this [id].[table] for the msg.sender
         if (permission > 1) {
-            elajsRowOwner[idTableKey] = _msgSender();
+            database.setAddressForKey(idTableKey, _msgSender());
         }
 
         _;
@@ -140,7 +182,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     public insertCheck(tableKey, idKey, idTableKey){
 
-        require(elajsStore[fieldIdTableKey] == bytes32(0), "id+field already exists");
+        require(database.containsKey(fieldIdTableKey) == false, "id+field already exists");
 
         // now check if the full field + id + table is a subhash
         require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
@@ -153,7 +195,35 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
         // finally set the data
         // we won't serialize the type, that's way too much redundant data
-        elajsStore[fieldIdTableKey] = bytes32(val);
+        database.setValueForKey(fieldIdTableKey, bytes32(val));
+    }
+
+    function insertValVar(
+        bytes32 tableKey,
+        bytes32 idTableKey,
+        bytes32 fieldIdTableKey,
+
+        bytes32 idKey,
+        bytes32 fieldKey,
+
+        bytes32 id,
+        bytes memory val)
+
+    public insertCheck(tableKey, idKey, idTableKey){
+
+        require(database.containsKey(fieldIdTableKey) == false, "id+field already exists");
+
+        // now check if the full field + id + table is a subhash
+        require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
+
+        // increment counter
+        increaseGsnCounter();
+
+        // add an id entry to the table's set of ids for the row
+        table.addValueForKey(tableKey, id);
+
+        // finally set the data
+        database.setValueForKey(fieldIdTableKey, val);
     }
 
     modifier updateCheck(bytes32 tableKey, bytes32 idKey, bytes32 idTableKey) {
@@ -175,7 +245,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
             if (isOwner() || delegate == _msgSender()){
                 // pass
             } else {
-                require(elajsRowOwner[idTableKey] == _msgSender(), "Sender not owner of row");
+                require(database.getAddressForKey(idTableKey) == _msgSender(), "Sender not owner of row");
             }
         }
 
@@ -205,7 +275,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         increaseGsnCounter();
 
         // set data (overwrite)
-        elajsStore[fieldIdTableKey] = bytes32(val);
+        database.setValueForKey(fieldIdTableKey, bytes32(val));
 
     }
 
@@ -230,7 +300,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
             if (isOwner() || delegate == _msgSender()){
                 // pass
             } else {
-                require(elajsRowOwner[idTableKey] == _msgSender(), "Sender not owner of row");
+                require(database.getAddressForKey(idTableKey) == _msgSender(), "Sender not owner of row");
             }
         }
 
@@ -262,8 +332,12 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // increment counter
         increaseGsnCounter();
 
-        // zero out the data
-        elajsStore[fieldIdTableKey] = bytes32(0);
+        // remove the key
+        bool removed = database.removeKey(fieldIdTableKey);
+
+        require(removed == true, "error removing key");
+
+        // TODO: zero out the data? Why bother everything is public
 
         // we can't really pass in enough data to make a loop worthwhile
         /*
@@ -280,6 +354,9 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         */
     }
 
+    // TODO: improve this, we don't want to cause data consistency if the client doesn't call this
+    // Right now we manually call this, but ideally we iterate over all the data and delete each column
+    // but this would require decoding and having all the field names
     function deleteRow(
 
         bytes32 tableKey,
@@ -335,11 +412,35 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     }
     */
 
+    /*
+    function getAllDataKeys() external view returns (bytes32[] memory) {
+        return database.enumerate();
+    }
+    */
+
+    function checkDataKey(bytes32 key) external view returns (bool) {
+        return database.containsKey(key);
+    }
+
     /**
      * @dev all data is public, so no need for security checks, we leave the data type handling to the client
      */
-    function getRowValue(bytes32 dataKey) external view returns (bytes32) {
-        return bytes32(elajsStore[dataKey]);
+    function getRowValue(bytes32 fieldIdTableKey) external view returns (bytes32) {
+
+        if (database.containsKey(fieldIdTableKey)) {
+            return database.getBytes32ForKey(fieldIdTableKey);
+        } else {
+            return bytes32(0);
+        }
+    }
+
+    function getRowValueVar(bytes32 fieldIdTableKey) external view returns (bytes memory) {
+
+        if (database.containsKey(fieldIdTableKey)) {
+            return database.getBytesForKey(fieldIdTableKey);
+        } else {
+            return new bytes(0);
+        }
     }
 
     /**
@@ -350,9 +451,8 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
         require(table.containsKey(tableKey) == true, "table not created");
 
-        return table.getBytes32ArrayForKey(tableKey);
+        return table.enumerateForKey(tableKey);
     }
-
 
     function isNamehashSubOf(bytes32 subKey, bytes32 base, bytes32 target) internal pure returns (bool) {
 
@@ -368,28 +468,27 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         return result == target;
     }
 
-
     // ************************************* _TABLE FUNCTIONS *************************************
     function getTableMetadata(bytes32 _tableKey)
         view
         public
         returns (uint256 permission, address delegate)
     {
-        require(_table.containsKey(_tableKey) == true, "table does not exist");
+        require(_table[_tableKey] > 0, "table does not exist");
 
-        uint256 tableMetadata = uint256(_table.getValueForKey(_tableKey));
+        uint256 tableMetadata = uint256(_table[_tableKey]);
 
         permission = uint256(uint8(tableMetadata));
         delegate = address(tableMetadata>>8);
     }
 
-    function setTableMetadata(bytes32 _tableKey, uint8 permission, address delegate) private onlyOwner returns (bool) {
+    function setTableMetadata(bytes32 _tableKey, uint8 permission, address delegate) private onlyOwner {
         uint256 tableMetadata;
 
         tableMetadata |= permission;
         tableMetadata |= uint160(delegate)<<8;
 
-        return _table.setValueForKey(_tableKey, bytes32(tableMetadata));
+        _table[_tableKey] = bytes32(tableMetadata);
     }
 
     // ************************************* MISC FUNCTIONS *************************************
@@ -413,7 +512,15 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         uint256 maxPossibleCharge
     ) external view returns (uint256, bytes memory) {
 
-        // TODO: check gsnCounter and compare to limit
+        bytes32 curDateHashed = getGsnCounter();
+
+        // check gsnCounter for today and compare to limit
+        uint256 curCounter = gsnCounter[curDateHashed];
+
+        if (curCounter >= gsnMaxCallsPerDay){
+            return _rejectRelayedCall(2);
+        }
+
 
         return _approveRelayedCall();
     }
@@ -429,7 +536,24 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     );
     */
 
+    /**
+     * Increase the GSN Counter for today
+     */
     function increaseGsnCounter() internal {
+
+        bytes32 curDateHashed = getGsnCounter();
+
+        uint256 curCounter = gsnCounter[curDateHashed];
+
+        gsnCounter[curDateHashed] = curCounter + 1;
+
+        // emit GsnCounterIncrease(_msgSender(), bytes4(uint32(curDate)));
+    }
+
+    /*
+     *
+     */
+    function getGsnCounter() internal view returns (bytes32 curDateHashed) {
 
         uint256 curDate;
 
@@ -441,13 +565,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         curDate |= uint256(month)<<16;
         curDate |= uint256(day)<<24;
 
-        bytes32 curDateHashed = keccak256(abi.encodePacked(curDate));
-
-        uint256 curCounter = gsnCounter[curDateHashed];
-
-        gsnCounter[curDateHashed] = curCounter + 1;
-
-        // emit GsnCounterIncrease(_msgSender(), bytes4(uint32(curDate)));
+        curDateHashed = keccak256(abi.encodePacked(curDate));
     }
 
     // We won't do any pre or post processing, so leave _preRelayedCall and _postRelayedCall empty

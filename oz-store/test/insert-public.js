@@ -54,6 +54,7 @@ describe('Tests for Insert Public Table', () => {
 
     sha3.reset()
     id = Web3.utils.randomHex(32)
+    // console.log(`id1 = ${id}`)
     idStr = id.substring(2)
     idKey = sha3.update(idStr).digest()
 
@@ -85,7 +86,13 @@ describe('Tests for Insert Public Table', () => {
     }
 
     // now create the table, this will be a public table - still need the ownerInstance to create it
-    await ownerInstance.methods.createTable(tableKey, 2).send({
+    await ownerInstance.methods.createTable(
+      Web3.utils.stringToHex('user'),
+      tableKey,
+      2,
+      [],
+      []
+    ).send({
       from: web3.eth.personal.currentProvider.addresses[0],
       gasPrice: config.gasPrice
     })
@@ -116,14 +123,19 @@ describe('Tests for Insert Public Table', () => {
     console.log(gasEstInsert1)
     */
 
+    // console.log(`INSERT -> ${fieldIdTableKey}`)
     await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
       from: ozWeb3.accounts[0]
     })
+
+    // console.log('done insert')
+
 
     // check for value
     const val = await ephemeralInstance.methods.getRowValue(fieldIdTableKey).call()
 
     expect(Web3.utils.hexToString(val)).to.be.equal(VAL_RAW)
+
 
     try {
       // try to insert into the same slot, should fail because ID exists
@@ -152,13 +164,14 @@ describe('Tests for Insert Public Table', () => {
     const VAL_RAW = 5121
     const VAL = uintToBytes32(VAL_RAW)
 
-    const VAL2_RAW = 'John'
-    const VAL2 = strToBytes32(VAL2_RAW)
+    const VAL2_RAW = 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.'
+    const VAL2 = Buffer.from(VAL2_RAW)
 
     sha3.reset()
 
     const id = Web3.utils.randomHex(32)
     id2 = id
+    // console.log(`id2 = ${id2}`)
     const idStr = id.substring(2)
     const idKey = sha3.update(idStr).digest()
     id2Key = idKey
@@ -207,7 +220,7 @@ describe('Tests for Insert Public Table', () => {
       from: ozWeb3.accounts[0]
     })
 
-    await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey2, idKey, fieldKey2, id, VAL2).send({
+    await ephemeralInstance.methods.insertValVar(tableKey, idTableKey, fieldIdTableKey2, idKey, fieldKey2, id, VAL2).send({
       from: ozWeb3.accounts[0]
     })
 
@@ -218,7 +231,7 @@ describe('Tests for Insert Public Table', () => {
         val = await ephemeralInstance.methods.getRowValue(fieldIdTableKey).call()
       })(),
       (async () => {
-        val2 = await ephemeralInstance.methods.getRowValue(fieldIdTableKey2).call()
+        val2 = await ephemeralInstance.methods.getRowValueVar(fieldIdTableKey2).call()
       })()
     ])
 
@@ -267,7 +280,11 @@ describe('Tests for Insert Public Table', () => {
     // check for id in table
     let tableIds = await ephemeralInstance.methods.getTableIds(tableKey).call()
 
+    // console.log(tableIds)
+
     expect(tableIds.length).to.be.equal(2)
+
+
 
     sha3.reset()
 
@@ -278,6 +295,9 @@ describe('Tests for Insert Public Table', () => {
 
     // this was the updated value
     expect(Web3.utils.hexToString(val)).to.be.equal('Mary')
+
+    let keyCheck = await ephemeralInstance.methods.checkDataKey(fieldIdTableKey).call()
+    expect(keyCheck).to.be.true;
 
     // console.log(tableKey, idTableKey, idKey, fieldKey, id, [fieldKey], [fieldIdTableKey])
 
@@ -292,45 +312,38 @@ describe('Tests for Insert Public Table', () => {
 
     // console.log('delete done')
 
-
     tableIds = await ephemeralInstance.methods.getTableIds(tableKey).call()
-
     expect(tableIds.length).to.be.equal(1)
 
 
-    // check for value
+    // check for value - For some reason on testnet this doesn't error out! But the data gets set to some gibberish
+    // Calls don't seem to throw errors on testnet, but they do on development
+    keyCheck = await ephemeralInstance.methods.checkDataKey(fieldIdTableKey).call()
+    expect(keyCheck).to.be.false;
+
+    // console.log(`keyCheck = ${keyCheck}`);
+
     val = await ephemeralInstance.methods.getRowValue(fieldIdTableKey).call()
+
+    // We're not zeroing out data any more, it would be inaccessible
+    // expect(Web3.utils.hexToNumber(val)).to.be.equal(0)
 
     expect(Web3.utils.hexToNumber(val)).to.be.equal(0)
 
-    // console.log(val)
 
     // remove the id from the array
     fieldIdTableKeys.shift()
 
-    for (let i = 0; i < fieldIdTableKeys.length; i++){
-      let val = await ephemeralInstance.methods.getRowValue(fieldIdTableKeys[i]).call()
+    val = await ephemeralInstance.methods.getRowValue(fieldIdTableKeys[0]).call()
 
-      expect(Web3.utils.hexToNumber(val)).to.not.be.equal(0)
-    }
+    expect(Web3.utils.hexToNumber(val)).to.not.be.equal(0)
+
+    val = await ephemeralInstance.methods.getRowValueVar(fieldIdTableKeys[1]).call()
+
+    expect(Web3.utils.hexToString(val).length).to.be.gt(32)
+
 
     // console.log('delete 2 starting')
-
-    /*
-    await Promise.all([
-      (async () => {
-        await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id2, fieldKeys[0], fieldIdTableKeys[0]).send({
-          from: ozWeb3.accounts[0]
-        })
-      })(),
-      (async () => {
-        await new Promise((resolve) => setTimeout(resolve, config.transactionDelay))
-        await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id2, fieldKeys[1], fieldIdTableKeys[1]).send({
-          from: ozWeb3.accounts[0]
-        })
-      })()
-    ])
-     */
 
     await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id2, fieldKeys[0], fieldIdTableKeys[0]).send({
       from: ozWeb3.accounts[0]
@@ -346,11 +359,15 @@ describe('Tests for Insert Public Table', () => {
 
     // console.log('delete 2 done')
 
-    for (let i = 0; i < fieldIdTableKeys.length; i++){
-      let val = await ephemeralInstance.methods.getRowValue(fieldIdTableKeys[i]).call()
+    // console.log(fieldIdTableKeys)
 
-      expect(Web3.utils.hexToNumber(val)).to.be.equal(0)
-    }
+    val = await ephemeralInstance.methods.getRowValue(fieldIdTableKeys[0]).call()
+
+    expect(Web3.utils.hexToNumber(val)).to.be.equal(0)
+
+    val = await ephemeralInstance.methods.getRowValueVar(fieldIdTableKeys[1]).call()
+
+    assert(val === null)
 
     tableIds = await ephemeralInstance.methods.getTableIds(tableKey).call()
 
