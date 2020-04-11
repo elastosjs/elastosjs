@@ -123,7 +123,7 @@ const Login = () => {
                     <p className="text-muted py-4">
                       You should have setup your Fortmatic when you first signed up.
                     </p>
-                    <FortmaticBtn className="px-4 mt-2" tabIndex={-1} onClick={() => ethConfig.fmWeb3.currentProvider.enable()}>
+                    <FortmaticBtn className="px-4 mt-2" tabIndex={-1} onClick={() => ethConfig.web3.baseProvider.enable()}>
                       Connect Fortmatic
                     </FortmaticBtn>
                   </div>

@@ -1,14 +1,16 @@
 import namehash from 'eth-ens-namehash'
 import _ from 'lodash'
-import drizzle, { fmWeb3 } from '../index'
+import drizzle, { web3 } from '../index'
 
 // import { createTable, addAddressToTable } from "../../services/contract";
 // import Box from '../../contracts/Box'
 
+/*
 function bufferToBytes32(buffer) {
   const padding = new Buffer(32 - buffer.length);
   return Buffer.concat([padding, buffer])
 }
+*/
 
 /**
  * Redux - Profile for a Viewer
@@ -28,6 +30,7 @@ function bufferToBytes32(buffer) {
  */
 export const ProfileActionTypes = {
   SET_ETH_ADDRESS: 'SET_ETH_ADDRESS',
+  REGISTER: 'REGISTER',
   LOGGING_IN: 'LOGGING_IN',
   READY: 'READY',
   LOGOUT: 'LOGOUT'
@@ -41,7 +44,12 @@ export const ProfileActionTypes = {
 const initialState = {
   ready: false,
   loading: true,
-  ethAddress: null
+
+  ethAddress: null,
+
+  // Temporary client side store
+  // we don't actually save the username, but a hashed id for reference
+  username: ''
 }
 
 /**
@@ -55,7 +63,7 @@ const initialState = {
  *   between any paid actions
  */
 export const ActionRegister = () => {
-  return async function(dispatch, getState, { ozWeb3 }){
+  return async function(dispatch, getState, { web3 }){
 
     const state = getState()
 
@@ -66,12 +74,12 @@ export const ActionRegister = () => {
 
 // export const ActionSetEth
 
+/*
 export const ActionCheckAccts = () => {
-  return async function(dispatch, getState, { fmWeb3 }){
+  return async function(dispatch, getState, { web3 }){
 
     const state = getState()
 
-    /*
     // check if there is an account, just once
     if (state.drizzleStatus.initialized && !state.accounts[0]){
       const ethAddress = await web3.currentProvider.enable()
@@ -81,11 +89,10 @@ export const ActionCheckAccts = () => {
         ethAddress: ethAddress
       })
     }
-    */
 
     // we are always calling Fortmatic now
     if (state.root.profile.ethAddress === null){
-      const ethAddress = await fmWeb3.currentProvider.enable()
+      const ethAddress = await web3.baseProvider.enable()
 
       dispatch({
         type: ProfileActionTypes.SET_ETH_ADDRESS,
@@ -100,6 +107,7 @@ export const ActionCheckAccts = () => {
     return Promise.resolve()
   }
 }
+*/
 
 /*
 export const ActionSetStore = (newVal) => {
@@ -171,7 +179,7 @@ export default {
       case ProfileActionTypes.REGISTER:
         return {
           ...state,
-          email: action.email,
+          username: action.username,
           ethAddress: action.ethAddress
         }
 

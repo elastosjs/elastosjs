@@ -14,7 +14,13 @@ import {
 import _ from 'lodash'
 import styled from 'styled-components'
 
+import constants from '../../../constants'
 
+/**
+ * This only handles the username, password, once those are committed to
+ * the elajsAcct state on the parent Register page we're done and
+ * dataCommitted = true
+ */
 const RegisterForm = (props) => {
 
   const {elajsAcct, setElajsAcct} = props
@@ -24,10 +30,10 @@ const RegisterForm = (props) => {
     msgs: []
   })
 
-  const handleEmailChange = (ev) => {
-    const email = ev.target.value
+  const handleUsernameChange = (ev) => {
+    const username = ev.target.value
 
-    setElajsAcct({ ...elajsAcct, email: email, emailInvalid: !(email && email.length > 5 && validateEmail(email))} )
+    setElajsAcct({ ...elajsAcct, username, usernameInvalid: !(username && username.length >= constants.PROFILE.USERNAME_MIN_LEN && validateUsername(username))} )
   }
 
   const handlePw = async (ev) => {
@@ -35,6 +41,11 @@ const RegisterForm = (props) => {
 
     if (pw.length < 8){
       setElajsAcct({ ...elajsAcct, passwordInvalid: true, passwordInvalidMsg: ''} )
+      return
+    }
+
+    if (pw.length > 32){
+      setElajsAcct({ ...elajsAcct, passwordInvalid: true, passwordInvalidMsg: 'Password too long'} )
       return
     }
 
@@ -79,12 +90,14 @@ const RegisterForm = (props) => {
 
     let errors = []
 
-    if (elajsAcct.email.length < 6 || elajsAcct.emailInvalid){
-      errors.push('Email is invalid')
+    if (elajsAcct.username.length < 6 || elajsAcct.usernameInvalid){
+      errors.push('Username is invalid')
     }
 
     if (elajsAcct.password.length < 8){
       errors.push('Password must be 8 chars or more')
+    } else if (elajsAcct.password.length > 32){
+      errors.push('Password cannot be over 32 characters')
     } else if (elajsAcct.passwordInvalid){
       errors.push(`Password is invalid - ${elajsAcct.passwordInvalidMsg}`)
     } else if (elajsAcct.passwordConfirmInvalid){
@@ -116,6 +129,11 @@ const RegisterForm = (props) => {
 
   return (
     <div className="flip-card-inner">
+      {/*
+      ************************************************************************************************
+      Username Password Container Only
+      ************************************************************************************************
+      */}
       <CardBody className="flip-card-front p-4">
         <h2>ElastosJS Auth</h2>
         <p className="text-muted">
@@ -125,10 +143,10 @@ const RegisterForm = (props) => {
         <InputGroup className="mb-4">
           <InputGroupAddon addonType="prepend">
             <InputGroupText>
-              <i className="icon-envelope"></i>
+              <i className="icon-user"></i>
             </InputGroupText>
           </InputGroupAddon>
-          <Input type="email" placeholder="Email" autoComplete="email" onChange={handleEmailChange} invalid={elajsAcct.emailInvalid}/>
+          <Input type="text" placeholder="Username" autoComplete="username" onChange={handleUsernameChange} invalid={elajsAcct.usernameInvalid}/>
         </InputGroup>
         <InputGroup className="mb-3">
           <InputGroupAddon addonType="prepend">
@@ -166,7 +184,7 @@ const RegisterForm = (props) => {
         </h4>
 
         <p className="text-left p-4 mt-2">
-          <b>Your Email:</b> {elajsAcct.email}
+          <b>Your Username:</b> {elajsAcct.username}
           <br/>
           <br/>
         </p>
@@ -177,6 +195,12 @@ const RegisterForm = (props) => {
           </Col>
         </Row>
       </CardBody>
+
+      {/*
+      ************************************************************************************************
+      Modal Errors
+      ************************************************************************************************
+      */}
       <Modal isOpen={modalErrorData.isOpen} toggle={modalErrorToggle} style={{marginTop: '20%'}}>
         <ModalHeader>
           Please correct the following errors
@@ -203,6 +227,6 @@ const ErrorMsg = styled.li`
   margin-left: 16px;
 `
 
-function validateEmail(email){
-  return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
+function validateUsername(username){
+  return (/^[^_][\w]+$/.test(username))
 }

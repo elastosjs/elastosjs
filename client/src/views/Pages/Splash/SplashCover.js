@@ -184,7 +184,7 @@ export default class SplashCover extends React.Component {
             </a>
 
             <a href="https://elastos.academy" target="_blank" style={{marginLeft: '15px'}}>
-              <button className="btn btn-elastos text-uppercase">Learn More @ Elastos.Academy</button>
+              <button className="btn btn-elastos text-uppercase">Learn More About Elastos @ Our Academy</button>
             </a>
           </Col>
         </Row>
@@ -275,8 +275,8 @@ export default class SplashCover extends React.Component {
           </TitleMarkdownBlock>
 
           <PromoSection>
-            <Button target="_blank" href="https://docs.elastosjs.com">Get Started</Button>
-            <Button href="#"><b>Calling Developers:</b> Port Your ETH DApp</Button>
+            <Button target="_blank" href="https://docs.elastosjs.com"><b>Get Started</b></Button>
+            <Button href="#">Learn How It Works</Button>
             <Button target="_blank" href="https://www.cyberrepublic.org">Get Funded By Cyber Republic</Button>
           </PromoSection>
         </div>

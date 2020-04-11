@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useCallback } from 'react'
 import {
   Button,
   Card,
@@ -21,7 +21,10 @@ import { colors } from '../../../config'
 import { EthContext } from '../../../context/EthContext'
 
 import RegisterForm from './RegisterForm'
+import RegisterTransaction from './RegisterTransaction'
 import Loading, { LoadingOverlay } from '../Loading'
+
+import constants from '../../../constants'
 
 import { ProfileActionTypes, ActionRegister } from '../../../store/redux/profile'
 
@@ -29,7 +32,7 @@ const Register = (props) => {
 
   const [ethConfig, setEthConfig] = useContext(EthContext)
 
-  const [canRegister, setCanRegister] = useState(false)
+  const [canRegister, setCanRegister] = useState(true)
 
   const [progress, setProgress] = useState({
     val: 10,
@@ -37,8 +40,8 @@ const Register = (props) => {
   })
 
   const [elajsAcct, setElajsAcct] = useState({
-    email: '',
-    emailInvalid: false,
+    username: '',
+    usernameInvalid: false,
 
     password: '',
     passwordConfirmInvalid: false,
@@ -99,7 +102,7 @@ const Register = (props) => {
           return
         }
 
-        const ethAccounts = await ethConfig.fmWeb3.eth.getAccounts()
+        const ethAccounts = await ethConfig.web3.eth.getAccounts()
 
         if (ethAccounts.length === 0){
           return
@@ -120,14 +123,14 @@ const Register = (props) => {
   /**
    * Connect Fortmatic
    */
-  const fortmaticConnect = async () => {
+  const fortmaticConnect = useCallback(async () => {
 
-    const ethAddress = await ethConfig.fmWeb3.currentProvider.enable()
+    const ethAddress = await ethConfig.web3.currentProvider.baseProvider.enable()
 
     setEthAddress(ethAddress)
 
     setProgress({...progress, val: progress.val += 45})
-  }
+  }, [])
 
   // Once Fortmatic is connected and the account is ready we set canRegister to true
   useEffect(() => {
@@ -137,7 +140,10 @@ const Register = (props) => {
     }
 
     // TODO: better final validity checks
-    if (elajsAcct.email.length < 6 || elajsAcct.password.length < 8){
+    if (
+      elajsAcct.username.length < constants.PROFILE.USERNAME_MIN_LEN ||
+      elajsAcct.password.length < constants.PROFILE.PASSWORD_MIN_LEN
+    ){
       return
     }
 
@@ -146,122 +152,141 @@ const Register = (props) => {
   }, [ethAddress, elajsAcct.dataCommitted])
 
   /**
-   * Final Register Call
-   * - usually we send the password to the back-end, add a salt and hash it, but in this
-   *   scenario we don't have a backend.
-   * - Also we are saving the hash to a public smart contract
+   ************************************************************************************************************
+   * Register Call
+   *
+   * We show a new page which requires the user to confirm a set of acknowledgements
+   *
+   * This only saves the data to redux, this function cannot be called until canRegister is true,
+   * at which point we know that username, ethAddress are good, and password is on elajsAcct
+   * RegisterTransaction handles the actual process
+   ************************************************************************************************************
    */
-  const handleRegister = async () => {
+  const handleRegister = useCallback(async () => {
 
     setIsRegistering(true)
-
+    /*
     await props.dispatch({
-      action: ProfileActionTypes.SET_ETH_ADDRESS,
+      action: ProfileActionTypes.REGISTER,
+      username: elajsAcct.username,
+      // passwordHash: sha3.update(elajsAcct.password).digest(),
       ethAddress: ethAddress
     })
+     */
+  }, [])
 
-    await props.dispatch(ActionRegister())
-
-    // check props.profile
-  }
 
   // waiting for registration,
-  // once we have both the
+  // once we have both the username and ethPassword
+  /*
   useEffect(() => {
 
     if (!isRegistering){
       return
     }
 
-    if (props.profile.email.length && props.profile.ethAddress.length){
-      debugger
-      window.location.hash = 'dashboard'
+    if (props.profile.username.length && props.profile.ethAddress.length){
+      // window.location.hash = 'dashboard'
     }
 
   }, [isRegistering, props.profile])
+  */
 
   return (
     <div className="app flex-row align-items-center">
-      {isRegistering && <LoadingOverlay/>}
-      <Container className="mt-n5">
-        <Row className="justify-content-center">
-          <Col md="8">
-            <div className="mb-3">
-              <Link to="/login">
-                <button className="btn btn-tertiary btn-lg">
-                  <i className="fa fa-arrow-left fa-lg mr-2"></i>
-                </button>
-              </Link>
-            </div>
-            <RegisterHeader>
-              <h3>
-                Welcome to ElastosJS and the Modern Internet
-              </h3>
-              <p>
-                To safeguard your data and funds we use Fortmatic to protect
-                your encryption keys and funds.
-              </p>
-              <p>
-                You will need to also create an ElastosJS account.
-              </p>
+      {/*
+      ************************************************************************************************
+      Registration Container - the username/password form is in component `RegisterForm`
+      ************************************************************************************************
+      */}
+      {!isRegistering ?
+        <Container className="mt-n5">
+          <Row className="justify-content-center">
+            <Col md="8">
+              <div className="mb-3">
+                <Link to="/login">
+                  <button className="btn btn-tertiary btn-lg">
+                    <i className="fa fa-arrow-left fa-lg mr-2"></i>
+                  </button>
+                </Link>
+              </div>
+              <RegisterHeader>
+                <h3>
+                  Welcome to ElastosJS and the Modern Internet
+                </h3>
+                <p>
+                  To safeguard your data and funds we use Fortmatic to protect
+                  your encryption keys and funds.
+                </p>
+                <p>
+                  You will need to also create an ElastosJS account.
+                </p>
 
-              <Progress value={progress.val}>
-                {progress.msg}
-              </Progress>
-            </RegisterHeader>
-            <CardGroup style={{clear: 'both'}}>
-              {/*
+                <Progress value={progress.val}>
+                  {progress.msg}
+                </Progress>
+              </RegisterHeader>
+              <CardGroup style={{ clear: 'both' }}>
+                {/*
               ******************************************************************************************************************
               ElastosJS Acct
               ******************************************************************************************************************
               */}
-              <Card className={'flip-card ' + (elajsAcct.dataCommitted ? 'flip-card-active' : '')} style={{borderTopLeftRadius: 0}}>
-                <RegisterForm setElajsAcct={setElajsAcct} elajsAcct={elajsAcct}/>
-              </Card>
-              {/*
+                <Card className={'flip-card ' + (elajsAcct.dataCommitted ? 'flip-card-active' : '')}
+                      style={{ borderTopLeftRadius: 0 }}>
+                  <RegisterForm setElajsAcct={setElajsAcct} elajsAcct={elajsAcct}/>
+                </Card>
+                {/*
               ******************************************************************************************************************
               Fortmatic Connect
               ******************************************************************************************************************
               */}
-              <Card className="bg-tertiary px-4" style={{ width: '44%', borderTopRightRadius: 0 }}>
+                <Card className="bg-tertiary px-4" style={{ width: '44%', borderTopRightRadius: 0 }}>
+                  <CardBody>
+                    <div>
+                      <h2>Connect</h2>
+
+                      <img src={FortmaticLogo}/>
+
+                      <p className="text-muted py-4" style={{ marginBottom: '40px' }}>
+                        Your encryption keys and wallet is managed by Fortmatic, learn more at{' '}
+                        <a href="https://fortmatic.com" target="_blank">
+                          https://fortmatic.com
+                        </a>
+                      </p>
+
+                      {ethAddress === false ? <Loading size="50"/> : (ethAddress ?
+                        <FortmaticBtn className="px-4" tabIndex={-1} disabled>
+                          <div>Fortmatic Connected</div>
+                          <i className="cui-circle-check icons font-2xl ml-2"></i>
+                        </FortmaticBtn> :
+                        <FortmaticBtn className="px-4" tabIndex={-1} onClick={fortmaticConnect}>
+                          Connect Fortmatic
+                        </FortmaticBtn>)
+                      }
+                    </div>
+                  </CardBody>
+                </Card>
+              </CardGroup>
+              <Card className="text-right">
                 <CardBody>
-                  <div>
-                    <h2>Connect</h2>
-
-                    <img src={FortmaticLogo}/>
-
-                    <p className="text-muted py-4" style={{marginBottom: '40px'}}>
-                      Your encryption keys and wallet is managed by Fortmatic, learn more at{' '}
-                      <a href="https://fortmatic.com" target="_blank">
-                        https://fortmatic.com
-                      </a>
-                    </p>
-
-                    {ethAddress === false ? <Loading size="50"/> : (ethAddress ?
-                      <FortmaticBtn className="px-4" tabIndex={-1} disabled>
-                        <div>Fortmatic Connected</div>
-                        <i className="cui-circle-check icons font-2xl ml-2"></i>
-                      </FortmaticBtn> :
-                      <FortmaticBtn className="px-4" tabIndex={-1} onClick={fortmaticConnect}>
-                        Connect Fortmatic
-                      </FortmaticBtn>)
-                    }
-                  </div>
+                  <button className="btn btn-primary mb-2" onClick={handleRegister}
+                          disabled={canRegister ? '' : 'disabled'}>
+                    Continue
+                    <i className="fa fa-sign-in fa-lg ml-1"></i>
+                  </button>
+                  {canRegister ?
+                    <p className="text-string" style={{color: colors.ela_red}}>All Set!</p> :
+                    <p className="text-muted">You must register an ElastosJS account and connect Fortmatic to Continue</p>
+                  }
                 </CardBody>
               </Card>
-            </CardGroup>
-            <Card className="text-right">
-              <CardBody>
-                <button className="btn btn-primary mb-2" onClick={handleRegister} disabled={canRegister ? '' : 'disabled'}>
-                  Continue
-                  <i className="fa fa-sign-in fa-lg ml-1"></i>
-                </button>
-                <p className="text-muted">You must register an ElastosJS account and connect Fortmatic to Continue</p>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+            </Col>
+          </Row>
+        </Container> :
+
+        <RegisterTransaction elajsAcct={elajsAcct} ethAddress={ethAddress}/>
+      }
     </div>
   )
 }
