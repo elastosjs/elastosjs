@@ -8,7 +8,7 @@ const EthProvider = (props) => {
   const [ethConfig, setEthConfig] = useState({
     fm: null,
     gsnProvider: null,
-    web3: null,
+    fmWeb3: null,
     ozWeb3: null,
     store: null,
     persistor: null,

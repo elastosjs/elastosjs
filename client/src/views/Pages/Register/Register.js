@@ -102,7 +102,7 @@ const Register = (props) => {
           return
         }
 
-        const ethAccounts = await ethConfig.web3.eth.getAccounts()
+        const ethAccounts = await ethConfig.fmWeb3.eth.getAccounts()
 
         if (ethAccounts.length === 0){
           return
@@ -125,7 +125,7 @@ const Register = (props) => {
    */
   const fortmaticConnect = useCallback(async () => {
 
-    const ethAddress = await ethConfig.web3.currentProvider.baseProvider.enable()
+    const ethAddress = await ethConfig.fmWeb3.currentProvider.baseProvider.enable()
 
     setEthAddress(ethAddress)
 

@@ -48,7 +48,7 @@ const Dashboard = () => {
   console.log(`network = ${network}`)
 
   return (
-    !(ethConfig.ready && ethConfig.web3) ?
+    !(ethConfig.ready && ethConfig.fmWeb3) ?
     <Loading/> :
     <Provider store={ethConfig.store}>
       <DrizzleContext.Provider store={ethConfig.store} drizzle={ethConfig.drizzle}>

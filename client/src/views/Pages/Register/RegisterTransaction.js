@@ -34,9 +34,8 @@ const RegisterTransaction = (props) => {
 
   const [count, setCount] = useState(0)
 
-  const web3 = ethConfig.web3
+  const fmWeb3 = ethConfig.fmWeb3
   const ozWeb3 = ethConfig.ozWeb3
-  const gsnProvider = ethConfig.gsnProvider
 
   // load Counter Instance
   const [counterInstance, setCounterInstance] = useState(undefined)
@@ -45,10 +44,8 @@ const RegisterTransaction = (props) => {
 
   useEffect(() => {
 
-    const instance = new web3.eth.Contract(counterELAJSON.abi, contracts[network].counterEla)
+    const instance = new fmWeb3.eth.Contract(counterELAJSON.abi, contracts[network].counterEla)
     // const instance = new ozWeb3.lib.eth.Contract(counterELAJSON.abi, contracts[network].counterEla)
-
-    // instance.setProvider(gsnProvider)
 
     setCounterInstance(instance)
   }, [])
@@ -69,7 +66,9 @@ const RegisterTransaction = (props) => {
 
   const increase = async () => {
 
-    const accounts = await web3.eth.getAccounts()
+    const accounts = await fmWeb3.eth.getAccounts()
+
+    console.log('Fortmatic address: ' + accounts[0])
 
     await counterInstance.methods.increase().send({
       // from: ozWeb3.accounts[0],

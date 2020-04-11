@@ -47,11 +47,9 @@ const FormaticAPIKey = {
  */
 const getEthConfig = async (network) => {
 
-  console.log('getEthConfig')
-
   const fm = new Fortmatic(FormaticAPIKey[network], FortmaticNodeOptions[network])
   const gsnProvider = new GSNProvider(fm.getProvider())
-  const web3 = new Web3(gsnProvider)
+  const fmWeb3 = new Web3(gsnProvider)
 
   // GSN uses a special web3 too
   const ozWeb3 = await fromConnection(FortmaticNodeOptions[network].rpcUrl, {
@@ -61,7 +59,7 @@ const getEthConfig = async (network) => {
 
   // Drizzle uses a direct web3 connection, not Fortmatic
   // this web3 is meant to call the relayer for verified ethAddresses in AWS Cognito
-  const drizzleOptions = DrizzleOptions(network, web3)
+  const drizzleOptions = DrizzleOptions(network, ozWeb3)
 
   const persistConfig = {
     key: 'root',
@@ -89,7 +87,7 @@ const getEthConfig = async (network) => {
 
   return {
     fm,
-    web3,
+    fmWeb3,
     ozWeb3,
     gsnProvider,
     store,
