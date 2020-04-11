@@ -20,7 +20,7 @@ contract DateTime {
     function getDay(uint timestamp) public pure returns (uint8);
 }
 
-// TODO: good practice to have functinons not callable externally and internally
+// TODO: good practice to have functions not callable externally and internally
 contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     // key to our table list
