@@ -39,7 +39,8 @@ const options = (network, web3) => {
     },
     // contracts: [Box],
     polls: {
-      accounts: 5000
+      accounts: 15000,
+      blocks: 15000
     },
     silent: true
   }

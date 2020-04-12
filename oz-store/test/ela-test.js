@@ -13,7 +13,7 @@ const config = require('./config')
 
 const namehash = require('../scripts/namehash')
 
-const { strToBytes32, uintToBytes32 } = require('elajs')
+const { strToBytes32, uintToBytes32 } = require('ela-js')
 
 describe.skip('Tests for ELA Testnet', () => {
 

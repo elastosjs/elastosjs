@@ -109,7 +109,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
             _columnDtype
         );
 
-        createTable(tableKey, tableSchema);
+        saveSchema(tableKey, tableSchema);
 
     }
 
@@ -117,7 +117,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         return table.containsKey(tableKey);
     }
 
-    function createTable(bytes32 tableKey, TableLib.Table memory tableSchema) internal returns (bool) {
+    function saveSchema(bytes32 tableKey, TableLib.Table memory tableSchema) internal returns (bool) {
         bytes memory encoded = tableSchema.encode();
 
         // we store the encoded table schema on the base tableKey
@@ -125,7 +125,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     }
 
     // EXPERIMENTAL
-    function getTable(bytes32 _name) public view returns (TableLib.Table memory) {
+    function getSchema(bytes32 _name) public view returns (TableLib.Table memory) {
         bytes memory encoded = database.getBytesForKey(_name);
         return encoded.decodeTable();
     }
@@ -147,11 +147,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
         // permissions check, is the idTableKey a subhash of the id and table?
         require(isNamehashSubOf(idKey, tableKey, idTableKey) == true, "idTableKey not a subhash [id].[table]");
-
-        // IF this is a public table, for a each row, we add an entry in for idTableKey claiming this [id].[table] for the msg.sender
-        if (permission > 1) {
-            database.setAddressForKey(idTableKey, _msgSender());
-        }
 
         _;
     }
@@ -193,6 +188,11 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // add an id entry to the table's set of ids for the row
         table.addValueForKey(tableKey, id);
 
+        // add the "row owner" if it doesn't exist, the row may already exist in which case we don't update it
+        if (database.containsKey(idTableKey) == false){
+            _setRowOwner(idTableKey);
+        }
+
         // finally set the data
         // we won't serialize the type, that's way too much redundant data
         database.setValueForKey(fieldIdTableKey, bytes32(val));
@@ -226,6 +226,41 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         database.setValueForKey(fieldIdTableKey, val);
     }
 
+    /**
+     * @dev we are essentially claiming this [id].[table] for the msg.sender, and setting the id createdDate
+     */
+    function _setRowOwner(bytes32 idTableKey) internal {
+
+        require(database.containsKey(idTableKey) == false, "row already has owner");
+
+        uint256 rowMetadata;
+
+        uint16 year = dateTime.getYear(now);
+        uint8 month = dateTime.getMonth(now);
+        uint8 day = dateTime.getDay(now);
+
+        rowMetadata |= year;
+        rowMetadata |= uint256(month)<<16;
+        rowMetadata |= uint256(day)<<24;
+
+        rowMetadata |= uint256(_msgSender())<<32;
+
+        database.setValueForKey(idTableKey, bytes32(rowMetadata));
+    }
+
+    function _getRowOwner(bytes32 idTableKey) internal returns (address rowOwner, bytes4 createdDate){
+
+        uint256 rowMetadata = uint256(database.getBytes32ForKey(idTableKey));
+
+        createdDate = bytes4(uint32(rowMetadata));
+        rowOwner = address(rowMetadata>>32);
+
+    }
+
+    function getRowOwner(bytes32 idTableKey) public returns (address rowOwner, bytes4 createdDate){
+        return _getRowOwner(idTableKey);
+    }
+
     modifier updateCheck(bytes32 tableKey, bytes32 idKey, bytes32 idTableKey) {
 
         (uint256 permission, address delegate) = getTableMetadata(tableKey);
@@ -245,7 +280,10 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
             if (isOwner() || delegate == _msgSender()){
                 // pass
             } else {
-                require(database.getAddressForKey(idTableKey) == _msgSender(), "Sender not owner of row");
+                // rowMetaData is packed as address (bytes20) + createdDate (bytes4)
+                bytes32 rowMetaData = database.getBytes32ForKey(idTableKey);
+                address rowOwner = address(uint256(rowMetaData)>>32);
+                require(rowOwner == _msgSender(), "Sender not owner of row");
             }
         }
 
@@ -300,7 +338,10 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
             if (isOwner() || delegate == _msgSender()){
                 // pass
             } else {
-                require(database.getAddressForKey(idTableKey) == _msgSender(), "Sender not owner of row");
+                // rowMetaData is packed as address (bytes20) + createdDate (bytes4)
+                bytes32 rowMetaData = database.getBytes32ForKey(idTableKey);
+                address rowOwner = address(uint256(rowMetaData)>>32);
+                require(rowOwner == _msgSender(), "Sender not owner of row");
             }
         }
 

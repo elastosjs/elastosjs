@@ -15,7 +15,7 @@ const namehash = require('../scripts/namehash')
 
 const config = require('./config')
 
-const { strToBytes32, uintToBytes32, bytes32ToStr } = require('elajs')
+const { strToBytes32, uintToBytes32, bytes32ToStr } = require('ela-js')
 
 describe('Tests for Table Schema', () => {
 
@@ -72,7 +72,7 @@ describe('Tests for Table Schema', () => {
       gasPrice: config.gasPrice
     })
 
-    const schema = await ownerInstance.methods.getTable(tableKey).call()
+    const schema = await ownerInstance.methods.getSchema(tableKey).call()
 
 
     expect(Web3.utils.hexToString(schema.name)).to.be.equals(TABLE_NAME)

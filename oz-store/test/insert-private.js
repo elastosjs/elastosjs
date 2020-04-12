@@ -15,7 +15,7 @@ const namehash = require('../scripts/namehash')
 
 const config = require('./config')
 
-const { strToBytes32, uintToBytes32 } = require('elajs')
+const { strToBytes32, uintToBytes32 } = require('ela-js')
 
 // THESE NO LONGER WORK - not updated
 describe.skip('Tests for Insert Private Table', () => {

@@ -16,7 +16,7 @@ const namehash = require('../scripts/namehash')
 
 const config = require('./config')
 
-const { strToBytes32, uintToBytes32 } = require('elajs')
+const { strToBytes32, uintToBytes32 } = require('ela-js')
 
 describe('Tests for Insert Public Table', () => {
 
@@ -255,6 +255,7 @@ describe('Tests for Insert Public Table', () => {
 
     const fieldKey = sha3.update(fieldStr).digest()
 
+    // should fail because not owner of row
     try {
       await ephemeralInstanceOther.methods.updateVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
         from: ozWeb3Other.accounts[0]
@@ -273,6 +274,13 @@ describe('Tests for Insert Public Table', () => {
 
     expect(Web3.utils.hexToString(val)).to.be.equal(VAL_RAW)
 
+    // get date created
+    const rowMetadata = await ephemeralInstance.methods.getRowOwner(idTableKey).call()
+
+    const buf = new Buffer.from(rowMetadata.createdDate.substring(2), 'hex')
+
+    expect(new Date().getFullYear()).to.be.equal(buf[2]*16**2 + buf[3])
+
   })
 
   it('Should DELETE a the global test id value', async () => {
@@ -286,7 +294,6 @@ describe('Tests for Insert Public Table', () => {
     // console.log(tableIds)
 
     expect(tableIds.length).to.be.equal(2)
-
 
 
     sha3.reset()
@@ -435,8 +442,6 @@ describe('Tests for Insert Public Table', () => {
       from: ozWeb3.accounts[0],
       gasPrice: config.gasPrice
     })
-
-
 
     try {
       await ephemeralInstance.methods.insert(tableKey, idTableKey, idKey, id, fieldKeys, fieldIdTableKeys, values).send({

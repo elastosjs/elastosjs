@@ -28,3 +28,5 @@ sed -i '' -e "s!^\(ELAJSSTORE_CONTRACT_ADDR=\).*!\1$contractAddr!" ./env/test.en
 END=`date +%s`
 
 print_success "\nDone. Runtime: $((END-START)) seconds."
+
+exit 1
