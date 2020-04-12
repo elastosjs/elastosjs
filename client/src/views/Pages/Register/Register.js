@@ -163,16 +163,7 @@ const Register = (props) => {
    ************************************************************************************************************
    */
   const handleRegister = useCallback(async () => {
-
     setIsRegistering(true)
-    /*
-    await props.dispatch({
-      action: ProfileActionTypes.REGISTER,
-      username: elajsAcct.username,
-      // passwordHash: sha3.update(elajsAcct.password).digest(),
-      ethAddress: ethAddress
-    })
-     */
   }, [])
 
 
@@ -276,7 +267,7 @@ const Register = (props) => {
                     <i className="fa fa-sign-in fa-lg ml-1"></i>
                   </button>
                   {canRegister ?
-                    <p className="text-string" style={{color: colors.ela_red}}>All Set!</p> :
+                    <p>Click here to Register</p> :
                     <p className="text-muted">You must register an ElastosJS account and connect Fortmatic to Continue</p>
                   }
                 </CardBody>

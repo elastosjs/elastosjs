@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 import {
   Button,
@@ -30,13 +30,13 @@ const RegisterForm = (props) => {
     msgs: []
   })
 
-  const handleUsernameChange = (ev) => {
+  const handleUsernameChange = useCallback((ev) => {
     const username = ev.target.value
 
     setElajsAcct({ ...elajsAcct, username, usernameInvalid: !(username && username.length >= constants.PROFILE.USERNAME_MIN_LEN && validateUsername(username))} )
-  }
+  }, [elajsAcct])
 
-  const handlePw = async (ev) => {
+  const handlePw = useCallback((ev) => {
     const pw = ev.target.value
 
     if (pw.length < 8){
@@ -62,7 +62,7 @@ const RegisterForm = (props) => {
     // else set to valid
     setElajsAcct({ ...elajsAcct, password: pw, passwordInvalid: false, passwordInvalidMsg: ''} )
 
-  }
+  }, [elajsAcct])
 
   // if the password changes it definitely invalidates the passwordConfirm being valid
   useEffect(() => {
@@ -71,7 +71,7 @@ const RegisterForm = (props) => {
     }
   }, [elajsAcct.password])
 
-  const handlePwConfirm = (pwConfirm) => {
+  const handlePwConfirm = useCallback((pwConfirm) => {
 
     if (elajsAcct.password.length < 8){
       return
@@ -84,9 +84,9 @@ const RegisterForm = (props) => {
 
     // else set to valid
     setElajsAcct({ ...elajsAcct, passwordConfirmInvalid: false} )
-  }
+  }, [elajsAcct])
 
-  const handleCreateAcct = () => {
+  const handleCreateAcct = useCallback(() => {
 
     let errors = []
 
@@ -112,18 +112,18 @@ const RegisterForm = (props) => {
 
     // if we reach here all is good with the registration fields
     toggleCommitAcct()
-  }
+  }, [elajsAcct])
 
   /**
    * We commit the registration fields by setting `elajsAcct.dataCommitted` to true
    */
-  const toggleCommitAcct = () => {
+  const toggleCommitAcct = useCallback(() => {
     setElajsAcct({
       ...elajsAcct,
 
       dataCommitted: !elajsAcct.dataCommitted
     })
-  }
+  }, [elajsAcct])
 
   const modalErrorToggle = () => setModalErrorData({ ...modalErrorData, isOpen: false} )
 

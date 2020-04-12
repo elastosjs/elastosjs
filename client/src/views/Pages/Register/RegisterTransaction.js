@@ -31,7 +31,7 @@ import ELAJStoreDev from '../../../contracts/ELAJSStore-development.json'
 
 // import counterELAJSON from '../../../contracts/CounterELA.json'
 
-const USER_TABLE = 'user'
+const USER_TABLE = constants.SCHEMA.USER_TABLE
 
 const RegisterTransaction = (props) => {
 

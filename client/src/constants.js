@@ -7,5 +7,8 @@ export default {
   PROFILE: {
     USERNAME_MIN_LEN: 6,
     PASSWORD_MIN_LEN: 8
+  },
+  SCHEMA: {
+    USER_TABLE: 'user'
   }
 }

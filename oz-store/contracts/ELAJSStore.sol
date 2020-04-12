@@ -509,6 +509,10 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         return table.enumerateForKey(tableKey);
     }
 
+    function getIdExists(bytes32 tableKey, bytes32 id) external view returns (bool) {
+        return table.containsValueForKey(tableKey, id);
+    }
+
     function isNamehashSubOf(bytes32 subKey, bytes32 base, bytes32 target) internal pure returns (bool) {
 
         bytes memory concat = new bytes(64);

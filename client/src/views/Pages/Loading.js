@@ -5,10 +5,11 @@ import { HashLoader } from 'react-spinners'
 const Loading = (props) => {
 
   const size = (props && props.size) || 150
+  const marginSize = (props && props.margin) || 5
 
   return (
-    <div className="App body" style={{'marginTop': '20%'}}>
-      <div className="d-flex justify-content-center m-5">
+    <div className="App body" style={{'marginTop': `${marginSize * 4}%`}}>
+      <div className={'d-flex justify-content-center m-' + marginSize}>
         <HashLoader
           size={size}
           color={"#4f789c"}
