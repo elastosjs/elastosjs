@@ -792,6 +792,16 @@
         "address": "0xa9A3ce77a659D5cF3744c55736912751e5e2BcA9",
         "kind": "NonProxy",
         "bytecodeHash": "77daae1ddd479aac4cda47fd5344d87073ca63af88853e4f575ea711a45d606d"
+      },
+      {
+        "address": "0xb632bc154a60ed60a2912A2dE88Eb2eA74dB0B91",
+        "kind": "NonProxy",
+        "bytecodeHash": "3902a51b7595ddf12c82478f909f1a58513e8658d88da37f38b9c561f2e1b0bc"
+      },
+      {
+        "address": "0x2F3923b197F0abAC7f175bFE2070bd5eC86Fb32B",
+        "kind": "NonProxy",
+        "bytecodeHash": "8ef191f72c34ddb58825d6c772e94732ef13029cf34b5752c853dea12d0813c2"
       }
     ],
     "oz-store/DateTime": [

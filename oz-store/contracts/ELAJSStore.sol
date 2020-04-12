@@ -27,8 +27,8 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     bytes32 constant public schemasTables = 0x736368656d61732e7075626c69632e7461626c65730000000000000000000000;
 
     // DateTime Contract address
-    address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
-    // address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
+    // address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
+    address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
 
     // Initialize the DateTime contract ABI with the already deployed contract
     DateTime dateTime = DateTime(dateTimeAddr);
@@ -190,12 +190,13 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
         // add the "row owner" if it doesn't exist, the row may already exist in which case we don't update it
         if (database.containsKey(idTableKey) == false){
-            _setRowOwner(idTableKey);
+            _setRowOwner(idTableKey, id, tableKey);
         }
 
         // finally set the data
         // we won't serialize the type, that's way too much redundant data
         database.setValueForKey(fieldIdTableKey, bytes32(val));
+
     }
 
     function insertValVar(
@@ -229,7 +230,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     /**
      * @dev we are essentially claiming this [id].[table] for the msg.sender, and setting the id createdDate
      */
-    function _setRowOwner(bytes32 idTableKey) internal {
+    function _setRowOwner(bytes32 idTableKey, bytes32 id, bytes32 tableKey) internal {
 
         require(database.containsKey(idTableKey) == false, "row already has owner");
 
@@ -243,10 +244,20 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         rowMetadata |= uint256(month)<<16;
         rowMetadata |= uint256(day)<<24;
 
+        bytes4 createdDate = bytes4(uint32(rowMetadata));
+
         rowMetadata |= uint256(_msgSender())<<32;
 
         database.setValueForKey(idTableKey, bytes32(rowMetadata));
+
+        emit InsertRow(id, tableKey, _msgSender());
     }
+
+    event InsertRow (
+        bytes32 indexed _id,
+        bytes32 indexed _tableKey,
+        address indexed _rowOwner
+    );
 
     function _getRowOwner(bytes32 idTableKey) internal returns (address rowOwner, bytes4 createdDate){
 

@@ -148,14 +148,10 @@ describe('Tests for Insert Public Table', () => {
       expect(err.message).to.not.equal('manual error')
     }
 
-    /*
-    const results = await ephemeralInstance.getPastEvents('GsnCounterIncrease', {})
 
-    console.log(results)
+    // const results = await ephemeralInstance.getPastEvents('InsertRow', {})
 
-    ephemeralInstance.events.GsnCounterIncrease({}).on('data', (ev) => console.log(ev));
-    */
-
+    // console.log(results)
 
   })
 
