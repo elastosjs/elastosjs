@@ -32,7 +32,7 @@ const Register = (props) => {
 
   const [ethConfig, setEthConfig] = useContext(EthContext)
 
-  const [canRegister, setCanRegister] = useState(true)
+  const [canRegister, setCanRegister] = useState(false)
 
   const [progress, setProgress] = useState({
     val: 10,

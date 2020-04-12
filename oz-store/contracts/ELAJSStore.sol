@@ -27,8 +27,8 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     bytes32 constant public schemasTables = 0x736368656d61732e7075626c69632e7461626c65730000000000000000000000;
 
     // DateTime Contract address
-    // address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
-    address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
+    address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
+    // address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
 
     // Initialize the DateTime contract ABI with the already deployed contract
     DateTime dateTime = DateTime(dateTimeAddr);
@@ -288,16 +288,19 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // permissions check (public table = 2, shared table = 3),
         // if 2 or 3 is the _msg.sender() the row owner? But if 3 owner() is always allowed
         if (permission >= 2) {
-            if (isOwner() || delegate == _msgSender()){
+
+            // rowMetaData is packed as address (bytes20) + createdDate (bytes4)
+            bytes32 rowMetaData = database.getBytes32ForKey(idTableKey);
+            address rowOwner = address(uint256(rowMetaData)>>32);
+
+            // if either 2 or 3, if you're the row owner it's fine
+            if (rowOwner == _msgSender()){
                 // pass
             } else {
-                // rowMetaData is packed as address (bytes20) + createdDate (bytes4)
-                bytes32 rowMetaData = database.getBytes32ForKey(idTableKey);
-                address rowOwner = address(uint256(rowMetaData)>>32);
-                require(rowOwner == _msgSender(), "Sender not owner of row");
+                require(isOwner() == true || delegate == _msgSender(), "Not rowOwner or owner/delegate for UPDATE into this table");
             }
-        }
 
+        }
         _;
     }
 
