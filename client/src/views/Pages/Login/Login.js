@@ -208,7 +208,7 @@ const Login = (props) => {
 
       // console.log('id = ' + id)
 
-      const expectedAuthHash = elajs.keccak256(id + elajsAcct.password + ethAddress + 'elajs')
+      const expectedAuthHash = elajs.keccak256(id.substring(2) + elajsAcct.password + ethAddress.substring(2) + 'elajs')
 
       const fieldIdTableKey = elajs.namehash(`authHash.${id.substring(2)}.${constants.SCHEMA.USER_TABLE}`)
 

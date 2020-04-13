@@ -1,0 +1,49 @@
+{
+  "contracts": {},
+  "solidityLibs": {},
+  "proxies": {
+    "oz-store/ELAJSStore": [
+      {
+        "address": "0x75B6570cd9699f6194bf4E6f4b3812b4CfBAE337",
+        "kind": "NonProxy",
+        "bytecodeHash": "1488c4a3031fb8bf5a425d4d466b7af00fe7cb71b2583a3c48deecde51195259"
+      },
+      {
+        "address": "0x158CBa029dE5D141f0e6e264de7b4F22C1c6A700",
+        "kind": "NonProxy",
+        "bytecodeHash": "cfd24d9d53f920005864e3ce9d3731f47521b844792fb4c3bf5f86e289ef1490"
+      },
+      {
+        "address": "0xDdc6DFA63A1a403d6e8f5f6f2bcBb6fEe128bC57",
+        "kind": "NonProxy",
+        "bytecodeHash": "cfd24d9d53f920005864e3ce9d3731f47521b844792fb4c3bf5f86e289ef1490"
+      },
+      {
+        "address": "0xcCeba486643d71DCD1A0d3bc9fc95a86ec2168dd",
+        "kind": "NonProxy",
+        "bytecodeHash": "cfd24d9d53f920005864e3ce9d3731f47521b844792fb4c3bf5f86e289ef1490"
+      },
+      {
+        "address": "0x2235F7c73182A17f42E9FFeDd55Ac9E9a899e71F",
+        "kind": "NonProxy",
+        "bytecodeHash": "cfd24d9d53f920005864e3ce9d3731f47521b844792fb4c3bf5f86e289ef1490"
+      },
+      {
+        "address": "0xaB2F1D46eda62Fad755B0175614eFf49c74B9B7C",
+        "kind": "NonProxy",
+        "bytecodeHash": "4beb7d1f88d2326ee8a1d920d7cbc4c7aef13dc70b241b524db459c5a7d8d58f"
+      },
+      {
+        "address": "0xcd80c5F931E793016697f584A5cEF2fce2999365",
+        "kind": "NonProxy",
+        "bytecodeHash": "4beb7d1f88d2326ee8a1d920d7cbc4c7aef13dc70b241b524db459c5a7d8d58f"
+      },
+      {
+        "address": "0x9Eabad7BEf5Dd7CDeCc8cc954ae391D15d668f8f",
+        "kind": "NonProxy",
+        "bytecodeHash": "4beb7d1f88d2326ee8a1d920d7cbc4c7aef13dc70b241b524db459c5a7d8d58f"
+      }
+    ]
+  },
+  "manifestVersion": "2.2"
+}

@@ -59,7 +59,7 @@ const getEthConfig = async (network) => {
 
   // Drizzle uses a direct web3 connection, not Fortmatic
   // this web3 is meant to call the relayer for verified ethAddresses in AWS Cognito
-  const drizzleOptions = DrizzleOptions(network, ozWeb3)
+  const drizzleOptions = DrizzleOptions(network, fmWeb3)
 
   const persistConfig = {
     key: 'root',

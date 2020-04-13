@@ -18,7 +18,7 @@ import { NetworkContext } from '../../../context/NetworkContext'
 
 import Web3 from 'web3'
 
-import elajs from 'ela-js'
+import { namehash, keccak256 } from 'ela-js'
 
 import constants from '../../../constants'
 
@@ -43,6 +43,8 @@ const RegisterTransaction = (props) => {
 
   const {inserts} = getInsertData(props)
 
+  console.log(inserts)
+
   const [elajsStore, setElajsStore] = useState()
 
   useEffect(() => {
@@ -54,10 +56,15 @@ const RegisterTransaction = (props) => {
 
   const register = useCallback(async () => {
 
+    if (!elajsStore){
+      return
+    }
+
     try {
       for (let i = 0; i < inserts.length; i++){
 
         // ephemeral call - this contract was initialized off of ozWeb3
+        // TODO: use elajs class
         await elajsStore.methods.insertVal(
           inserts[i].tableKey,
           inserts[i].idTableKey,
@@ -189,11 +196,12 @@ function getInsertData({elajsAcct, ethAddress}){
   // we avoid username collision checking by declaring the unique key as username + ethAddress,
   // so technically multiple people could have the same username
   // TODO: revisit this decision
-  const id = elajs.keccak256(elajsAcct.username + ethAddress)
-  const idKey = elajs.keccak256(id.substring(2))
+  debugger
+  const id = keccak256(elajsAcct.username + ethAddress)
+  const idKey = keccak256(id.substring(2))
 
-  const tableKey = elajs.namehash(USER_TABLE)
-  const idTableKey = elajs.namehash(`${id.substring(2)}.${USER_TABLE}`)
+  const tableKey = namehash(USER_TABLE)
+  const idTableKey = namehash(`${id.substring(2)}.${USER_TABLE}`)
 
   const cols = ['ethAddressHash', 'authHash', 'admin']
   const colTypes = ['BYTES32', 'BYTES32', 'BOOL']
@@ -202,32 +210,32 @@ function getInsertData({elajsAcct, ethAddress}){
     {
       tableKey,
       idTableKey,
-      fieldIdTableKey: elajs.namehash(`ethAddressHash.${id.substring(2)}.${USER_TABLE}`),
+      fieldIdTableKey: namehash(`ethAddressHash.${id.substring(2)}.${USER_TABLE}`),
 
       idKey,
       id,
-      fieldKey: elajs.keccak256('ethAddressHash'),
-      value: elajs.keccak256(ethAddress)
+      fieldKey: keccak256('ethAddressHash'),
+      value: keccak256(ethAddress)
     },
     {
       tableKey,
       idTableKey,
-      fieldIdTableKey: elajs.namehash(`authHash.${id.substring(2)}.${USER_TABLE}`),
+      fieldIdTableKey: namehash(`authHash.${id.substring(2)}.${USER_TABLE}`),
 
       idKey,
       id,
       // no point hiding the salt here anyway, it's all client-side
-      fieldKey: elajs.keccak256('authHash'),
-      value: elajs.keccak256(id + elajsAcct.password + ethAddress + 'elajs')
+      fieldKey: keccak256('authHash'),
+      value: keccak256(id.substring(2) + elajsAcct.password + ethAddress.substring(2) + 'elajs')
     },
     {
       tableKey,
       idTableKey,
-      fieldIdTableKey: elajs.namehash(`admin.${id.substring(2)}.${USER_TABLE}`),
+      fieldIdTableKey: namehash(`admin.${id.substring(2)}.${USER_TABLE}`),
 
       idKey,
       id,
-      fieldKey: elajs.keccak256('admin'),
+      fieldKey: keccak256('admin'),
       value: Web3.utils.numberToHex(0)
     }
   ]
