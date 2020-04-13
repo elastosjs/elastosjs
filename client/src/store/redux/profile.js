@@ -33,7 +33,8 @@ export const ProfileActionTypes = {
   REGISTER: 'REGISTER',
   LOGGING_IN: 'LOGGING_IN',
   READY: 'READY',
-  LOGOUT: 'LOGOUT'
+  LOGOUT: 'LOGOUT',
+  SET_CREDENTIALS: 'SET_CREDENTIALS'
 };
 
 /*
@@ -49,7 +50,9 @@ const initialState = {
 
   // Temporary client side store
   // we don't actually save the username, but a hashed id for reference
-  username: ''
+  username: '',
+
+  isAdmin: 0
 }
 
 /**
@@ -177,10 +180,12 @@ export default {
         }
 
       case ProfileActionTypes.REGISTER:
+      case ProfileActionTypes.SET_CREDENTIALS:
         return {
           ...state,
           username: action.username,
-          ethAddress: action.ethAddress
+          ethAddress: action.ethAddress,
+          isAdmin: action.isAdmin || 0
         }
 
       case ProfileActionTypes.SET_ETH_ADDRESS:

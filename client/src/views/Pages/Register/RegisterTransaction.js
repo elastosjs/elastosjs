@@ -24,7 +24,7 @@ import constants from '../../../constants'
 
 import { contracts } from '../../../config'
 
-import { ProfileActionTypes, ActionRegister } from '../../../store/redux/profile'
+import { ProfileActionTypes } from '../../../store/redux/profile'
 
 import ELAJStoreDev from '../../../contracts/ELAJSStore-development.json'
 // import ELAJStoreTestnet from '../../../contracts/ELAJSStore-development.json'

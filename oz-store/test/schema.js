@@ -15,12 +15,9 @@ const namehash = require('../scripts/namehash')
 
 const config = require('./config')
 
-const { strToBytes32, uintToBytes32, bytes32ToStr } = require('ela-js')
-
 describe('Tests for Table Schema', () => {
 
   const TABLE_NAME = 'inventory'
-  const TABLE_NAME_BYTES32 = strToBytes32(TABLE_NAME)
 
   let ozWeb3, web3, ownerInstance, ephemeralInstance
 
@@ -52,17 +49,18 @@ describe('Tests for Table Schema', () => {
     const colsRaw = ['item_code', 'item_name', 'color', 'description', 'qty', 'imgIPFS']
     const typesRaw = ['CHAR32', 'CHAR32', 'CHAR32', 'TEXT', 'UINT', 'BYTES32']
 
-    const cols = colsRaw.map((colName) => strToBytes32(colName))
-    const types = typesRaw.map((colName) => strToBytes32(colName))
+    // TODO: should use Web3.utils.stringToHex
+    const cols = colsRaw.map((colName) => Web3.utils.stringToHex(colName))
+    const types = typesRaw.map((colName) => Web3.utils.stringToHex(colName))
 
     assert(cols.length === types.length)
 
-    expect(bytes32ToStr(types[0])).to.be.equal('CHAR32')
+    expect(Web3.utils.hexToString(types[0])).to.be.equal('CHAR32')
 
 
     // now create the table, this will be a public table - still need the ownerInstance to create it
     await ownerInstance.methods.createTable(
-      TABLE_NAME_BYTES32,
+      Web3.utils.stringToHex(TABLE_NAME),
       tableKey,
       2,
       cols,

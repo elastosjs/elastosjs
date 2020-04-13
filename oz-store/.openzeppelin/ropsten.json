@@ -802,6 +802,11 @@
         "address": "0x2F3923b197F0abAC7f175bFE2070bd5eC86Fb32B",
         "kind": "NonProxy",
         "bytecodeHash": "8ef191f72c34ddb58825d6c772e94732ef13029cf34b5752c853dea12d0813c2"
+      },
+      {
+        "address": "0x920e270C53A792F7433a782acdc041A579d6d928",
+        "kind": "NonProxy",
+        "bytecodeHash": "1488c4a3031fb8bf5a425d4d466b7af00fe7cb71b2583a3c48deecde51195259"
       }
     ],
     "oz-store/DateTime": [

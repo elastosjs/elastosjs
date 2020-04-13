@@ -97,12 +97,17 @@ describe('Tests for Insert Public Table', () => {
       gasPrice: config.gasPrice
     })
 
+    /*
+    const results = await ephemeralInstance.getPastEvents('Debug', {})
+
+    console.log(results)
+    */
   })
 
   it('Should INSERT a test value (str) with 1 field to an ID', async () => {
 
     const VAL_RAW = 'Clarence'
-    const VAL = strToBytes32(VAL_RAW)
+    const VAL = Web3.utils.stringToHex(VAL_RAW)
 
     const fieldStr = 'firstName'
     const fieldIdTableKey = namehash.hash(`${fieldStr}.${idStr}.user`)
@@ -162,7 +167,7 @@ describe('Tests for Insert Public Table', () => {
 
     const VAL2_RAW = 'John'
     // const VAL2_RAW = 'Contrary to popular belief, Lorem Ipsum is not simply random text.'
-    const VAL2 = Buffer.from(VAL2_RAW)
+    const VAL2 = Web3.utils.stringToHex(VAL2_RAW)
 
     sha3.reset()
 
@@ -242,7 +247,7 @@ describe('Tests for Insert Public Table', () => {
   it('Should UPDATE a test value (str)', async () => {
 
     const VAL_RAW = 'Mary'
-    const VAL = strToBytes32(VAL_RAW)
+    const VAL = Web3.utils.stringToHex(VAL_RAW)
 
     const fieldStr = 'firstName'
     const fieldIdTableKey = namehash.hash(`${fieldStr}.${idStr}.user`)

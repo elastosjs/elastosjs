@@ -1,3 +1,41 @@
+
+import { useContext, useState, useEffect } from 'react'
+import { EthContext } from './context/EthContext'
+
+export const useNavigation = (profile) => {
+
+  const [nav, setNav] = useState()
+
+  console.log('useNavigation called')
+
+  const [ethConfig, setEthConfig] = useContext(EthContext)
+
+  const baseNav = {
+    items: [
+      {
+        name: 'Dashboard',
+        url: '/dashboard',
+        icon: 'icon-speedometer'
+      },
+      {
+        name: 'Databases',
+        url: '/databases',
+        icon: 'icon-layers'
+      }
+    ]
+  };
+
+  useEffect(() => {
+
+    setNav(baseNav)
+
+  }, [])
+
+  return nav
+}
+
+
+/*
 export default {
   items: [
     {
@@ -10,7 +48,7 @@ export default {
       url: '/databases',
       icon: 'icon-layers'
     }
-    /*
+
     {
       title: true,
       name: 'Theme',
@@ -278,6 +316,8 @@ export default {
       variant: 'danger',
       attributes: { target: '_blank', rel: "noopener" },
     },
-    */
+
   ],
 };
+
+ */

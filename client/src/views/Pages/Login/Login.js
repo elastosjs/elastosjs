@@ -30,10 +30,12 @@ import { contracts } from '../../../config'
 import _ from 'lodash'
 import elajs from 'ela-js'
 import ELAJStoreDev from '../../../contracts/ELAJSStore-development.json'
+import { ProfileActionTypes } from '../../../store/redux/profile'
+import { connect } from 'react-redux'
 
 
 // TODO: DRY merge redundant code between this and Register pages
-const Login = () => {
+const Login = (props) => {
 
   const [ethConfig, setEthConfig] = useContext(EthContext)
   const [network, setNetwork] = useContext(NetworkContext)
@@ -202,7 +204,9 @@ const Login = () => {
 
       // get the authHash from the id and check if it matches the authHash
       const id = elajs.keccak256(elajsAcct.username + ethAddress)
-      const idKey = elajs.keccak256(id.substring(2))
+      // const idKey = elajs.keccak256(id.substring(2))
+
+      // console.log('id = ' + id)
 
       const expectedAuthHash = elajs.keccak256(id + elajsAcct.password + ethAddress + 'elajs')
 
@@ -225,6 +229,26 @@ const Login = () => {
         toggleCommitAcct()
         return
       }
+
+      // check for admin
+      const adminFieldIdTableKey = elajs.namehash(`admin.${id.substring(2)}.${constants.SCHEMA.USER_TABLE}`)
+
+      let isAdmin = 0
+
+      try {
+        isAdmin = Web3.utils.hexToNumber(await elajsStore.methods.getRowValue(adminFieldIdTableKey).call())
+      } catch (err){
+        // pass
+      }
+
+
+
+      props.dispatch({
+        type: ProfileActionTypes.SET_CREDENTIALS,
+        username: elajsAcct.username,
+        ethAddress: ethAddress,
+        isAdmin: isAdmin
+      })
 
       // else it matches
       window.location.hash = 'dashboard'
@@ -410,7 +434,13 @@ const Login = () => {
   )
 }
 
-export default Login
+const mapStateToProps = (state) => {
+  return {
+    profile: state.root.profile,
+  }
+}
+
+export default connect(mapStateToProps)(Login)
 
 const FortmaticBtn = styled(Button)`
   background-color: #6851ff;

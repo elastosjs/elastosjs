@@ -3,7 +3,7 @@ pragma experimental ABIEncoderV2;
 
 import "sol-datastructs/src/contracts/PolymorphicDictionaryLib.sol";
 
-import "sol-datastructs/src/contracts/Bytes32DictionaryLib.sol";
+// import "sol-datastructs/src/contracts/Bytes32DictionaryLib.sol";
 import "sol-datastructs/src/contracts/Bytes32SetDictionaryLib.sol";
 
 // import "./oz/EnumerableSetDictionary.sol";
@@ -23,12 +23,9 @@ contract DateTime {
 // TODO: good practice to have functions not callable externally and internally
 contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
-    // key to our table list
-    bytes32 constant public schemasTables = 0x736368656d61732e7075626c69632e7461626c65730000000000000000000000;
-
     // DateTime Contract address
-    address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
-    // address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
+    // address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
+    address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
 
     // Initialize the DateTime contract ABI with the already deployed contract
     DateTime dateTime = DateTime(dateTimeAddr);
@@ -41,7 +38,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     uint40 public gsnMaxCallsPerDay;
 
     using PolymorphicDictionaryLib for PolymorphicDictionaryLib.PolymorphicDictionary;
-    using Bytes32DictionaryLib for Bytes32DictionaryLib.Bytes32Dictionary;
     using Bytes32SetDictionaryLib for Bytes32SetDictionaryLib.Bytes32SetDictionary;
 
     // _table = system table (bytes32 Dict) of each table's metadata marshaled
@@ -50,13 +46,16 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     mapping(bytes32 => bytes32) internal _table;
 
     // table = dict, where the key is the table, and the value is a set of byte32 ids
-    Bytes32SetDictionaryLib.Bytes32SetDictionary internal table;
+    Bytes32SetDictionaryLib.Bytes32SetDictionary internal tableId;
 
     // Schema dictionary, key (schemasPublicTables) points to a set of table names
     using TableLib for TableLib.Table;
     using TableLib for bytes;
     // using ColumnLib for ColumnLib.Column;
     // using ColumnLib for bytes;
+
+    // schemaTables -> Set of tables (raw table name values) for enumeration
+    bytes32 constant public schemasTables = 0x736368656d61732e7075626c69632e7461626c65730000000000000000000000;
 
     // namehash([tableName]) => encoded table schema
     // ownership of each row (id) - key = namehash([id].[table]) which has a value that is the owner's address
@@ -73,16 +72,19 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     function _initialize() internal {
         gsnMaxCallsPerDay = 1000;
+
+        // init the key for schemasTables, our set is one-to-many-fixed, so table names must be max 32 bytes
+        database.addKey(schemasTables, PolymorphicDictionaryLib.DictionaryType.OneToManyFixed);
     }
 
     // ************************************* SCHEMA FUNCTIONS *************************************
     /**
      * @dev create a new table, only the owner may create this
      *
+     * @param tableName right padded zeroes (Web3.utils.stringToHex)
      * @param tableKey this is the namehash of tableName
      */
     function createTable(
-
         bytes32 tableName,
         bytes32 tableKey,
         uint8 permission,
@@ -90,6 +92,9 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         bytes32[] memory _columnDtype
 
     ) public onlyOwner {
+
+        // this only works if tableName is trimmed of padding zeroes, since this is an onlyOwner call we won't bother
+        // require(isNamehashSubOf(keccak256(tableNameBytes), bytes32(0), tableKey), "tableName does not match tableKey");
 
         // check if table exists
         require(_table[tableKey] == 0, "Table already exists");
@@ -99,8 +104,10 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // claim the key slot and set the metadata
         setTableMetadata(tableKey, permission, delegate);
 
+        database.addValueForKey(schemasTables, tableName);
+
         // table stores the row ids set as the value, set up the key
-        table.addKey(tableKey);
+        tableId.addKey(tableKey);
 
         // now insert the schema
         TableLib.Table memory tableSchema = TableLib.create(
@@ -110,12 +117,22 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         );
 
         saveSchema(tableKey, tableSchema);
-
     }
 
+    // TODO: this isn't complete
+    function deleteTable(
+        bytes32 tableName,
+        bytes32 tableKey
+    ) public onlyOwner {
+        database.removeValueForKey(schemasTables, tableName);
+        tableId.removeKey(tableKey);
+    }
+
+    /*
     function tableExists(bytes32 tableKey) public view returns (bool) {
-        return table.containsKey(tableKey);
+        return tableId.containsKey(tableKey);
     }
+    */
 
     function saveSchema(bytes32 tableKey, TableLib.Table memory tableSchema) internal returns (bool) {
         bytes memory encoded = tableSchema.encode();
@@ -185,8 +202,8 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // increment counter
         increaseGsnCounter();
 
-        // add an id entry to the table's set of ids for the row
-        table.addValueForKey(tableKey, id);
+        // add an id entry to the table's set of ids for the row (this is a set so we don't need to check first)
+        tableId.addValueForKey(tableKey, id);
 
         // add the "row owner" if it doesn't exist, the row may already exist in which case we don't update it
         if (database.containsKey(idTableKey) == false){
@@ -199,6 +216,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     }
 
+    /*
     function insertValVar(
         bytes32 tableKey,
         bytes32 idTableKey,
@@ -221,11 +239,12 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         increaseGsnCounter();
 
         // add an id entry to the table's set of ids for the row
-        table.addValueForKey(tableKey, id);
+        tableId.addValueForKey(tableKey, id);
 
         // finally set the data
         database.setValueForKey(fieldIdTableKey, val);
     }
+    */
 
     /**
      * @dev we are essentially claiming this [id].[table] for the msg.sender, and setting the id createdDate
@@ -259,17 +278,13 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         address indexed _rowOwner
     );
 
-    function _getRowOwner(bytes32 idTableKey) internal returns (address rowOwner, bytes4 createdDate){
+    function getRowOwner(bytes32 idTableKey) external returns (address rowOwner, bytes4 createdDate){
 
         uint256 rowMetadata = uint256(database.getBytes32ForKey(idTableKey));
 
         createdDate = bytes4(uint32(rowMetadata));
         rowOwner = address(rowMetadata>>32);
 
-    }
-
-    function getRowOwner(bytes32 idTableKey) public returns (address rowOwner, bytes4 createdDate){
-        return _getRowOwner(idTableKey);
     }
 
     modifier updateCheck(bytes32 tableKey, bytes32 idKey, bytes32 idTableKey) {
@@ -318,7 +333,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     public updateCheck(tableKey, idKey, idTableKey) {
 
-        require(table.containsValueForKey(tableKey, id) == true, "id doesn't exist, use INSERT");
+        require(tableId.containsValueForKey(tableKey, id) == true, "id doesn't exist, use INSERT");
 
         // now check if the full field + id + table is a subhash
         require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
@@ -333,7 +348,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     modifier deleteCheck(bytes32 tableKey, bytes32 idTableKey, bytes32 idKey, bytes32 id) {
 
-        require(table.containsValueForKey(tableKey, id) == true, "id doesn't exist");
+        require(tableId.containsValueForKey(tableKey, id) == true, "id doesn't exist");
 
         (uint256 permission, address delegate) = getTableMetadata(tableKey);
 
@@ -426,7 +441,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         increaseGsnCounter();
 
         // remove the id
-        table.removeValueForKey(tableKey, id);
+        tableId.removeValueForKey(tableKey, id);
     }
 
     /**
@@ -489,6 +504,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         }
     }
 
+    /*
     function getRowValueVar(bytes32 fieldIdTableKey) external view returns (bytes memory) {
 
         if (database.containsKey(fieldIdTableKey)) {
@@ -497,6 +513,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
             return new bytes(0);
         }
     }
+    */
 
     /**
      * @dev Warning this produces an Error: overflow (operation="setValue", fault="overflow", details="Number can only safely store up to 53 bits")
@@ -504,13 +521,13 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
      */
     function getTableIds(bytes32 tableKey) external view returns (bytes32[] memory){
 
-        require(table.containsKey(tableKey) == true, "table not created");
+        require(tableId.containsKey(tableKey) == true, "table not created");
 
-        return table.enumerateForKey(tableKey);
+        return tableId.enumerateForKey(tableKey);
     }
 
     function getIdExists(bytes32 tableKey, bytes32 id) external view returns (bool) {
-        return table.containsValueForKey(tableKey, id);
+        return tableId.containsValueForKey(tableKey, id);
     }
 
     function isNamehashSubOf(bytes32 subKey, bytes32 base, bytes32 target) internal pure returns (bool) {
