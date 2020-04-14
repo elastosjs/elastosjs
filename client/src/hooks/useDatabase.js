@@ -4,7 +4,7 @@ import { NetworkContext } from '../context/NetworkContext'
 import Web3 from 'web3'
 import { contracts } from '../config'
 
-export const useDatabase = ({profile}) => {
+export const useDatabase = (isAdmin) => {
 
   const [ethConfig, setEthConfig] = useContext(EthContext)
   const [network, setNetwork] = useContext(NetworkContext)
@@ -14,15 +14,14 @@ export const useDatabase = ({profile}) => {
   useEffect(() => {
     (async () => {
 
-      if (profile.isAdmin){
+      if (isAdmin){
         setDatabases(await getAdminDatabases(ethConfig, network))
         return
       }
 
-
       setDatabases([])
     })()
-  }, [ethConfig, network, profile])
+  }, [ethConfig, network, isAdmin])
 
   return databases
 }

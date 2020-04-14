@@ -5,9 +5,9 @@ import {
   Table,
   Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap'
-import { connect } from 'react-redux'
 import Loading from '../Pages/Loading'
 import { useTableMetadata } from '../../hooks/useTableMetadata'
+import { connect } from 'react-redux'
 
 
 const DatabaseTable = (props) => {
@@ -61,9 +61,9 @@ const DatabaseTable = (props) => {
 
   return (
     <div>
-      <Row>
+      <Row className="mb-3">
         <Col lg="8">
-
+          <button className="btn btn-secondary" onClick={() => props.setActiveTab('2')}>View Data</button>
         </Col>
         <Col className="text-right" lg="4">
           Permission Type:{' '}

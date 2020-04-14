@@ -37,10 +37,10 @@ const DefaultHeader = (props) => {
       </Nav>
       <Nav className="ml-auto" navbar>
 
-        {/*
-        <NavItem className="d-md-down-none">
-          <NavLink to="#" className="nav-link"><i className="icon-bell"></i><Badge pill color="danger">5</Badge></NavLink>
+        <NavItem className="d-md-down-none mr-4">
+          <a target="_blank" href="https://docs.elastosjs.com" className="text-muted">Documentation</a>
         </NavItem>
+        {/*
         <NavItem className="d-md-down-none">
           <NavLink to="#" className="nav-link"><i className="icon-list"></i></NavLink>
         </NavItem>

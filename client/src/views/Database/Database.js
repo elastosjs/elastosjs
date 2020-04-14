@@ -28,13 +28,13 @@ import {
   TabPane
 } from 'reactstrap'
 import Loading from '../Pages/Loading'
-import DatabaseTable from './Table'
+import DatabaseTable from './DatabaseTable'
+import DatabaseData from './DatabaseData'
 import classnames from 'classnames'
 import { useDatabase } from '../../hooks/useDatabase'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import { ProfileActionTypes } from '../../store/redux/profile'
-import { useTableMetadata } from '../../hooks/useTableMetadata'
 
 const DatabaseView = (props) => {
 
@@ -46,14 +46,21 @@ const DatabaseView = (props) => {
     if (activeTab !== tab) setActiveTab(tab);
   }
 
-  const databases = useDatabase(props)
+  const databases = useDatabase(props.profile.isAdmin)
 
   const [selectedDb, setSelectedDb] = useState()
 
   useEffect(() => {
+    // reset the selected table if database changes
+    props.dispatch({
+      type: ProfileActionTypes.SET_SELECTED_TABLE,
+      selectedTable: ''
+    })
+
     setSelectedDb(_.find(databases, (db) => {
       return db.contractAddress === props.profile.selectedDbContract
     }))
+
   }, [props.profile.selectedDbContract, databases])
 
   const goTable = useCallback((ev) => {
@@ -65,9 +72,11 @@ const DatabaseView = (props) => {
     })
   })
 
+  /*
   useEffect(() => {
 
   }, [props.profile.selectedTable])
+  */
 
   return (
     !databases ? <Loading/> :
@@ -126,13 +135,13 @@ const DatabaseView = (props) => {
                     <Breadcrumb>
                       <BreadcrumbItem>
                         <a href="#" onClick={goTable} data-tablename="" >
-                          List
+                          Back to Tables List
                         </a>
                       </BreadcrumbItem>
                       <BreadcrumbItem active>{props.profile.selectedTable}</BreadcrumbItem>
                     </Breadcrumb> : ''}
                   {props.profile.selectedTable ?
-                  <DatabaseTable {...props}/> :
+                  <DatabaseTable setActiveTab={setActiveTab}/> :
                   <Table hover responsive className="table-outline mb-0 d-none d-sm-table" style={{'backgroundColor': '#fff'}}>
                     <thead className="thead-light">
                     <tr>
@@ -178,22 +187,7 @@ const DatabaseView = (props) => {
               </Row>
             </TabPane>
             <TabPane tabId="2">
-              <Row>
-                <Col sm="6">
-                  <Card body>
-                    <CardTitle>Special Title Treatment</CardTitle>
-                    <CardText>With supporting text below as a natural lead-in to additional content.</CardText>
-                    <Button>Go somewhere</Button>
-                  </Card>
-                </Col>
-                <Col sm="6">
-                  <Card body>
-                    <CardTitle>Special Title Treatment</CardTitle>
-                    <CardText>With supporting text below as a natural lead-in to additional content.</CardText>
-                    <Button>Go somewhere</Button>
-                  </Card>
-                </Col>
-              </Row>
+              {activeTab === '2' ? <DatabaseData/> : ''}
             </TabPane>
           </TabContent>
         </Col>
