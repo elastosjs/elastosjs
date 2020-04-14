@@ -53,10 +53,20 @@ npx oz send-tx --network development --to 0x592c129085b61A3110Ebd1DCD99F3Cfe97A5
     contractAddress: contractAddr
   })
 
-  await elastosjs.createTable(tableName, 3, [], [])
+  /*
+  CREATE TABLE
+   */
+  const cols = ['ethAddressHash', 'authHash', 'admin']
+  const typesRaw = ['BYTES32', 'BYTES32', 'BOOL']
+  const colsHashed = cols.map((colName) => Web3.utils.stringToHex(colName))
+  const types = typesRaw.map((colName) => Web3.utils.stringToHex(colName))
+  await elastosjs.createTable(tableName, 3, colsHashed, types)
+
+  /*
+  ADMIN USER
+   */
 
   const id = keccak256('clarencel' + FM_ETH_ADDRESS)
-  const cols = ['ethAddressHash', 'authHash', 'admin']
   // const colTypes = ['BYTES32', 'BYTES32', 'BOOL']
   const values = [keccak256(FM_ETH_ADDRESS), keccak256(id.substring(2) + 'testtest1' + FM_ETH_ADDRESS.substring(2) + 'elajs'), uintToBytes32(1)]
 
@@ -65,6 +75,8 @@ npx oz send-tx --network development --to 0x592c129085b61A3110Ebd1DCD99F3Cfe97A5
   await elastosjs.insertRow(tableName, cols, values, {id: id})
 
   // TODO: run checks
+
+
 
   process.exit(1)
 

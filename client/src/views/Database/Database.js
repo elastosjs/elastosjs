@@ -28,10 +28,13 @@ import {
   TabPane
 } from 'reactstrap'
 import Loading from '../Pages/Loading'
+import DatabaseTable from './Table'
 import classnames from 'classnames'
 import { useDatabase } from '../../hooks/useDatabase'
 import { connect } from 'react-redux'
 import _ from 'lodash'
+import { ProfileActionTypes } from '../../store/redux/profile'
+import { useTableMetadata } from '../../hooks/useTableMetadata'
 
 const DatabaseView = (props) => {
 
@@ -54,8 +57,17 @@ const DatabaseView = (props) => {
   }, [props.profile.selectedDbContract, databases])
 
   const goTable = useCallback((ev) => {
+    ev.preventDefault()
 
+    props.dispatch({
+      type: ProfileActionTypes.SET_SELECTED_TABLE,
+      selectedTable: ev.currentTarget.dataset.tablename
+    })
   })
+
+  useEffect(() => {
+
+  }, [props.profile.selectedTable])
 
   return (
     !databases ? <Loading/> :
@@ -110,9 +122,17 @@ const DatabaseView = (props) => {
             <TabPane tabId="1">
               <Row>
                 <Col>
-                  <Breadcrumb>
-                    <BreadcrumbItem active>List</BreadcrumbItem>
-                  </Breadcrumb>
+                  {props.profile.selectedTable ?
+                    <Breadcrumb>
+                      <BreadcrumbItem>
+                        <a href="#" onClick={goTable} data-tablename="" >
+                          List
+                        </a>
+                      </BreadcrumbItem>
+                      <BreadcrumbItem active>{props.profile.selectedTable}</BreadcrumbItem>
+                    </Breadcrumb> : ''}
+                  {props.profile.selectedTable ?
+                  <DatabaseTable {...props}/> :
                   <Table hover responsive className="table-outline mb-0 d-none d-sm-table" style={{'backgroundColor': '#fff'}}>
                     <thead className="thead-light">
                     <tr>
@@ -129,17 +149,23 @@ const DatabaseView = (props) => {
                           No Tables - <a href="#">Create Table</a>
                         </td>
                       </tr> :
-                      selectedDb.tables.map((table) => {
+                      selectedDb.tables.map((table, i) => {
+
+                        const style = {display: 'flex', justifyContent: 'flex-end'}
+                        if (i === 0){
+                          style.borderTop = 0
+                        }
+
                         return <tr key={table.name}>
                           <td>
-                            <a href="#" onClick={goTable}>
+                            <a href="#" onClick={goTable} data-tablename={table.name}>
                               {table.name}
                             </a>
                           </td>
                           <td>
                             0
                           </td>
-                          <td className="text-right align-items-center" style={{display: 'flex', justifyContent: 'flex-end', borderTop: 0}}>
+                          <td className="text-right align-items-center" style={style}>
                             <button className="btn btn-primary mr-3">View Data</button>{' '}
                             <i className="cui-trash icons font-2xl"/>
                           </td>
@@ -147,7 +173,7 @@ const DatabaseView = (props) => {
                       })
                     }
                     </tbody>
-                  </Table>
+                  </Table>}
                 </Col>
               </Row>
             </TabPane>
