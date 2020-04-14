@@ -31,6 +31,9 @@ cp -f ./build/contracts/ELAJSStore.json ../client/src/contracts/ELAJSStore-devel
 # update the contract address for the client
 sed -i '' -e "s!\(elajsStore: '\).*!\1$contractAddr'!" ../client/src/config.js
 
+# copy the contract JSON for ela-js
+cp -f ./build/contracts/ELAJSStore.json ~/workspace/ela-js/src/contracts/ELAJSStore.json
+
 END=`date +%s`
 
 print_success "\nDone. Runtime: $((END-START)) seconds."

@@ -7,6 +7,7 @@ import {
   Col,
   Container,
   Row,
+
   Progress,
   CardGroup,
 } from 'reactstrap';
@@ -22,7 +23,9 @@ import { namehash, keccak256 } from 'ela-js'
 
 import constants from '../../../constants'
 
-import { contracts } from '../../../config'
+import Loading from '../Loading'
+
+import elastosJSLogo from '../../../assets/img/elastosJS.svg'
 
 import { ProfileActionTypes } from '../../../store/redux/profile'
 
@@ -37,11 +40,25 @@ const RegisterTransaction = (props) => {
 
   const [ethConfig, setEthConfig] = useContext(EthContext)
 
+  const [agree, setAgree] = useState(false)
+
   const elajs = ethConfig.elajs
 
   const {elajsAcct, ethAddress} = props
 
+  const handleAgree = useCallback((ev) => {
+
+    setAgree(!!ev.target.checked)
+
+  }, [setAgree])
+
   const register = useCallback(async () => {
+
+    if (!agree || !elajsAcct || !ethAddress){
+      return
+    }
+
+    setRegisterPending(true)
 
     try {
 
@@ -73,8 +90,15 @@ const RegisterTransaction = (props) => {
       console.error(err)
     }
 
-  }, [elajs])
+  }, [agree, elajs, elajsAcct, ethAddress])
 
+
+  /*
+ ****************************************************************************************************************
+ * Registration Transactions TODO
+ ****************************************************************************************************************
+ */
+  const [registerPending, setRegisterPending] = useState(false)
   /*
   // AUTH SIGNED
   // load Counter Instance
@@ -158,8 +182,74 @@ const RegisterTransaction = (props) => {
 
 
   return <Container>
-    Hello World
-    <Button onClick={register}>I agree</Button>
+
+    <img src={elastosJSLogo} className="mb-2 ml-4"/>
+
+    {!registerPending ?
+      <Card>
+        <CardBody>
+          <Row>
+            <Col className="mb-3">
+              <h4>
+                Terms and Acknowledgements
+              </h4>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <Card className="text-white bg-danger">
+                <CardBody>
+                  <h3>
+                    <ol>
+                      <li>
+                        Data stored on our Smart Contracts is <b>Public!</b> Any data you wish to keep private must be
+                        encrypted by you.
+                        ElastosJS accepts <u>no responsibility</u> for data issues arising from any applications you created.
+                      </li>
+                    </ol>
+                  </h3>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <Card className="text-white bg-primary">
+                <CardBody>
+                  <h3>
+                    <ol start="2">
+                      <li>
+                        ElastosJS stores no data, uses any cookies or tracking in the spirit of decentralization.
+                      </li>
+                    </ol>
+                  </h3>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+
+          <div className="pull-right align-items-center" style={{ display: 'flex', 'flexDirection': 'row' }}>
+            <div className="mr-2" style={{ fontSize: '1.2em' }}>
+              I agree with the above{' '}
+            </div>
+            <div className="mr-3">
+              <input type="checkbox" style={{ zoom: 2 }} onChange={handleAgree}/>
+            </div>
+            <div>
+              <button className="btn btn-lg btn-secondary" onClick={register}
+                      disabled={!agree ? 'disabled' : ''}>Register
+              </button>
+            </div>
+          </div>
+
+        </CardBody>
+      </Card> :
+      <div>
+        <Loading/>
+      </div>
+    }
   </Container>
 }
 

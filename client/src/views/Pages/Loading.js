@@ -5,7 +5,10 @@ import { HashLoader } from 'react-spinners'
 const Loading = (props) => {
 
   const size = (props && props.size) || 150
-  const marginSize = (props && props.margin) || 5
+  let marginSize = 5
+  if (props && props.margin !== undefined){
+    marginSize = parseInt(props.margin)
+  }
 
   return (
     <div className="App body" style={{'marginTop': `${marginSize * 4}%`}}>

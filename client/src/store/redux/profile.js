@@ -34,7 +34,9 @@ export const ProfileActionTypes = {
   LOGGING_IN: 'LOGGING_IN',
   READY: 'READY',
   LOGOUT: 'LOGOUT',
-  SET_CREDENTIALS: 'SET_CREDENTIALS'
+  SET_CREDENTIALS: 'SET_CREDENTIALS',
+
+  SET_SELECTED_DB: 'SET_SELECTED_DB'
 };
 
 /*
@@ -52,28 +54,12 @@ const initialState = {
   // we don't actually save the username, but a hashed id for reference
   username: '',
 
-  isAdmin: 0
+  isAdmin: 0,
+
+  selectedDbContract: null,
+  selectedTable: null
 }
 
-/**
- * Final Register Call
- *
- * - usually we send the password to the back-end, add a salt and hash it, but in this
- *   scenario we don't have a backend.
- *
- * - Also we are saving the hash to a public smart contract, so the security is low anyway,
- *   in this scenario the real security lies in the Fortmatic account which is the gatekeeper
- *   between any paid actions
- */
-export const ActionRegister = () => {
-  return async function(dispatch, getState, { web3 }){
-
-    const state = getState()
-
-    const salt = state.root.profile.ethAddress
-
-  }
-}
 
 // export const ActionSetEth
 
@@ -192,6 +178,18 @@ export default {
         return {
           ...state,
           ethAddress: action.ethAddress
+        }
+
+      case ProfileActionTypes.SET_SELECTED_DB:
+        return {
+          ...state,
+          selectedDbContract: action.selectedDbContract
+        }
+
+      case ProfileActionTypes.SET_SELECTED_TABLE:
+        return {
+          ...state,
+          selectedTable: action.selectedTable
         }
     }
 

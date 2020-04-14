@@ -16,7 +16,7 @@ import {
   AppSidebarNav2 as AppSidebarNav,
 } from '@coreui/react'
 // sidebar nav config
-import { useNavigation } from '../../_nav'
+import { useNavigation } from '../../hooks/useNavigation'
 // routes config
 import routes from '../../routes'
 import { connect } from 'react-redux'

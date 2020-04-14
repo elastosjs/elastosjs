@@ -12,6 +12,7 @@ export const useEthConfig = () => {
     store: null,
     persistor: null,
     drizzle: null,
+    elajs: null,
 
     ready: false
   })

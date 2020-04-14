@@ -1,6 +1,6 @@
 
 import { useContext, useState, useEffect } from 'react'
-import { EthContext } from './context/EthContext'
+import { EthContext } from '../context/EthContext'
 
 export const useNavigation = (profile) => {
 

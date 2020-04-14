@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Bar, Line } from 'react-chartjs-2';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { useEthBalance } from '../../hooks/useEthBalance'
+import { useDatabase } from '../../hooks/useDatabase'
 import {
   Badge,
   Button,
@@ -20,11 +21,38 @@ import {
   Row,
   Table,
 } from 'reactstrap'
+import Loading from '../Pages/Loading'
+import { EthContext } from '../../context/EthContext'
+import { NetworkContext } from '../../context/NetworkContext'
+import { connect } from 'react-redux'
+import { ProfileActionTypes } from '../../store/redux/profile'
 
 const Dashboard = (props) => {
 
   const [card1, setCard1] = useState(false)
-  const [card2, setCard2] = useState(false)
+
+  const [ethConfig, setEthConfig] = useContext(EthContext)
+  const [network, setNetwork] = useContext(NetworkContext)
+
+  const {ethBalance, walletAddress} = useEthBalance()
+
+  const databases = useDatabase(props)
+
+  const goDatabase = useCallback((ev) => {
+
+    if (ev.target.tagName === 'A'){
+      return
+    }
+
+    const selectedContract = ev.currentTarget.dataset.contractaddress
+
+    props.dispatch({
+      type: ProfileActionTypes.SET_SELECTED_DB,
+      selectedDbContract: selectedContract
+    })
+
+    window.location.hash = 'databases'
+  })
 
   return (
     <div className="animated fadeIn">
@@ -38,15 +66,24 @@ const Dashboard = (props) => {
                     <i className="icon-settings"></i>
                   </DropdownToggle>
                   <DropdownMenu right>
-                    <DropdownItem>Action</DropdownItem>
-                    <DropdownItem>Another action</DropdownItem>
-                    <DropdownItem disabled>Disabled action</DropdownItem>
-                    <DropdownItem>Something else here</DropdownItem>
+                    <DropdownItem>Add Funds</DropdownItem>
+                    <DropdownItem>Send Funds</DropdownItem>
                   </DropdownMenu>
                 </ButtonDropdown>
               </ButtonGroup>
-              <div className="text-value">9.823</div>
-              <div>Members online</div>
+              <h3>
+                <a href="https://docs.elastosjs.com" className="text-white">
+                  {ethBalance.toFixed(4)}
+                </a>
+              </h3>
+
+              <div>
+                ELASC Balance<br/>
+                <b>Address:</b>{' '}
+                <a target="_blank" className="text-white" href={`https://testnet.elaeth.io/address/${walletAddress}/transactions`}>
+                  {walletAddress}
+                </a>
+              </div>
             </CardBody>
             <div>
               <br/>
@@ -57,20 +94,15 @@ const Dashboard = (props) => {
         <Col sm="12" lg="6">
           <Card className="text-white bg-primary">
             <CardBody className="pb-0">
-              <ButtonGroup className="float-right">
-                <Dropdown id='card2' isOpen={card2} toggle={() => setCard2(!card2)}>
-                  <DropdownToggle className="p-0" color="transparent">
-                    <i className="icon-location-pin"></i>
-                  </DropdownToggle>
-                  <DropdownMenu right>
-                    <DropdownItem>Action</DropdownItem>
-                    <DropdownItem>Another action</DropdownItem>
-                    <DropdownItem>Something else here</DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              </ButtonGroup>
-              <div className="text-value">9.823</div>
-              <div>Members online</div>
+              <h3>
+                <a href="https://docs.elastosjs.com" className="text-white">
+                  Learn ElastosJS
+                </a>
+              </h3>
+              <div>
+                Your database is a smart contract, to learn how to connect your dApp read our docs at{' '}
+                <a href="https://docs.elastosjs.com" className="text-white text-dark"><b>https://docs.elastosjs.com</b></a>
+              </div>
             </CardBody>
             <div>
               <br/>
@@ -83,227 +115,51 @@ const Dashboard = (props) => {
         <Col>
           <Table hover responsive className="table-outline mb-0 d-none d-sm-table" style={{'backgroundColor': '#fff'}}>
             <thead className="thead-light">
-            <tr>
-              <th className="text-center"><i className="icon-people"></i></th>
-              <th>User</th>
-              <th className="text-center">Country</th>
-              <th>Usage</th>
-              <th className="text-center">Payment Method</th>
-              <th>Activity</th>
-            </tr>
+              <tr>
+                <th>Database Name</th>
+                <th>Contract Address</th>
+                <th>GSN Funds</th>
+                {/* <th># of Tables</th> */}
+                <th className="text-right">Actions</th>
+              </tr>
             </thead>
             <tbody>
-            <tr>
-              <td className="text-center">
-                <div className="avatar">
-                  <img src={'assets/img/avatars/1.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                  <span className="avatar-status badge-success"></span>
-                </div>
+            {!databases ? <tr>
+              <td className="text-center" colSpan="5">
+                <Loading margin="0" size="100"/>
               </td>
-              <td>
-                <div>Yiorgos Avraamu</div>
-                <div className="small text-muted">
-                  <span>New</span> | Registered: Jan 1, 2015
-                </div>
-              </td>
-              <td className="text-center">
-                <i className="flag-icon flag-icon-us h4 mb-0" title="us" id="us"></i>
-              </td>
-              <td>
-                <div className="clearfix">
-                  <div className="float-left">
-                    <strong>50%</strong>
-                  </div>
-                  <div className="float-right">
-                    <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                  </div>
-                </div>
-                <Progress className="progress-xs" color="success" value="50" />
-              </td>
-              <td className="text-center">
-                <i className="fa fa-cc-mastercard" style={{ fontSize: 24 + 'px' }}></i>
-              </td>
-              <td>
-                <div className="small text-muted">Last login</div>
-                <strong>10 sec ago</strong>
-              </td>
-            </tr>
-            <tr>
-              <td className="text-center">
-                <div className="avatar">
-                  <img src={'assets/img/avatars/2.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                  <span className="avatar-status badge-danger"></span>
-                </div>
-              </td>
-              <td>
-                <div>Avram Tarasios</div>
-                <div className="small text-muted">
-
-                  <span>Recurring</span> | Registered: Jan 1, 2015
-                </div>
-              </td>
-              <td className="text-center">
-                <i className="flag-icon flag-icon-br h4 mb-0" title="br" id="br"></i>
-              </td>
-              <td>
-                <div className="clearfix">
-                  <div className="float-left">
-                    <strong>10%</strong>
-                  </div>
-                  <div className="float-right">
-                    <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                  </div>
-                </div>
-                <Progress className="progress-xs" color="info" value="10" />
-              </td>
-              <td className="text-center">
-                <i className="fa fa-cc-visa" style={{ fontSize: 24 + 'px' }}></i>
-              </td>
-              <td>
-                <div className="small text-muted">Last login</div>
-                <strong>5 minutes ago</strong>
-              </td>
-            </tr>
-            <tr>
-              <td className="text-center">
-                <div className="avatar">
-                  <img src={'assets/img/avatars/3.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                  <span className="avatar-status badge-warning"></span>
-                </div>
-              </td>
-              <td>
-                <div>Quintin Ed</div>
-                <div className="small text-muted">
-                  <span>New</span> | Registered: Jan 1, 2015
-                </div>
-              </td>
-              <td className="text-center">
-                <i className="flag-icon flag-icon-in h4 mb-0" title="in" id="in"></i>
-              </td>
-              <td>
-                <div className="clearfix">
-                  <div className="float-left">
-                    <strong>74%</strong>
-                  </div>
-                  <div className="float-right">
-                    <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                  </div>
-                </div>
-                <Progress className="progress-xs" color="warning" value="74" />
-              </td>
-              <td className="text-center">
-                <i className="fa fa-cc-stripe" style={{ fontSize: 24 + 'px' }}></i>
-              </td>
-              <td>
-                <div className="small text-muted">Last login</div>
-                <strong>1 hour ago</strong>
-              </td>
-            </tr>
-            <tr>
-              <td className="text-center">
-                <div className="avatar">
-                  <img src={'assets/img/avatars/4.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                  <span className="avatar-status badge-secondary"></span>
-                </div>
-              </td>
-              <td>
-                <div>Enéas Kwadwo</div>
-                <div className="small text-muted">
-                  <span>New</span> | Registered: Jan 1, 2015
-                </div>
-              </td>
-              <td className="text-center">
-                <i className="flag-icon flag-icon-fr h4 mb-0" title="fr" id="fr"></i>
-              </td>
-              <td>
-                <div className="clearfix">
-                  <div className="float-left">
-                    <strong>98%</strong>
-                  </div>
-                  <div className="float-right">
-                    <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                  </div>
-                </div>
-                <Progress className="progress-xs" color="danger" value="98" />
-              </td>
-              <td className="text-center">
-                <i className="fa fa-paypal" style={{ fontSize: 24 + 'px' }}></i>
-              </td>
-              <td>
-                <div className="small text-muted">Last login</div>
-                <strong>Last month</strong>
-              </td>
-            </tr>
-            <tr>
-              <td className="text-center">
-                <div className="avatar">
-                  <img src={'assets/img/avatars/5.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                  <span className="avatar-status badge-success"></span>
-                </div>
-              </td>
-              <td>
-                <div>Agapetus Tadeáš</div>
-                <div className="small text-muted">
-                  <span>New</span> | Registered: Jan 1, 2015
-                </div>
-              </td>
-              <td className="text-center">
-                <i className="flag-icon flag-icon-es h4 mb-0" title="es" id="es"></i>
-              </td>
-              <td>
-                <div className="clearfix">
-                  <div className="float-left">
-                    <strong>22%</strong>
-                  </div>
-                  <div className="float-right">
-                    <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                  </div>
-                </div>
-                <Progress className="progress-xs" color="info" value="22" />
-              </td>
-              <td className="text-center">
-                <i className="fa fa-google-wallet" style={{ fontSize: 24 + 'px' }}></i>
-              </td>
-              <td>
-                <div className="small text-muted">Last login</div>
-                <strong>Last week</strong>
-              </td>
-            </tr>
-            <tr>
-              <td className="text-center">
-                <div className="avatar">
-                  <img src={'assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
-                  <span className="avatar-status badge-danger"></span>
-                </div>
-              </td>
-              <td>
-                <div>Friderik Dávid</div>
-                <div className="small text-muted">
-                  <span>New</span> | Registered: Jan 1, 2015
-                </div>
-              </td>
-              <td className="text-center">
-                <i className="flag-icon flag-icon-pl h4 mb-0" title="pl" id="pl"></i>
-              </td>
-              <td>
-                <div className="clearfix">
-                  <div className="float-left">
-                    <strong>43%</strong>
-                  </div>
-                  <div className="float-right">
-                    <small className="text-muted">Jun 11, 2015 - Jul 10, 2015</small>
-                  </div>
-                </div>
-                <Progress className="progress-xs" color="success" value="43" />
-              </td>
-              <td className="text-center">
-                <i className="fa fa-cc-amex" style={{ fontSize: 24 + 'px' }}></i>
-              </td>
-              <td>
-                <div className="small text-muted">Last login</div>
-                <strong>Yesterday</strong>
-              </td>
-            </tr>
+            </tr> : (
+              !databases.length ?
+              <tr>
+                <td className="text-center" colSpan="5">
+                  No Databases - <a href="#">Create Database</a>
+                </td>
+              </tr> :
+              databases.map((database) => {
+                return <tr key={database.name} style={{cursor: 'pointer'}} onClick={goDatabase} data-contractaddress={database.contractAddress}>
+                  <td>
+                    {database.name}
+                  </td>
+                  <td>
+                    <a target="_blank" href={`https://testnet.elaeth.io/address/${database.contractAddress}/transactions`}>
+                      {database.contractAddress}
+                    </a>
+                  </td>
+                  <td>
+                    {database.gsnBalance.toFixed(5)}
+                  </td>
+                  {/*
+                  <td>
+                    {database.tables.length}
+                  </td>
+                  */}
+                  <td className="text-right">
+                    <button className="btn btn-primary btn-sm">Add Funds</button>{' '}
+                    <button className="btn btn-warning btn-sm">Withdraw Funds</button>
+                  </td>
+                </tr>
+              })
+              )}
             </tbody>
           </Table>
         </Col>
@@ -313,4 +169,11 @@ const Dashboard = (props) => {
 
 }
 
-export default Dashboard;
+const mapStateToProps = (state) => {
+  return {
+    profile: state.root.profile,
+  }
+}
+
+export default connect(mapStateToProps)(Dashboard)
+
