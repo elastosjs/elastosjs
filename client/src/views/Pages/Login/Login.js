@@ -57,7 +57,7 @@ const Login = (props) => {
     dataCommitted: false
   })
 
-  const ozWeb3 = ethConfig.ozWeb3
+  // const ozWeb3 = ethConfig.ozWeb3
 
   const elajs = ethConfig.elajs
 

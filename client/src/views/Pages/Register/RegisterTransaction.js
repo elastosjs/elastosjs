@@ -36,47 +36,28 @@ const USER_TABLE = constants.SCHEMA.USER_TABLE
 const RegisterTransaction = (props) => {
 
   const [ethConfig, setEthConfig] = useContext(EthContext)
-  const [network, setNetwork] = useContext(NetworkContext)
 
-  // const fmWeb3 = ethConfig.fmWeb3
-  const ozWeb3 = ethConfig.ozWeb3
+  const elajs = ethConfig.elajs
 
-  const {inserts} = getInsertData(props)
-
-  console.log(inserts)
-
-  const [elajsStore, setElajsStore] = useState()
-
-  useEffect(() => {
-
-    const instance = new ozWeb3.lib.eth.Contract(ELAJStoreDev.abi, contracts[network].elajsStore)
-
-    setElajsStore(instance)
-  }, [])
+  const {elajsAcct, ethAddress} = props
 
   const register = useCallback(async () => {
 
-    if (!elajsStore){
-      return
-    }
-
     try {
-      for (let i = 0; i < inserts.length; i++){
 
-        // ephemeral call - this contract was initialized off of ozWeb3
-        // TODO: use elajs class
-        await elajsStore.methods.insertVal(
-          inserts[i].tableKey,
-          inserts[i].idTableKey,
-          inserts[i].fieldIdTableKey,
-          inserts[i].idKey,
-          inserts[i].fieldKey,
-          inserts[i].id,
-          inserts[i].value
-        ).send({
-          from: ozWeb3.accounts[0]
-        })
-      }
+      // we avoid username collision checking by declaring the unique key as username + ethAddress,
+      // so technically multiple people could have the same username
+      // TODO: revisit this decision
+      const id = keccak256(elajsAcct.username + ethAddress)
+
+      const cols = ['ethAddressHash', 'authHash', 'admin']
+      const values = [
+        keccak256(ethAddress),
+        keccak256(id.substring(2) + elajsAcct.password + ethAddress.substring(2) + 'elajs'),
+        Web3.utils.numberToHex(0)
+      ]
+
+      await elajs.insertRow(USER_TABLE, cols, values, {id: id})
 
       props.dispatch({
         type: ProfileActionTypes.REGISTER,
@@ -92,7 +73,7 @@ const RegisterTransaction = (props) => {
       console.error(err)
     }
 
-  }, [elajsStore])
+  }, [elajs])
 
   /*
   // AUTH SIGNED
@@ -189,61 +170,3 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps)(RegisterTransaction)
-
-
-function getInsertData({elajsAcct, ethAddress}){
-
-  // we avoid username collision checking by declaring the unique key as username + ethAddress,
-  // so technically multiple people could have the same username
-  // TODO: revisit this decision
-  debugger
-  const id = keccak256(elajsAcct.username + ethAddress)
-  const idKey = keccak256(id.substring(2))
-
-  const tableKey = namehash(USER_TABLE)
-  const idTableKey = namehash(`${id.substring(2)}.${USER_TABLE}`)
-
-  const cols = ['ethAddressHash', 'authHash', 'admin']
-  const colTypes = ['BYTES32', 'BYTES32', 'BOOL']
-
-  const inserts = [
-    {
-      tableKey,
-      idTableKey,
-      fieldIdTableKey: namehash(`ethAddressHash.${id.substring(2)}.${USER_TABLE}`),
-
-      idKey,
-      id,
-      fieldKey: keccak256('ethAddressHash'),
-      value: keccak256(ethAddress)
-    },
-    {
-      tableKey,
-      idTableKey,
-      fieldIdTableKey: namehash(`authHash.${id.substring(2)}.${USER_TABLE}`),
-
-      idKey,
-      id,
-      // no point hiding the salt here anyway, it's all client-side
-      fieldKey: keccak256('authHash'),
-      value: keccak256(id.substring(2) + elajsAcct.password + ethAddress.substring(2) + 'elajs')
-    },
-    {
-      tableKey,
-      idTableKey,
-      fieldIdTableKey: namehash(`admin.${id.substring(2)}.${USER_TABLE}`),
-
-      idKey,
-      id,
-      fieldKey: keccak256('admin'),
-      value: Web3.utils.numberToHex(0)
-    }
-  ]
-
-  return {
-    cols,
-    colTypes,
-    inserts
-  }
-}
-
