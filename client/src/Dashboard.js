@@ -51,21 +51,21 @@ const Dashboard = () => {
     !(ethConfig.ready && ethConfig.fmWeb3) ?
     <Loading/> :
     <Provider store={ethConfig.store}>
-      <DrizzleContext.Provider store={ethConfig.store} drizzle={ethConfig.drizzle}>
-        <PersistGate loading={Loading()} persistor={ethConfig.persistor}>
-          <React.Suspense fallback={Loading()}>
-            <HashRouter>
-              <Switch>
-                <Route exact path="/login" name="Login Page" render={props => <Login {...props}/>}/>
-                <Route exact path="/register" name="Register Page" render={props => <Register {...props}/>}/>
-                <Route exact path="/404" name="Page 404" render={props => <Page404 {...props}/>}/>
-                <Route exact path="/500" name="Page 500" render={props => <Page500 {...props}/>}/>
-                <Route render={props => <DefaultLayout {...props} setNetwork={setNetwork}/>}/>
-              </Switch>
-            </HashRouter>
-          </React.Suspense>
-        </PersistGate>
-      </DrizzleContext.Provider>
+      {/* <DrizzleContext.Provider store={ethConfig.store} drizzle={ethConfig.drizzle}> */}
+      <PersistGate loading={Loading()} persistor={ethConfig.persistor}>
+        <React.Suspense fallback={Loading()}>
+          <HashRouter>
+            <Switch>
+              <Route exact path="/login" name="Login Page" render={props => <Login {...props}/>}/>
+              <Route exact path="/register" name="Register Page" render={props => <Register {...props}/>}/>
+              <Route exact path="/404" name="Page 404" render={props => <Page404 {...props}/>}/>
+              <Route exact path="/500" name="Page 500" render={props => <Page500 {...props}/>}/>
+              <Route render={props => <DefaultLayout {...props} setNetwork={setNetwork}/>}/>
+            </Switch>
+          </HashRouter>
+        </React.Suspense>
+      </PersistGate>
+      {/* </DrizzleContext.Provider> */}
     </Provider>
   )
 }

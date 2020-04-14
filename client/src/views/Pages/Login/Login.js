@@ -15,7 +15,7 @@ import {
   Row
 } from 'reactstrap'
 
-import Loading from '../Loading'
+import Loading, { LoadingOverlay } from '../Loading'
 import styled from 'styled-components'
 
 import { EthContext } from '../../../context/EthContext'
@@ -28,7 +28,9 @@ import FortmaticLogo from '../../../assets/img/fortmatic_logo.svg'
 import constants from '../../../constants'
 import { contracts } from '../../../config'
 import _ from 'lodash'
-import elajs from 'ela-js'
+
+import { keccak256, namehash } from 'ela-js'
+
 import ELAJStoreDev from '../../../contracts/ELAJSStore-development.json'
 import { ProfileActionTypes } from '../../../store/redux/profile'
 import { connect } from 'react-redux'
@@ -44,6 +46,8 @@ const Login = (props) => {
 
   const [ethAddress, setEthAddress] = useState(false)
 
+  const [loading, setLoading] = useState(false)
+
   const [elajsAcct, setElajsAcct] = useState({
     username: '',
     usernameInvalid: false,
@@ -54,6 +58,8 @@ const Login = (props) => {
   })
 
   const ozWeb3 = ethConfig.ozWeb3
+
+  const elajs = ethConfig.elajs
 
   /*
    ****************************************************************************************************************
@@ -189,35 +195,39 @@ const Login = (props) => {
    * Login & Smart Contract Calls
    ****************************************************************************************************************
    */
-  const [elajsStore, setElajsStore] = useState()
+  // const [elajsStore, setElajsStore] = useState()
 
+  /*
   useEffect(() => {
 
     const instance = new ozWeb3.lib.eth.Contract(ELAJStoreDev.abi, contracts[network].elajsStore)
 
     setElajsStore(instance)
   }, [])
+   */
 
   const handleLogin = useCallback(() => {
 
     (async () => {
 
+      setLoading(true)
+
       // get the authHash from the id and check if it matches the authHash
-      const id = elajs.keccak256(elajsAcct.username + ethAddress)
+      const id = keccak256(elajsAcct.username + ethAddress)
       // const idKey = elajs.keccak256(id.substring(2))
 
       // console.log('id = ' + id)
 
-      const expectedAuthHash = elajs.keccak256(id.substring(2) + elajsAcct.password + ethAddress.substring(2) + 'elajs')
+      const expectedAuthHash = keccak256(id.substring(2) + elajsAcct.password + ethAddress.substring(2) + 'elajs')
 
-      const fieldIdTableKey = elajs.namehash(`authHash.${id.substring(2)}.${constants.SCHEMA.USER_TABLE}`)
-
-      const authHash = await elajsStore.methods.getRowValue(fieldIdTableKey).call()
+      // const authHash = await elajs._getVal(fieldIdTableKey).call()
+      const authHash = await elajs._getVal(constants.SCHEMA.USER_TABLE, id, 'authHash')
 
       try {
         if (Web3.utils.hexToNumber(authHash) === 0){
           setModalErrorData({ msgs: ['No login found for entered credentials'], isOpen: true })
           toggleCommitAcct()
+          setLoading(false)
           return
         }
       } catch (err){
@@ -227,21 +237,18 @@ const Login = (props) => {
       if (authHash !== expectedAuthHash){
         setModalErrorData({ msgs: ['No login found for entered credentials'], isOpen: true })
         toggleCommitAcct()
+        setLoading(false)
         return
       }
 
       // check for admin
-      const adminFieldIdTableKey = elajs.namehash(`admin.${id.substring(2)}.${constants.SCHEMA.USER_TABLE}`)
-
       let isAdmin = 0
 
       try {
-        isAdmin = Web3.utils.hexToNumber(await elajsStore.methods.getRowValue(adminFieldIdTableKey).call())
+        isAdmin = Web3.utils.hexToNumber(await elajs._getVal(constants.SCHEMA.USER_TABLE, id, 'admin'))
       } catch (err){
         // pass
       }
-
-
 
       props.dispatch({
         type: ProfileActionTypes.SET_CREDENTIALS,
@@ -342,8 +349,8 @@ const Login = (props) => {
                       <Input type="password" placeholder="Password" autoComplete="current-password" onChange={handlePw}/>
                     </InputGroup>
                     <Row>
-                      <Col xs="6" className="mb-5">
-                        <Button color="primary" className="px-4 mt-2" onClick={handleSaveAcct}>Authenticate</Button>
+                      <Col xs="8" className="mb-5">
+                        <Button color="primary" className="px-4 mt-2" onClick={handleSaveAcct}>Submit Login</Button>
                       </Col>
                       {/*
                       <Col xs="6" className="text-right">
@@ -430,6 +437,7 @@ const Login = (props) => {
           <button className="btn btn-elastos btn-block" onClick={modalErrorToggle}>Close</button>
         </ModalFooter>
       </Modal>
+      {loading ? <LoadingOverlay/> : ''}
     </div>
   )
 }

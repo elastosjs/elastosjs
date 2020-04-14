@@ -1,6 +1,6 @@
 
 import { Drizzle, generateStore } from "@drizzle/store"
-import DrizzleOptions from "./drizzleOptions"
+// import DrizzleOptions from "./drizzleOptions"
 import thunk from 'redux-thunk'
 import { contractEventNotifier, contractAddNotifier } from "../middleware"
 import { persistStore, persistReducer } from 'redux-persist'
@@ -12,14 +12,17 @@ import { GSNProvider } from '@openzeppelin/gsn-provider'
 
 import { fromConnection, ephemeral } from "@openzeppelin/network"
 
+import { ELA_JS } from 'ela-js'
+
 import reducers from './reducers'
 
 import constants from '../constants'
+import { contracts } from '../config'
 
 const FortmaticNodeOptions = {
   [constants.NETWORK.LOCAL]: {
     rpcUrl: 'http://127.0.0.1:8545',
-    chainId: 1584842682536
+    chainId: 1586791657977
   },
   [constants.NETWORK.TESTNET]: {
     rpcUrl: 'https://rpc.elaeth.io',
@@ -59,7 +62,19 @@ const getEthConfig = async (network) => {
 
   // Drizzle uses a direct web3 connection, not Fortmatic
   // this web3 is meant to call the relayer for verified ethAddresses in AWS Cognito
-  const drizzleOptions = DrizzleOptions(network, fmWeb3)
+  // TODO: undisable this once we have subscriptions/websocket
+  // const drizzleOptions = DrizzleOptions(network, ozWeb3)
+
+  /*
+  ***********************************************************************************************************************
+  * ELA_JS Setup
+  ***********************************************************************************************************************
+   */
+  const elajs = new ELA_JS({
+    defaultWeb3: fmWeb3,
+    ephemeralWeb3: ozWeb3,
+    contractAddress: contracts[network].elajsStore
+  })
 
   const persistConfig = {
     key: 'root',
@@ -74,7 +89,7 @@ const getEthConfig = async (network) => {
   const appMiddlewares = [thunk.withExtraArgument({fm}), contractEventNotifier, contractAddNotifier]
 
   const config = {
-    drizzleOptions,
+    // drizzleOptions,
     appReducers,
     appMiddlewares,
     disableReduxDevTools: false // enable ReduxDevTools!
@@ -83,7 +98,7 @@ const getEthConfig = async (network) => {
 
   const persistor = persistStore(store)
 
-  const drizzle = new Drizzle(drizzleOptions, store)
+  // const drizzle = new Drizzle(drizzleOptions, store)
 
   return {
     fm,
@@ -92,7 +107,8 @@ const getEthConfig = async (network) => {
     gsnProvider,
     store,
     persistor,
-    drizzle,
+    // drizzle,
+    elajs,
 
     ready: true
   }

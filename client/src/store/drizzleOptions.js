@@ -1,6 +1,6 @@
 // import Web3 from 'web3'
 
-// import Box from "../contracts/Box.json"
+import ELAJSStore from "../contracts/ELAJSStore-development.json"
 
 // import constants from '../constants'
 
@@ -37,7 +37,7 @@ const options = (network, web3) => {
       block: false,
       customProvider: web3.lib
     },
-    // contracts: [Box],
+    contracts: [ELAJSStore],
     polls: {
       accounts: 15000,
       blocks: 15000

@@ -24,8 +24,8 @@ contract DateTime {
 contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     // DateTime Contract address
-    address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
-    // address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
+    // address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
+    address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
 
     // Initialize the DateTime contract ABI with the already deployed contract
     DateTime dateTime = DateTime(dateTimeAddr);
