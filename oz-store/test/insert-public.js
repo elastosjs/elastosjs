@@ -129,7 +129,7 @@ describe('Tests for Insert Public Table', () => {
     */
 
     // console.log(`INSERT -> ${fieldIdTableKey}`)
-    await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
+    await ephemeralInstance.methods.insertVal(tableKey, idKey, fieldKey, id, VAL).send({
       from: ozWeb3.accounts[0]
     })
 
@@ -141,10 +141,9 @@ describe('Tests for Insert Public Table', () => {
 
     expect(Web3.utils.hexToString(val)).to.be.equal(VAL_RAW)
 
-
     try {
       // try to insert into the same slot, should fail because ID exists
-      await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
+      await ephemeralInstance.methods.insertVal(tableKey, idKey, fieldKey, id, VAL).send({
         from: ozWeb3.accounts[0]
       })
       throw new Error('manual error')
@@ -166,7 +165,7 @@ describe('Tests for Insert Public Table', () => {
     const VAL = uintToBytes32(VAL_RAW)
 
     const VAL2_RAW = 'John'
-    // const VAL2_RAW = 'Contrary to popular belief, Lorem Ipsum is not simply random text.'
+    // const VAL2_RAW = 'Contrary to popular belief, Lorem Ipsum is not simply random text. It keeps branches out of the body as recommended and splits out the checks for independent validation.'
     const VAL2 = Web3.utils.stringToHex(VAL2_RAW)
 
     sha3.reset()
@@ -218,12 +217,12 @@ describe('Tests for Insert Public Table', () => {
     ])
     */
 
-    await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
+    await ephemeralInstance.methods.insertVal(tableKey, idKey, fieldKey, id, VAL).send({
       from: ozWeb3.accounts[0]
     })
 
-    // await ephemeralInstance.methods.insertValVar(tableKey, idTableKey, fieldIdTableKey2, idKey, fieldKey2, id, VAL2).send({
-    await ephemeralInstance.methods.insertVal(tableKey, idTableKey, fieldIdTableKey2, idKey, fieldKey2, id, VAL2).send({
+    // await ephemeralInstance.methods.insertValVar(tableKey, idKey, fieldKey2, id, VAL2).send({
+    await ephemeralInstance.methods.insertVal(tableKey, idKey, fieldKey2, id, VAL2).send({
       from: ozWeb3.accounts[0]
     })
 
@@ -258,7 +257,7 @@ describe('Tests for Insert Public Table', () => {
 
     // should fail because not owner of row
     try {
-      await ephemeralInstanceOther.methods.updateVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
+      await ephemeralInstanceOther.methods.updateVal(tableKey, idKey, fieldKey, id, VAL).send({
         from: ozWeb3Other.accounts[0]
       })
       throw new Error('manual error')
@@ -266,7 +265,7 @@ describe('Tests for Insert Public Table', () => {
       expect(err.message).to.not.equal('manual error')
     }
 
-    await ephemeralInstance.methods.updateVal(tableKey, idTableKey, fieldIdTableKey, idKey, fieldKey, id, VAL).send({
+    await ephemeralInstance.methods.updateVal(tableKey, idKey, fieldKey, id, VAL).send({
       from: ozWeb3.accounts[0]
     })
 
@@ -313,15 +312,13 @@ describe('Tests for Insert Public Table', () => {
     // console.log(tableKey, idTableKey, idKey, fieldKey, id, [fieldKey], [fieldIdTableKey])
 
     // await ephemeralInstance.methods.deleteVal(tableKey, idTableKey, idKey, fieldKey, id, [fieldKey], [fieldIdTableKey]).send({
-    await ephemeralInstance.methods.deleteVal(tableKey, idTableKey, idKey, id, fieldKey, fieldIdTableKey).send({
+    await ephemeralInstance.methods.deleteVal(tableKey, idKey, fieldKey, id).send({
       from: ozWeb3.accounts[0]
     })
 
-    await ephemeralInstance.methods.deleteRow(tableKey, idTableKey, idKey, id).send({
+    await ephemeralInstance.methods.deleteRow(tableKey, idKey, id).send({
       from: ozWeb3.accounts[0]
     })
-
-    // console.log('delete done')
 
     tableIds = await ephemeralInstance.methods.getTableIds(tableKey).call()
     expect(tableIds.length).to.be.equal(1)
@@ -344,6 +341,10 @@ describe('Tests for Insert Public Table', () => {
 
     // remove the id from the array
     fieldIdTableKeys.shift()
+  })
+
+  it('Should delete a row with 2 vals', async () => {
+    // console.log('delete done')
 
     val = await ephemeralInstance.methods.getRowValue(fieldIdTableKeys[0]).call()
 
@@ -353,21 +354,22 @@ describe('Tests for Insert Public Table', () => {
 
     // expect(Web3.utils.hexToString(val).length).to.be.gt(32)
 
+    // val = await ephemeralInstance.methods.getRowValueVar(fieldIdTableKeys[1]).call()
     val = await ephemeralInstance.methods.getRowValue(fieldIdTableKeys[1]).call()
 
     expect(Web3.utils.hexToString(val)).to.not.be.equal(0)
 
     // console.log('delete 2 starting')
 
-    await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id2, fieldKeys[0], fieldIdTableKeys[0]).send({
+    await ephemeralInstance.methods.deleteVal(tableKey, id2Key, fieldKeys[0], id2).send({
       from: ozWeb3.accounts[0]
     })
 
-    await ephemeralInstance.methods.deleteVal(tableKey, id2TableKey, id2Key, id2, fieldKeys[1], fieldIdTableKeys[1]).send({
+    await ephemeralInstance.methods.deleteVal(tableKey, id2Key, fieldKeys[1], id2).send({
       from: ozWeb3.accounts[0]
     })
 
-    await ephemeralInstance.methods.deleteRow(tableKey, id2TableKey, id2Key, id2).send({
+    await ephemeralInstance.methods.deleteRow(tableKey, id2Key, id2).send({
       from: ozWeb3.accounts[0]
     })
 

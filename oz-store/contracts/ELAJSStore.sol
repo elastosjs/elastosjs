@@ -23,6 +23,9 @@ contract DateTime {
 // TODO: good practice to have functions not callable externally and internally
 contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
+    // TODO: have a dynamic mode to only use Events -> https://thegraph.com
+    // bool public useEvents = false;
+
     // DateTime Contract address
     address public dateTimeAddr = 0x9c71b2E820B067ea466ea81C0cd6852Bc8D8604e; // development
     // address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
@@ -157,7 +160,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     /**
      * @dev Table level permission checks
      */
-    modifier insertCheck(bytes32 tableKey, bytes32 idKey, bytes32 idTableKey) {
+    modifier insertCheck(bytes32 tableKey) {
 
         (uint256 permission, address delegate) = getTableMetadata(tableKey);
 
@@ -167,11 +170,16 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // if permission = 1, we must be the owner/delegate
         require(permission > 1 || isOwner() == true || delegate == _msgSender(), "Only owner/delegate can INSERT into this table");
 
-        // permissions check, is the idTableKey a subhash of the id and table?
-        require(isNamehashSubOf(idKey, tableKey, idTableKey) == true, "idTableKey not a subhash [id].[table]");
-
         _;
     }
+
+    /*
+    event InsertVal (
+        bytes32 indexed fieldIdTableKey,
+        address indexed owner,
+        bytes32 val
+    );
+    */
 
     /**
      * @dev Prior to insert, we check the permissions and autoIncrement
@@ -179,35 +187,29 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
      *
      * @param tableKey the namehashed [table] name string
      * @param idKey the sha3 hashed idKey
-     * @param idTableKey the namehashed [id].[table] name string
-     *
      * @param id as the raw string (unhashed)
-     *
-     *
      */
     function insertVal(
 
         bytes32 tableKey,
-        bytes32 idTableKey,
-        bytes32 fieldIdTableKey,
-
         bytes32 idKey,
         bytes32 fieldKey,
 
         bytes32 id,
         bytes32 val)
 
-    public insertCheck(tableKey, idKey, idTableKey){
+    public insertCheck(tableKey){
+
+        bytes32 idTableKey = namehash(idKey, tableKey);
+        bytes32 fieldIdTableKey = namehash(fieldKey, idTableKey);
 
         require(database.containsKey(fieldIdTableKey) == false, "id+field already exists");
-
-        // now check if the full field + id + table is a subhash
-        require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
 
         // increment counter
         increaseGsnCounter();
 
         // add an id entry to the table's set of ids for the row (this is a set so we don't need to check first)
+        // TODO: should we check the id/row ownership?
         tableId.addValueForKey(tableKey, id);
 
         // add the "row owner" if it doesn't exist, the row may already exist in which case we don't update it
@@ -219,26 +221,24 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // we won't serialize the type, that's way too much redundant data
         database.setValueForKey(fieldIdTableKey, bytes32(val));
 
+        // emit InsertVal(fieldIdTableKey, _msgSender(), val);
+
     }
 
-    /*
     function insertValVar(
         bytes32 tableKey,
-        bytes32 idTableKey,
-        bytes32 fieldIdTableKey,
-
         bytes32 idKey,
         bytes32 fieldKey,
 
         bytes32 id,
         bytes memory val)
 
-    public insertCheck(tableKey, idKey, idTableKey){
+    public insertCheck(tableKey){
+
+        bytes32 idTableKey = namehash(idKey, tableKey);
+        bytes32 fieldIdTableKey = namehash(fieldKey, idTableKey);
 
         require(database.containsKey(fieldIdTableKey) == false, "id+field already exists");
-
-        // now check if the full field + id + table is a subhash
-        require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
 
         // increment counter
         increaseGsnCounter();
@@ -246,10 +246,14 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // add an id entry to the table's set of ids for the row
         tableId.addValueForKey(tableKey, id);
 
+        // add the "row owner" if it doesn't exist, the row may already exist in which case we don't update it
+        if (database.containsKey(idTableKey) == false){
+            _setRowOwner(idTableKey, id, tableKey);
+        }
+
         // finally set the data
         database.setValueForKey(fieldIdTableKey, val);
     }
-    */
 
     /**
      * @dev we are essentially claiming this [id].[table] for the msg.sender, and setting the id createdDate
@@ -292,7 +296,9 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     }
 
-    modifier updateCheck(bytes32 tableKey, bytes32 idKey, bytes32 idTableKey) {
+    function updateCheck(bytes32 tableKey, bytes32 idKey, bytes32 idTableKey, bytes32 id) internal {
+
+        require(tableId.containsValueForKey(tableKey, id) == true, "id doesn't exist, use INSERT");
 
         (uint256 permission, address delegate) = getTableMetadata(tableKey);
 
@@ -301,9 +307,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
         // if permission = 1, we must be the owner/delegate
         require(permission > 1 || isOwner() == true || delegate == _msgSender(), "Only owner/delegate can UPDATE into this table");
-
-        // permissions check, is the idTableKey a subhash of the id and table?
-        require(isNamehashSubOf(idKey, tableKey, idTableKey) == true, "idTableKey not a subhash [id].[table]");
 
         // permissions check (public table = 2, shared table = 3),
         // if 2 or 3 is the _msg.sender() the row owner? But if 3 owner() is always allowed
@@ -319,29 +322,24 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
             } else {
                 require(isOwner() == true || delegate == _msgSender(), "Not rowOwner or owner/delegate for UPDATE into this table");
             }
-
         }
-        _;
     }
 
     function updateVal(
 
         bytes32 tableKey,
-        bytes32 idTableKey,
-        bytes32 fieldIdTableKey,
-
         bytes32 idKey,
         bytes32 fieldKey,
 
         bytes32 id,
         bytes32 val)
 
-    public updateCheck(tableKey, idKey, idTableKey) {
+    public {
 
-        require(tableId.containsValueForKey(tableKey, id) == true, "id doesn't exist, use INSERT");
+        bytes32 idTableKey = namehash(idKey, tableKey);
+        bytes32 fieldIdTableKey = namehash(fieldKey, idTableKey);
 
-        // now check if the full field + id + table is a subhash
-        require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
+        updateCheck(tableKey, idKey, idTableKey, id);
 
         // increment counter
         increaseGsnCounter();
@@ -351,7 +349,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     }
 
-    modifier deleteCheck(bytes32 tableKey, bytes32 idTableKey, bytes32 idKey, bytes32 id) {
+    function deleteCheck(bytes32 tableKey, bytes32 idTableKey, bytes32 idKey, bytes32 id) internal {
 
         require(tableId.containsValueForKey(tableKey, id) == true, "id doesn't exist");
 
@@ -362,9 +360,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
         // if permission = 1, we must be the owner/delegate
         require(permission > 1 || isOwner() == true || delegate == _msgSender(), "Only owner/delegate can DELETE from this table");
-
-        // permissions check, is the idTableKey a subhash of the id and table?
-        require(isNamehashSubOf(idKey, tableKey, idTableKey) == true, "idTableKey not a subhash [id].[table]");
 
         // permissions check (public table = 2, shared table = 3),
         // if 2 or 3 is the _msg.sender() the row owner? But if 3 owner() is always allowed
@@ -378,8 +373,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
                 require(rowOwner == _msgSender(), "Sender not owner of row");
             }
         }
-
-        _;
     }
 
     /**
@@ -391,18 +384,17 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     function deleteVal(
 
         bytes32 tableKey,
-        bytes32 idTableKey,
-
         bytes32 idKey,
-        bytes32 id,
-
         bytes32 fieldKey,
-        bytes32 fieldIdTableKey
 
-    ) public deleteCheck(tableKey, idTableKey, idKey, id){
+        bytes32 id
 
-        // check if the full field + id + table is a subhash (permissions)
-        require(isNamehashSubOf(fieldKey, idTableKey, fieldIdTableKey) == true, "fieldKey not a subhash [field].[id].[table]");
+    ) public {
+
+        bytes32 idTableKey = namehash(idKey, tableKey);
+        bytes32 fieldIdTableKey = namehash(fieldKey, idTableKey);
+
+        deleteCheck(tableKey, idTableKey, idKey, id);
 
         // increment counter
         increaseGsnCounter();
@@ -435,12 +427,14 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     function deleteRow(
 
         bytes32 tableKey,
-        bytes32 idTableKey,
-
         bytes32 idKey,
         bytes32 id
 
-    ) public deleteCheck(tableKey, idTableKey, idKey, id){
+    ) public {
+
+        bytes32 idTableKey = namehash(idKey, tableKey);
+
+        deleteCheck(tableKey, idTableKey, idKey, id);
 
         // increment counter
         increaseGsnCounter();
@@ -509,7 +503,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         }
     }
 
-    /*
     function getRowValueVar(bytes32 fieldIdTableKey) external view returns (bytes memory) {
 
         if (database.containsKey(fieldIdTableKey)) {
@@ -518,7 +511,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
             return new bytes(0);
         }
     }
-    */
 
     /**
      * @dev Warning this produces an Error: overflow (operation="setValue", fault="overflow", details="Number can only safely store up to 53 bits")
@@ -535,8 +527,14 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         return tableId.containsValueForKey(tableKey, id);
     }
 
+    /*
     function isNamehashSubOf(bytes32 subKey, bytes32 base, bytes32 target) internal pure returns (bool) {
+        bytes32 result = namehash(subKey, base);
+        return result == target;
+    }
+    */
 
+    function namehash(bytes32 subKey, bytes32 base) internal pure returns (bytes32) {
         bytes memory concat = new bytes(64);
 
         assembly {
@@ -546,7 +544,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
         bytes32 result = keccak256(concat);
 
-        return result == target;
+        return result;
     }
 
     // ************************************* _TABLE FUNCTIONS *************************************
