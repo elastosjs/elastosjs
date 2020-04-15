@@ -14,7 +14,7 @@ import { useTableData } from '../../hooks/useTableData'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import { ProfileActionTypes } from '../../store/redux/profile'
-
+import Web3 from 'web3'
 
 const DatabaseData = (props) => {
 
@@ -69,6 +69,8 @@ const DatabaseData = (props) => {
 
   }, [tables, props.profile.selectedTable])
 
+  debugger
+
   return <div>
     <Row className="mb-4">
       <Col lg="8">
@@ -88,7 +90,7 @@ const DatabaseData = (props) => {
     </Row>
     {props.profile.selectedTable ?
       (schema ?
-          <Table hover responsive className="table-outline mb-0 d-none d-sm-table"
+          <Table hover responsive className="table-outline mb-0 d-none d-sm-table animated fadeIn"
                  style={{ 'backgroundColor': '#fff' }}>
             <thead className="thead-light">
             <tr>
@@ -107,13 +109,13 @@ const DatabaseData = (props) => {
             </thead>
             <tbody>
             {tableData.map((row, i) => {
-              return <tr key={i}>
+              return <tr className="animated fadeIn" key={i}>
                 <td>
                   {i}
                 </td>
                 {row.map((colData, j) => {
                   return <td key={j}>
-                    {colData}
+                    {j === 0 ? colData : getColData(schema[j-1], colData)}
                   </td>
                 })}
               </tr>
@@ -133,3 +135,14 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps)(DatabaseData)
+
+const getColData = (col, val) => {
+
+  switch (col.type){
+    case 'BOOL':
+      val = Web3.utils.hexToNumber(val)
+      break
+  }
+
+  return val
+}

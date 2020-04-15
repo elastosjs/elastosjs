@@ -97,7 +97,7 @@ const DatabaseTable = (props) => {
                   style.borderTop = 0
                 }
 
-                return <tr key={col.name}>
+                return <tr className="animated fadeIn" key={col.name}>
                   <td>
                     {col.name}
                   </td>
