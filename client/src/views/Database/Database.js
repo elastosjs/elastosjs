@@ -153,7 +153,7 @@ const DatabaseView = (props) => {
                         <button className="btn btn-primary btn-sm">Add Funds</button>
                       </ButtonGroup>
                       <h3>
-                        0
+                        {selectedDb ? selectedDb.gsnBalance.toFixed(5) : 0}
                       </h3>
 
                       <div>
@@ -252,7 +252,7 @@ const DatabaseView = (props) => {
             ************************************************************************************************
             */}
             <TabPane tabId="2">
-              {activeTab === '2' ? <DatabaseData/> : ''}
+              {activeTab === '2' ? <DatabaseData databases={databases}/> : ''}
             </TabPane>
           </TabContent>
         </Col>

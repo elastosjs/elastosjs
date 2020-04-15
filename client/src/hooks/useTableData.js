@@ -33,7 +33,7 @@ export const useTableData = (tableName, schema) => {
 
         rowData.push(results)
 
-        setTableData(rowData)
+        setTableData(rowData.slice())
       }
 
     })()
