@@ -27,6 +27,7 @@ import {
   TabContent,
   TabPane
 } from 'reactstrap'
+import styled from 'styled-components'
 import Loading from '../Pages/Loading'
 import DatabaseTable from './DatabaseTable'
 import DatabaseData from './DatabaseData'
@@ -40,7 +41,9 @@ const DatabaseView = (props) => {
 
   const [dbOpen, setDbOpen] = useState(false)
 
-  const [activeTab, setActiveTab] = useState('1');
+  const [dbFundOpen, setDbFundOpen] = useState( false)
+
+  const [activeTab, setActiveTab] = useState('0');
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -112,6 +115,14 @@ const DatabaseView = (props) => {
           <Nav tabs>
             <NavItem>
               <NavLink
+                className={classnames({ active: activeTab === '0' })}
+                onClick={() => { toggle('0'); }}
+              >
+                Info
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
                 className={classnames({ active: activeTab === '1' })}
                 onClick={() => { toggle('1'); }}
               >
@@ -128,6 +139,55 @@ const DatabaseView = (props) => {
             </NavItem>
           </Nav>
           <TabContent activeTab={activeTab}>
+            {/*
+            ************************************************************************************************
+            Info Tab Pane
+            ************************************************************************************************
+            */}
+            <TabPane tabId="0">
+              <Row>
+                <Col sm="6" lg="3">
+                  <Card className="text-white bg-info">
+                    <CardBody>
+                      <ButtonGroup className="float-right">
+                        <button className="btn btn-primary btn-sm">Add Funds</button>
+                      </ButtonGroup>
+                      <h3>
+                        0
+                      </h3>
+
+                      <div>
+                        GSN Balance
+                        <HelpIcon className="fa fa-question-circle fa-lg ml-1"/>
+                      </div>
+                    </CardBody>
+                  </Card>
+                </Col>
+                <Col sm="6" lg="9">
+                  <Card className="text-white bg-primary">
+                    <CardBody>
+                      <h3>
+                        Smart Contract Address
+                      </h3>
+
+                      <div>
+                        <a target="_blank"
+                           href={`https://testnet.elaeth.io/address/${props.profile.selectedDbContract}/transactions`}
+                           className="text-white"
+                        >
+                          {props.profile.selectedDbContract}
+                        </a>
+                      </div>
+                    </CardBody>
+                  </Card>
+                </Col>
+              </Row>
+            </TabPane>
+            {/*
+            ************************************************************************************************
+            Tables Tab Pane
+            ************************************************************************************************
+            */}
             <TabPane tabId="1">
               <Row>
                 <Col>
@@ -186,6 +246,11 @@ const DatabaseView = (props) => {
                 </Col>
               </Row>
             </TabPane>
+            {/*
+            ************************************************************************************************
+            Data Tab Pane
+            ************************************************************************************************
+            */}
             <TabPane tabId="2">
               {activeTab === '2' ? <DatabaseData/> : ''}
             </TabPane>
@@ -199,10 +264,17 @@ const DatabaseView = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    profile: state.root.profile,
+    profile: state.root.profile
   }
 }
 
 export default connect(mapStateToProps)(DatabaseView)
 
+const HelpIcon = styled.i`
 
+  cursor: pointer;
+
+  :hover {
+    color: #ccc;
+  }
+`

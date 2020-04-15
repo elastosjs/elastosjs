@@ -208,6 +208,10 @@ const Login = (props) => {
 
   const handleLogin = useCallback(() => {
 
+    if (!ethAddress || !elajsAcct.username || !elajsAcct.password){
+      return
+    }
+
     (async () => {
 
       setLoading(true)

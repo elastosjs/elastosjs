@@ -270,7 +270,7 @@ export default class SplashCover extends React.Component {
             <br/>
 
             <code>
-              import elajs from 'elastosjs'
+              import elajs from 'ela-js'
             </code>
           </TitleMarkdownBlock>
 
