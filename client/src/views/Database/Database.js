@@ -54,11 +54,25 @@ const DatabaseView = (props) => {
   const [selectedDb, setSelectedDb] = useState()
 
   useEffect(() => {
+
+    if (!databases){
+      return
+    }
+
     // reset the selected table if database changes
     props.dispatch({
       type: ProfileActionTypes.SET_SELECTED_TABLE,
       selectedTable: ''
     })
+
+    // for admin there is only 1 DB
+    if (!props.profile.selectedDbContract && props.profile.isAdmin){
+      props.dispatch({
+        type: ProfileActionTypes.SET_SELECTED_DB,
+        selectedDbContract: databases[0].contractAddress
+      })
+      return
+    }
 
     setSelectedDb(_.find(databases, (db) => {
       return db.contractAddress === props.profile.selectedDbContract

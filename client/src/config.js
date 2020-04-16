@@ -14,7 +14,7 @@ const colors = {
 const contracts = {
   [constants.NETWORK.LOCAL]: {
     counterEla: '0xadBB95e5C488930495D9F15ADaAeffc138DFc689',
-    elajsStore: '0xd60485492e316833082b192DE7a3401F6fD51CE9'
+    elajsStore: '0x78A9b2871462cdA05A9b82b20262487bAa70d11c'
   }
 }
 
