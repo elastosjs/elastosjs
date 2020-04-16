@@ -15,7 +15,7 @@ import {
 import { connect } from 'react-redux'
 
 import { EthContext } from '../../../context/EthContext'
-import { NetworkContext } from '../../../context/NetworkContext'
+import _ from 'lodash'
 
 import Web3 from 'web3'
 
@@ -41,6 +41,10 @@ const RegisterTransaction = (props) => {
   const [ethConfig, setEthConfig] = useContext(EthContext)
 
   const [agree, setAgree] = useState(false)
+
+  const [registerPending, setRegisterPending] = useState(false)
+  const [registerDone, setRegisterDone] = useState(false)
+  const [transactions, setTransactions] = useState({})
 
   const elajs = ethConfig.elajs
 
@@ -74,7 +78,37 @@ const RegisterTransaction = (props) => {
         Web3.utils.numberToHex(0)
       ]
 
-      await elajs.insertRow(USER_TABLE, cols, values, {id: id})
+      // await elajs.insertRow(USER_TABLE, cols, values, {id: id})
+      let curTransactions = {}
+
+      for (let i = 0; i < cols.length; i++){
+        let insertPromise = elajs.insertVal(USER_TABLE, cols[i], values[i], {id: id})
+
+        curTransactions[i] = {
+          promise: insertPromise
+        }
+
+        ;(function(key){
+          insertPromise.on('transactionHash', (hash) => {
+            curTransactions[key] = {
+              ...curTransactions[key],
+              hash: hash
+            }
+            setTransactions(Object.assign({}, curTransactions))
+          })
+
+          insertPromise.on('receipt', (hash) => {
+            curTransactions[key] = {
+              ...curTransactions[key],
+              done: true
+            }
+            setTransactions(Object.assign({}, curTransactions))
+          })
+        })(i)
+
+        setTransactions(Object.assign({}, curTransactions))
+        await insertPromise
+      }
 
       props.dispatch({
         type: ProfileActionTypes.REGISTER,
@@ -82,7 +116,7 @@ const RegisterTransaction = (props) => {
         ethAddress: props.ethAddress
       })
 
-      window.location.hash = 'dashboard'
+      setRegisterDone(true)
 
     } catch (err){
       // TODO: error modal
@@ -92,13 +126,18 @@ const RegisterTransaction = (props) => {
 
   }, [agree, elajs, elajsAcct, ethAddress])
 
+  /*
+  useEffect(() => {
+    debugger
+  }, [transactions])
+  */
 
   /*
  ****************************************************************************************************************
  * Registration Transactions TODO
  ****************************************************************************************************************
  */
-  const [registerPending, setRegisterPending] = useState(false)
+
   /*
   // AUTH SIGNED
   // load Counter Instance
@@ -185,9 +224,15 @@ const RegisterTransaction = (props) => {
 
     <img src={elastosJSLogo} className="mb-2 ml-4"/>
 
-    {!registerPending ?
-      <Card>
-        <CardBody>
+    <Card>
+      <CardBody>
+
+        {!registerPending ? <div>
+          {/*
+          ****************************************************************************************************
+          *
+          ****************************************************************************************************
+          */}
           <Row>
             <Col className="mb-3">
               <h4>
@@ -243,13 +288,64 @@ const RegisterTransaction = (props) => {
               </button>
             </div>
           </div>
+        </div> : <div>
+          {/*
+          ****************************************************************************************************
+          *
+          ****************************************************************************************************
+          */}
+          <Row>
+            <Col className="mb-3 animated fadeIn">
+              <h4>
+                Creating Your Account
+              </h4>
+              This uses Gas Station Network so you don't pay for gas or need a wallet yet
+            </Col>
+          </Row>
 
-        </CardBody>
-      </Card> :
-      <div>
-        <Loading/>
-      </div>
-    }
+          {_.keys(transactions).map((key) => {
+
+            let trans = transactions[key]
+
+            let cardCssClass = 'bg-secondary'
+            let msg = 'Sending Transaction'
+            if (trans.done){
+              cardCssClass = 'bg-success'
+              msg = <div>
+                Done Transaction:<br/>
+                <a target="_blank" href={`https://testnet.elaeth.io/tx/${trans.hash}/internal_transactions`} className="text-white">{trans.hash}</a>
+              </div>
+            } else if (trans.hash) {
+              cardCssClass = 'bg-primary'
+              msg = <div>Running Transaction<br/>${trans.hash}</div>
+            }
+
+            return <Row className="animated fadeIn" key={parseInt(key) + 1}>
+              <Col>
+                <Card className={`text-white ${cardCssClass}`}>
+                  <CardBody>
+                    <h4>
+                      <ol start={parseInt(key) + 1}>
+                        <li>
+                          {msg}
+                        </li>
+                      </ol>
+                    </h4>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+          })}
+
+          {registerDone ?
+          <Row>
+            <Col>
+              <button className="btn btn-primary btn-lg pull-right" onClick={() => window.location.hash = 'dashboard'}>Continue</button>
+            </Col>
+          </Row> : <div/>}
+        </div>}
+      </CardBody>
+    </Card>
   </Container>
 }
 

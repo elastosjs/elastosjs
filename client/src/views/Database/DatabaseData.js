@@ -90,38 +90,38 @@ const DatabaseData = (props) => {
     </Row>
     {props.profile.selectedTable ?
       (schema ?
-          <Table hover responsive className="table-outline mb-0 d-none d-sm-table animated fadeIn"
-                 style={{ 'backgroundColor': '#fff' }}>
-            <thead className="thead-light">
-            <tr>
-              <th>
-                Row
+        <Table hover responsive className="table-outline mb-0 d-none d-sm-table animated fadeIn"
+               style={{ 'backgroundColor': '#fff' }}>
+          <thead className="thead-light">
+          <tr>
+            <th>
+              Row
+            </th>
+            <th>
+              ID
+            </th>
+            {schema.map((col) => {
+              return <th key={col.name}>
+                {col.name}
               </th>
-              <th>
-                ID
-              </th>
-              {schema.map((col) => {
-                return <th key={col.name}>
-                  {col.name}
-                </th>
+            })}
+          </tr>
+          </thead>
+          <tbody>
+          {tableData.map((row, i) => {
+            return <tr className="animated fadeIn" key={i}>
+              <td>
+                {i}
+              </td>
+              {row.map((colData, j) => {
+                return <td key={j}>
+                  {j === 0 ? colData : getColData(schema[j-1], colData)}
+                </td>
               })}
             </tr>
-            </thead>
-            <tbody>
-            {tableData.map((row, i) => {
-              return <tr className="animated fadeIn" key={i}>
-                <td>
-                  {i}
-                </td>
-                {row.map((colData, j) => {
-                  return <td key={j}>
-                    {j === 0 ? colData : getColData(schema[j-1], colData)}
-                  </td>
-                })}
-              </tr>
-            })}
-            </tbody>
-          </Table> : <Loading/>
+          })}
+          </tbody>
+        </Table> : <Loading/>
       )
       : <div></div>
     }
