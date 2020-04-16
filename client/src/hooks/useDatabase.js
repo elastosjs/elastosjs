@@ -9,7 +9,7 @@ export const useDatabase = (isAdmin) => {
   const [ethConfig, setEthConfig] = useContext(EthContext)
   const [network, setNetwork] = useContext(NetworkContext)
 
-  const [databases, setDatabases] = useState()
+  const [databases, setDatabases] = useState([])
 
   useEffect(() => {
     (async () => {
@@ -19,7 +19,6 @@ export const useDatabase = (isAdmin) => {
         return
       }
 
-      setDatabases([])
     })()
   }, [ethConfig, network, isAdmin])
 

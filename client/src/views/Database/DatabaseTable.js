@@ -6,13 +6,11 @@ import {
   Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap'
 import Loading from '../Pages/Loading'
-import { useTableMetadata } from '../../hooks/useTableMetadata'
 import { connect } from 'react-redux'
-
 
 const DatabaseTable = (props) => {
 
-  const {metadata, schema} = useTableMetadata(props.profile.selectedTable)
+  const { tableMetadata, tableSchema } = props
 
   const [helpModal, setHelpModal] = useState({
     permissionType: '',
@@ -22,13 +20,13 @@ const DatabaseTable = (props) => {
 
   useEffect(() => {
 
-    if (!metadata || !metadata.permission){
+    if (!tableMetadata || !tableMetadata.permission){
       return
     }
 
     let permissionType, msg
 
-    switch (parseInt(metadata.permission)){
+    switch (parseInt(tableMetadata.permission)){
       case 1:
         permissionType = 'Private'
         msg = 'Only the Contract Owner can modify this table'
@@ -48,7 +46,7 @@ const DatabaseTable = (props) => {
       permissionType,
       permissionHelpMsg: msg,
     })
-  }, [metadata])
+  }, [tableMetadata])
 
   const permissionTypeHelp = useCallback((ev) => {
     ev.preventDefault()
@@ -84,32 +82,35 @@ const DatabaseTable = (props) => {
             </tr>
             </thead>
             <tbody>
-            {!schema ? <tr><td className="text-center" colSpan="3"><Loading margin="0" size="100"/></td></tr> : (!schema.length === 0 ?
-              <tr>
-                <td colSpan="3">
-                  No Columns - <a href="#">Create Column</a>
-                </td>
-              </tr> :
-              schema.map((col, i) => {
+            {!tableSchema ?
+              <tr><td className="text-center" colSpan="3"><Loading margin="0" size="100"/></td></tr> :
+              (!tableSchema.length === 0 ?
+                <tr>
+                  <td colSpan="3">
+                    No Columns - <a href="#">Create Column</a>
+                  </td>
+                </tr> :
+                tableSchema.map((col, i) => {
 
-                const style = {display: 'flex', justifyContent: 'flex-end'}
-                if (i === 0){
-                  style.borderTop = 0
-                }
+                  const style = {display: 'flex', justifyContent: 'flex-end'}
+                  if (i === 0){
+                    style.borderTop = 0
+                  }
 
-                return <tr className="animated fadeIn" key={col.name}>
-                  <td>
-                    {col.name}
-                  </td>
-                  <td>
-                    {col.type}
-                  </td>
-                  <td className="text-right align-items-center" style={style}>
-                    <i className="cui-trash icons font-2xl"/>
-                  </td>
-                </tr>
-              })
-            )}
+                  return <tr className="animated fadeIn" key={col.name}>
+                    <td>
+                      {col.name}
+                    </td>
+                    <td>
+                      {col.type}
+                    </td>
+                    <td className="text-right align-items-center" style={style}>
+                      <i className="cui-trash icons font-2xl"/>
+                    </td>
+                  </tr>
+                })
+              )
+            }
             </tbody>
           </Table>
         </Col>

@@ -2,23 +2,23 @@ import { useContext, useState, useEffect } from 'react'
 import { EthContext } from '../context/EthContext'
 import Web3 from 'web3'
 
-export const useTableMetadata = (tableName) => {
+export const useTable = (tableName) => {
 
   const [ethConfig, ] = useContext(EthContext)
 
-  const [metadata, setMetadata] = useState()
-  const [schema, setSchema] = useState()
+  const [tableMetadata, setTableMetadata] = useState()
+  const [tableSchema, setTableSchema] = useState()
 
   useEffect(() => {
     (async () => {
       if (!tableName){
-        setMetadata(null)
+        setTableMetadata(null)
         return
       }
 
       const metadata = await ethConfig.elajs.getTableMetadata(tableName)
 
-      setMetadata(metadata)
+      setTableMetadata(metadata)
 
     })()
   }, [ethConfig, tableName])
@@ -26,7 +26,7 @@ export const useTableMetadata = (tableName) => {
   useEffect(() => {
     (async () => {
       if (!tableName){
-        setSchema(null)
+        setTableSchema(null)
         return
       }
 
@@ -39,11 +39,11 @@ export const useTableMetadata = (tableName) => {
         }
       })
 
-      setSchema(colsResult)
+      setTableSchema(colsResult)
 
     })()
   }, [ethConfig, tableName])
 
 
-  return {metadata, schema}
+  return {tableMetadata, tableSchema}
 }

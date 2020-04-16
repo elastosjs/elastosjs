@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from 'react'
 import { EthContext } from '../context/EthContext'
 import Web3 from 'web3'
 
-export const useTableData = (tableName, schema) => {
+export const useTableData = (tableName, tableSchema) => {
 
   const [ethConfig, ] = useContext(EthContext)
 
@@ -11,17 +11,23 @@ export const useTableData = (tableName, schema) => {
   useEffect(() => {
     (async () => {
 
-      if (!tableName || !schema){
+      if (!tableName || !tableSchema){
+        setTableData([])
         return
       }
 
       const tableIds = await ethConfig.elajs.getTableIds(tableName)
 
       const rowQueries = tableIds.map((id) => {
-        return schema.map((col) => {
+        return tableSchema.map((col) => {
           return ethConfig.elajs._getVal(tableName, id, col.name)
         })
       })
+
+      if (rowQueries.length === 0){
+        setTableData([])
+        return
+      }
 
       let rowData = []
 
@@ -38,7 +44,7 @@ export const useTableData = (tableName, schema) => {
 
     })()
 
-  }, [ethConfig, tableName, schema])
+  }, [ethConfig, tableName, tableSchema])
 
   return tableData
 }

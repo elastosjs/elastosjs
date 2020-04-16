@@ -57,8 +57,7 @@ const initialState = {
 
   isAdmin: 0,
 
-  selectedDbContract: null,
-  selectedTable: null
+  selectedDbContract: null
 }
 
 
@@ -181,12 +180,6 @@ export default {
         return {
           ...state,
           selectedDbContract: action.selectedDbContract
-        }
-
-      case ProfileActionTypes.SET_SELECTED_TABLE:
-        return {
-          ...state,
-          selectedTable: action.selectedTable
         }
     }
 

@@ -34,6 +34,7 @@ import DatabaseTable from './DatabaseTable'
 import DatabaseData from './DatabaseData'
 import classnames from 'classnames'
 import { useDatabase } from '../../hooks/useDatabase'
+import { useTable } from '../../hooks/useTable'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import { ProfileActionTypes } from '../../store/redux/profile'
@@ -52,19 +53,23 @@ const DatabaseView = (props) => {
     if (activeTab !== tab) setActiveTab(tab);
   }
 
+  /*
+  ************************************************************************
+  * Database Data
+  ************************************************************************
+   */
   const databases = useDatabase(props.profile.isAdmin)
 
+  const [selectedTable, setSelectedTable] = useState()
+
+  const {tableMetadata, tableSchema} = useTable(selectedTable)
+
+  /*
   useEffect(() => {
 
     if (!databases){
       return
     }
-
-    // reset the selected table if database changes
-    props.dispatch({
-      type: ProfileActionTypes.SET_SELECTED_TABLE,
-      selectedTable: ''
-    })
 
     // for admin there is only 1 DB
     if (!props.profile.selectedDbContract && props.profile.isAdmin){
@@ -76,26 +81,22 @@ const DatabaseView = (props) => {
     }
 
   }, [props.profile.selectedDbContract, databases])
-
-  const goTable = useCallback((ev) => {
-    ev.preventDefault()
-
-    props.dispatch({
-      type: ProfileActionTypes.SET_SELECTED_TABLE,
-      selectedTable: ev.currentTarget.dataset.tablename
-    })
+   */
+  const selectDatabase = useCallback(() => {
+    // setSelectedTable(ev.currentTarget.dataset.contractaddress)
   })
 
+  const selectTable = useCallback((ev) => {
+    ev.preventDefault()
+    setSelectedTable(ev.currentTarget.dataset.tablename)
+  })
+
+
   /*
-  useEffect(() => {
-
-  }, [props.profile.selectedTable])
-  */
-
-  const selectDatabase = useCallback(() => {
-
-  }, [])
-
+  ************************************************************************
+  * Generate Databases Dropdown
+  ************************************************************************
+   */
   const databaseDropdown = useMemo(() => {
 
     if (!databases){
@@ -124,6 +125,7 @@ const DatabaseView = (props) => {
 
   }, [databases, props.profile.selectedDbContract])
 
+  // returns selected db name from contract
   const selectedDb = useMemo(() => {
 
     if (!databases){
@@ -240,58 +242,61 @@ const DatabaseView = (props) => {
             <TabPane tabId="1">
               <Row>
                 <Col>
-                  {props.profile.selectedTable ?
+                  {selectedTable ?
                     <Breadcrumb>
                       <BreadcrumbItem>
-                        <a href="#" onClick={goTable} data-tablename="" >
+                        <a href="#" onClick={selectTable} data-tablename="" >
                           Back to Tables List
                         </a>
                       </BreadcrumbItem>
-                      <BreadcrumbItem active>{props.profile.selectedTable}</BreadcrumbItem>
+                      <BreadcrumbItem active>{selectedTable}</BreadcrumbItem>
                     </Breadcrumb> : ''}
-                  {props.profile.selectedTable ?
-                  <DatabaseTable setActiveTab={setActiveTab}/> :
-                  <Table hover responsive className="table-outline mb-0 d-none d-sm-table" style={{'backgroundColor': '#fff'}}>
-                    <thead className="thead-light">
-                    <tr>
-                      <th>Table Name</th>
-                      <th>Rows</th>
-                      {/* <th># of Tables</th> */}
-                      <th className="text-right">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {!selectedDb || !selectedDb.tables || selectedDb.tables.length === 0 ?
+                  {selectedTable ?
+
+                    <DatabaseTable setActiveTab={setActiveTab} tableMetadata={tableMetadata} tableSchema={tableSchema}/> :
+
+                    <Table hover responsive className="table-outline mb-0 d-none d-sm-table" style={{'backgroundColor': '#fff'}}>
+                      <thead className="thead-light">
                       <tr>
-                        <td colSpan="3">
-                          No Tables - <a href="#">Create Table</a>
-                        </td>
-                      </tr> :
-                      selectedDb.tables.map((table, i) => {
+                        <th>Table Name</th>
+                        <th>Rows</th>
+                        {/* <th># of Tables</th> */}
+                        <th className="text-right">Actions</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      {!selectedDb || !selectedDb.tables || selectedDb.tables.length === 0 ?
+                        <tr>
+                          <td colSpan="3">
+                            No Tables - <a href="#">Create Table</a>
+                          </td>
+                        </tr> :
+                        selectedDb.tables.map((table, i) => {
 
-                        const style = {display: 'flex', justifyContent: 'flex-end'}
-                        if (i === 0){
-                          style.borderTop = 0
-                        }
+                          const style = {display: 'flex', justifyContent: 'flex-end'}
+                          if (i === 0){
+                            style.borderTop = 0
+                          }
 
-                        return <tr key={table.name}>
-                          <td>
-                            <a href="#" onClick={goTable} data-tablename={table.name}>
-                              {table.name}
-                            </a>
-                          </td>
-                          <td>
-                            0
-                          </td>
-                          <td className="text-right align-items-center" style={style}>
-                            <button className="btn btn-primary mr-3">View Data</button>{' '}
-                            <i className="cui-trash icons font-2xl"/>
-                          </td>
-                        </tr>
-                      })
-                    }
-                    </tbody>
-                  </Table>}
+                          return <tr key={table.name}>
+                            <td>
+                              <a href="#" onClick={selectTable} data-tablename={table.name}>
+                                {table.name}
+                              </a>
+                            </td>
+                            <td>
+                              0
+                            </td>
+                            <td className="text-right align-items-center" style={style}>
+                              <button className="btn btn-primary mr-3">View Data</button>{' '}
+                              <i className="cui-trash icons font-2xl"/>
+                            </td>
+                          </tr>
+                        })
+                      }
+                      </tbody>
+                    </Table>
+                  }
                 </Col>
               </Row>
             </TabPane>
@@ -301,7 +306,14 @@ const DatabaseView = (props) => {
             ************************************************************************************************
             */}
             <TabPane tabId="2">
-              {activeTab === '2' ? <DatabaseData databases={databases}/> : ''}
+              {activeTab === '2' ?
+                <DatabaseData
+                  databases={databases}
+                  selectedTable={selectedTable}
+                  setSelectedTable={setSelectedTable}
+                  tableMetadata={tableMetadata}
+                  tableSchema={tableSchema}
+                /> : ''}
             </TabPane>
           </TabContent>
         </Col>
