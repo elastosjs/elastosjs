@@ -3,6 +3,8 @@ import { Link, NavLink } from 'react-router-dom';
 import { Badge, UncontrolledDropdown, DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem } from 'reactstrap';
 import PropTypes from 'prop-types';
 
+import { toastr } from 'react-redux-toastr'
+
 import { AppAsideToggler, AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
 import logo from '../../assets/img/brand/elastosJS.svg'
 import logoSmall from '../../assets/img/brand/elastosJS.svg'
@@ -10,7 +12,7 @@ import logoSmall from '../../assets/img/brand/elastosJS.svg'
 const DefaultHeader = (props) => {
 
   const handleChangeNet = useCallback(() => {
-    alert('coming soon')
+    toastr.info('Coming Soon')
   })
 
   return (

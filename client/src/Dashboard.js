@@ -7,6 +7,8 @@ import { DrizzleContext } from '@drizzle/react-plugin'
 
 import constants from './constants'
 
+import ReduxToastr from 'react-redux-toastr'
+
 import getEthConfig from './store'
 
 import { EthContext } from './context/EthContext'
@@ -66,6 +68,16 @@ const Dashboard = () => {
         </React.Suspense>
       </PersistGate>
       {/* </DrizzleContext.Provider> */}
+      <ReduxToastr
+        timeOut={3000}
+        newestOnTop={false}
+        preventDuplicates
+        position="top-right"
+        getState={(state) => state.toastr} // This is the default
+        transitionIn="bounceIn"
+        transitionOut="bounceOut"
+        progressBar
+        closeOnToastrClick/>
     </Provider>
   )
 }

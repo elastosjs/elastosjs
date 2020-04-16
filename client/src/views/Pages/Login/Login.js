@@ -267,6 +267,13 @@ const Login = (props) => {
 
   }, [elajsAcct, ethAddress])
 
+  const keyUpPw = useCallback((ev) => {
+    if (ev.keyCode === 13){
+      // enter key
+      handleSaveAcct()
+    }
+  }, [handleSaveAcct])
+
   /*
   const { accounts, lib } = ethConfig.ozWeb3
   const ozWeb3Context = ethConfig.ozWeb3
@@ -350,7 +357,7 @@ const Login = (props) => {
                           <i className="icon-lock"></i>
                         </InputGroupText>
                       </InputGroupAddon>
-                      <Input type="password" placeholder="Password" autoComplete="current-password" onChange={handlePw}/>
+                      <Input type="password" placeholder="Password" autoComplete="current-password" onChange={handlePw} onKeyUp={keyUpPw}/>
                     </InputGroup>
                     <Row>
                       <Col xs="8" className="mb-5">

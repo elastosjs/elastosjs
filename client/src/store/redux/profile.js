@@ -153,11 +153,7 @@ export default {
         }
 
       case ProfileActionTypes.LOGOUT:
-        return {
-          ...state,
-          did: null,
-          loading: true
-        }
+        return Object.assign({}, initialState)
 
       // we set this first so we show the loading screen
       case ProfileActionTypes.LOGGING_IN:

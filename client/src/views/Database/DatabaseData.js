@@ -69,8 +69,6 @@ const DatabaseData = (props) => {
 
   }, [tables, props.profile.selectedTable])
 
-  debugger
-
   return <div>
     <Row className="mb-4">
       <Col lg="8">

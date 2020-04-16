@@ -36,7 +36,7 @@ const Dashboard = (props) => {
 
   const {ethBalance, walletAddress} = useEthBalance()
 
-  const databases = useDatabase(props)
+  const databases = useDatabase(props.profile.isAdmin)
 
   const goDatabase = useCallback((ev) => {
 

@@ -6,6 +6,8 @@ import { contractEventNotifier, contractAddNotifier } from "../middleware"
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 
+import {reducer as toastrReducer} from 'react-redux-toastr'
+
 import Fortmatic from 'fortmatic'
 import Web3 from "web3"
 import { GSNProvider } from '@openzeppelin/gsn-provider'
@@ -83,6 +85,7 @@ const getEthConfig = async (network) => {
 
   const appReducers = {
     // todo rename this to root
+    toastr: toastrReducer,
     root: persistReducer(persistConfig, reducers),
   }
 

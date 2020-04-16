@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import {
   Badge,
   Button,
@@ -25,10 +25,11 @@ import {
   NavItem,
   NavLink,
   TabContent,
-  TabPane
+  TabPane, ModalHeader, ModalBody, ModalFooter, Modal
 } from 'reactstrap'
 import styled from 'styled-components'
 import Loading from '../Pages/Loading'
+import { CreateDb } from '../../forms/CreateDb'
 import DatabaseTable from './DatabaseTable'
 import DatabaseData from './DatabaseData'
 import classnames from 'classnames'
@@ -43,6 +44,8 @@ const DatabaseView = (props) => {
 
   const [dbFundOpen, setDbFundOpen] = useState( false)
 
+  const [dbCreateOpen, setDbCreateOpen] = useState( false)
+
   const [activeTab, setActiveTab] = useState('0');
 
   const toggle = (tab) => {
@@ -50,8 +53,6 @@ const DatabaseView = (props) => {
   }
 
   const databases = useDatabase(props.profile.isAdmin)
-
-  const [selectedDb, setSelectedDb] = useState()
 
   useEffect(() => {
 
@@ -74,10 +75,6 @@ const DatabaseView = (props) => {
       return
     }
 
-    setSelectedDb(_.find(databases, (db) => {
-      return db.contractAddress === props.profile.selectedDbContract
-    }))
-
   }, [props.profile.selectedDbContract, databases])
 
   const goTable = useCallback((ev) => {
@@ -95,6 +92,42 @@ const DatabaseView = (props) => {
   }, [props.profile.selectedTable])
   */
 
+  const selectDatabase = useCallback(() => {
+
+  }, [])
+
+  const databaseDropdown = useMemo(() => {
+
+    if (!databases){
+      return
+    }
+
+    // no database selected, show them all
+    if (!props.profile.selectedDbContract){
+      return <DropdownMenu>
+        {databases.map((db) => {
+          return <DropdownItem key={db.name} onClick={selectDatabase} data-dbname={db.name}>{db.name}</DropdownItem>
+        })}
+      </DropdownMenu>
+    }
+
+    const otherDbs = _.reject(databases, (obj) => obj.contractAddress === props.profile.selectedDbContract)
+
+    return <DropdownMenu>
+      <DropdownItem header>Change Database</DropdownItem>
+      <DropdownItem disabled>{selectedDb.name}</DropdownItem>
+      <DropdownItem divider />
+      {otherDbs.length > 1 ? otherDbs.map((db) => {
+        return <DropdownItem key={db.name} onClick={selectDatabase}>{db.name}</DropdownItem>
+      }) : <DropdownItem>No Other Databases</DropdownItem>}
+    </DropdownMenu>
+
+  }, [databases, props.profile.selectedDbContract])
+
+  const selectedDb = useMemo(() => {
+    return _.find(databases, (db) => db.contractAddress === props.profile.selectedDbContract)
+  }, [databases, props.profile.selectedDbContract])
+
   return (
     !databases ? <Loading/> :
     <div className="animated fadeIn">
@@ -105,19 +138,9 @@ const DatabaseView = (props) => {
               Database:
             </Label>
             <DropdownToggle caret>
-              ElastosJS
+              {selectedDb || 'None'}
             </DropdownToggle>
-            <DropdownMenu>
-              <DropdownItem header>Change Database</DropdownItem>
-              <DropdownItem disabled>ElastosJS</DropdownItem>
-              <DropdownItem divider />
-              {!databases || databases.length === 1 ?
-                <DropdownItem disabled>No Other Databases</DropdownItem> :
-                _.reject(databases, (obj) => obj.contractAddress === props.profile.selectedDbContract).map((db) => {
-                  return <DropdownItem>{db.name}</DropdownItem>
-                })
-              }
-            </DropdownMenu>
+            {databaseDropdown}
           </Dropdown>
         </Col>
         <Col lg="4" className="text-right">
@@ -137,6 +160,7 @@ const DatabaseView = (props) => {
             </NavItem>
             <NavItem>
               <NavLink
+                disabled={!selectedDb}
                 className={classnames({ active: activeTab === '1' })}
                 onClick={() => { toggle('1'); }}
               >
@@ -145,6 +169,7 @@ const DatabaseView = (props) => {
             </NavItem>
             <NavItem>
               <NavLink
+                disabled={!selectedDb}
                 className={classnames({ active: activeTab === '2' })}
                 onClick={() => { toggle('2'); }}
               >
@@ -159,43 +184,48 @@ const DatabaseView = (props) => {
             ************************************************************************************************
             */}
             <TabPane tabId="0">
-              <Row>
-                <Col sm="6" lg="3">
-                  <Card className="text-white bg-info">
-                    <CardBody>
-                      <ButtonGroup className="float-right">
-                        <button className="btn btn-primary btn-sm">Add Funds</button>
-                      </ButtonGroup>
-                      <h3>
-                        {selectedDb ? selectedDb.gsnBalance.toFixed(5) : 0}
-                      </h3>
+              {selectedDb ?
+                <Row>
+                  <Col sm="6" lg="3">
+                    <Card className="text-white bg-info">
+                      <CardBody>
+                        <ButtonGroup className="float-right">
+                          <button className="btn btn-primary btn-sm">Add Funds</button>
+                        </ButtonGroup>
+                        <h3>
+                          {selectedDb ? selectedDb.gsnBalance.toFixed(5) : 0}
+                        </h3>
 
-                      <div>
-                        GSN Balance
-                        <HelpIcon className="fa fa-question-circle fa-lg ml-1"/>
-                      </div>
-                    </CardBody>
-                  </Card>
-                </Col>
-                <Col sm="6" lg="9">
-                  <Card className="text-white bg-primary">
-                    <CardBody>
-                      <h3>
-                        Smart Contract Address
-                      </h3>
+                        <div>
+                          GSN Balance
+                          <HelpIcon className="fa fa-question-circle fa-lg ml-1"/>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </Col>
+                  <Col sm="6" lg="9">
+                    <Card className="text-white bg-primary">
+                      <CardBody>
+                        <h3>
+                          Smart Contract Address
+                        </h3>
 
-                      <div>
-                        <a target="_blank"
-                           href={`https://testnet.elaeth.io/address/${props.profile.selectedDbContract}/transactions`}
-                           className="text-white"
-                        >
-                          {props.profile.selectedDbContract}
-                        </a>
-                      </div>
-                    </CardBody>
-                  </Card>
-                </Col>
-              </Row>
+                        <div>
+                          <a target="_blank"
+                             href={`https://testnet.elaeth.io/address/${props.profile.selectedDbContract}/transactions`}
+                             className="text-white"
+                          >
+                            {props.profile.selectedDbContract}
+                          </a>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </Col>
+                </Row> :
+                <div className="text-muted">
+                  Please select a database or <a href="#" onClick={(ev) => {ev.preventDefault();setDbCreateOpen(true)}}>Create a New Database</a>
+                </div>
+              }
             </TabPane>
             {/*
             ************************************************************************************************
@@ -271,6 +301,15 @@ const DatabaseView = (props) => {
           </TabContent>
         </Col>
       </Row>
+      <Modal isOpen={dbCreateOpen} style={{marginTop: '20%'}}>
+        <ModalHeader>
+          Create New Database
+        </ModalHeader>
+        <ModalBody>
+          <CreateDb closeModal={() => setDbCreateOpen(false)}/>
+        </ModalBody>
+      </Modal>
+
     </div>
   )
 
