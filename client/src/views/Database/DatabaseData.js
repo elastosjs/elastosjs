@@ -44,7 +44,7 @@ const DatabaseData = (props) => {
     })
   }, [])
 
-  const tableDropdown = useMemo(() => {
+  const tableDropdown = () => {
 
     // no table selected, show them all
     if (!props.profile.selectedTable){
@@ -62,12 +62,12 @@ const DatabaseData = (props) => {
       <DropdownItem header>Change Table</DropdownItem>
       <DropdownItem disabled>{props.profile.selectedTable}</DropdownItem>
       <DropdownItem divider />
-      {otherTables.length > 1 ? otherTables.map((table) => {
+      {otherTables.length ? otherTables.map((table) => {
         return <DropdownItem key={table.name} onClick={selectTable}>{table.name}</DropdownItem>
       }) : <DropdownItem>No Other Tables</DropdownItem>}
     </DropdownMenu>
 
-  }, [tables, props.profile.selectedTable])
+  }//, [tables, props.profile.selectedTable])
 
   return <div>
     <Row className="mb-4">
@@ -79,7 +79,7 @@ const DatabaseData = (props) => {
           <DropdownToggle caret>
             {props.profile.selectedTable || 'None'}
           </DropdownToggle>
-          {tableDropdown}
+          {tableDropdown()}
         </Dropdown>
       </Col>
       <Col lg="4" className="text-right">
@@ -136,10 +136,13 @@ export default connect(mapStateToProps)(DatabaseData)
 
 const getColData = (col, val) => {
 
-  switch (col.type){
-    case 'BOOL':
-      val = Web3.utils.hexToNumber(val)
-      break
+  // TODO: fix this
+  if (col && col.type){
+    switch (col.type){
+      case 'BOOL':
+        val = Web3.utils.hexToNumber(val)
+        break
+    }
   }
 
   return val

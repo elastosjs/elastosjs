@@ -29,7 +29,7 @@ import {
 } from 'reactstrap'
 import styled from 'styled-components'
 import Loading from '../Pages/Loading'
-import { CreateDb } from '../../forms/CreateDb'
+import CreateDb from '../../forms/CreateDb'
 import DatabaseTable from './DatabaseTable'
 import DatabaseData from './DatabaseData'
 import classnames from 'classnames'
@@ -99,7 +99,7 @@ const DatabaseView = (props) => {
   const databaseDropdown = useMemo(() => {
 
     if (!databases){
-      return
+      return <div></div>
     }
 
     // no database selected, show them all
@@ -115,7 +115,7 @@ const DatabaseView = (props) => {
 
     return <DropdownMenu>
       <DropdownItem header>Change Database</DropdownItem>
-      <DropdownItem disabled>{selectedDb.name}</DropdownItem>
+      <DropdownItem disabled>{selectedDb ? selectedDb.name : 'None'}</DropdownItem>
       <DropdownItem divider />
       {otherDbs.length > 1 ? otherDbs.map((db) => {
         return <DropdownItem key={db.name} onClick={selectDatabase}>{db.name}</DropdownItem>
@@ -125,6 +125,11 @@ const DatabaseView = (props) => {
   }, [databases, props.profile.selectedDbContract])
 
   const selectedDb = useMemo(() => {
+
+    if (!databases){
+      return
+    }
+
     return _.find(databases, (db) => db.contractAddress === props.profile.selectedDbContract)
   }, [databases, props.profile.selectedDbContract])
 
@@ -138,7 +143,7 @@ const DatabaseView = (props) => {
               Database:
             </Label>
             <DropdownToggle caret>
-              {selectedDb || 'None'}
+              {selectedDb ? selectedDb.name : ''}
             </DropdownToggle>
             {databaseDropdown}
           </Dropdown>

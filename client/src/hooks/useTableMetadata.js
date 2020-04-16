@@ -12,6 +12,7 @@ export const useTableMetadata = (tableName) => {
   useEffect(() => {
     (async () => {
       if (!tableName){
+        setMetadata(null)
         return
       }
 
@@ -25,6 +26,7 @@ export const useTableMetadata = (tableName) => {
   useEffect(() => {
     (async () => {
       if (!tableName){
+        setSchema(null)
         return
       }
 

@@ -14,8 +14,6 @@ const DatabaseTable = (props) => {
 
   const {metadata, schema} = useTableMetadata(props.profile.selectedTable)
 
-  debugger
-
   const [helpModal, setHelpModal] = useState({
     permissionType: '',
     permissionHelpMsg: '',
