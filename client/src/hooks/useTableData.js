@@ -11,8 +11,9 @@ export const useTableData = (tableName, tableSchema) => {
   useEffect(() => {
     (async () => {
 
+      setTableData([])
+
       if (!tableName || !tableSchema){
-        setTableData([])
         return
       }
 
@@ -25,7 +26,6 @@ export const useTableData = (tableName, tableSchema) => {
       })
 
       if (rowQueries.length === 0){
-        setTableData([])
         return
       }
 

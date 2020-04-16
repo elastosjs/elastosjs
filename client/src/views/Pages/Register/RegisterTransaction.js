@@ -317,7 +317,7 @@ const RegisterTransaction = (props) => {
               </div>
             } else if (trans.hash) {
               cardCssClass = 'bg-primary'
-              msg = <div>Running Transaction<br/>${trans.hash}</div>
+              msg = <div>Running Transaction<br/>{trans.hash}</div>
             }
 
             return <Row className="animated fadeIn" key={parseInt(key) + 1}>

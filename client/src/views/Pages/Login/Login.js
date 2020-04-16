@@ -257,6 +257,7 @@ const Login = (props) => {
       props.dispatch({
         type: ProfileActionTypes.SET_CREDENTIALS,
         username: elajsAcct.username,
+        userId: id,
         ethAddress: ethAddress,
         isAdmin: isAdmin
       })

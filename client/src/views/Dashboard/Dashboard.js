@@ -16,7 +16,7 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
-  DropdownToggle,
+  DropdownToggle, Modal, ModalBody, ModalHeader,
   Progress,
   Row,
   Table,
@@ -26,6 +26,7 @@ import { EthContext } from '../../context/EthContext'
 import { NetworkContext } from '../../context/NetworkContext'
 import { connect } from 'react-redux'
 import { ProfileActionTypes } from '../../store/redux/profile'
+import CreateDb from '../../forms/CreateDb'
 
 const Dashboard = (props) => {
 
@@ -35,6 +36,8 @@ const Dashboard = (props) => {
   const [network, setNetwork] = useContext(NetworkContext)
 
   const {ethBalance, walletAddress} = useEthBalance()
+
+  const [dbCreateOpen, setDbCreateOpen] = useState( false)
 
   const databases = useDatabase(props.profile.isAdmin)
 
@@ -132,7 +135,7 @@ const Dashboard = (props) => {
               !databases.length ?
               <tr>
                 <td className="text-center" colSpan="5">
-                  No Databases - <a href="#">Create Database</a>
+                  No Databases - <a href="#" onClick={(ev) => {ev.preventDefault(); setDbCreateOpen(true)}}>Create Database</a>
                 </td>
               </tr> :
               databases.map((database) => {
@@ -164,6 +167,14 @@ const Dashboard = (props) => {
           </Table>
         </Col>
       </Row>
+      <Modal isOpen={dbCreateOpen} style={{marginTop: '20%'}}>
+        <ModalHeader>
+          Create New Database
+        </ModalHeader>
+        <ModalBody>
+          <CreateDb closeModal={() => setDbCreateOpen(false)}/>
+        </ModalBody>
+      </Modal>
     </div>
   );
 

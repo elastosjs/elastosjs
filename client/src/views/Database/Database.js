@@ -145,7 +145,7 @@ const DatabaseView = (props) => {
               Database:
             </Label>
             <DropdownToggle caret>
-              {selectedDb ? selectedDb.name : ''}
+              {selectedDb ? selectedDb.name : 'None Selected'}
             </DropdownToggle>
             {databaseDropdown}
           </Dropdown>

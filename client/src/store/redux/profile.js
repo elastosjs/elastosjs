@@ -55,6 +55,7 @@ const initialState = {
   // we don't actually save the username, but a hashed id for reference
   username: '',
 
+  userId: '',
   isAdmin: 0,
 
   selectedDbContract: null
@@ -69,7 +70,7 @@ export const ActionCheckAccts = () => {
 
     const state = getState()
 
-    // check if there is an account, just once
+    // check if there is an account, just onces
     if (state.drizzleStatus.initialized && !state.accounts[0]){
       const ethAddress = await web3.currentProvider.enable()
 
@@ -166,6 +167,7 @@ export default {
         return {
           ...state,
           username: action.username,
+          userId: action.userId,
           ethAddress: action.ethAddress,
           isAdmin: action.isAdmin || 0
         }

@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useContext } from 'react'
 import {
+  Row,
+  Col,
   InputGroup,
   InputGroupAddon,
   InputGroupText,
@@ -8,15 +10,18 @@ import {
   Dropdown,
   DropdownItem,
   DropdownToggle,
-  DropdownMenu
+  DropdownMenu,
+  Card,
+  CardBody
 } from 'reactstrap'
 import _ from 'lodash'
 import { toastr } from 'react-redux-toastr'
 import styled from 'styled-components'
 import { LoadingOverlay } from '../views/Pages/Loading'
-
+import { useEthBalance } from '../hooks/useEthBalance'
 import { EthContext } from '../context/EthContext'
 import { connect } from 'react-redux'
+import Web3 from 'web3'
 
 /*
 const DIRECTION = {
@@ -28,6 +33,8 @@ const DIRECTION = {
 const CreateDb = (props) => {
 
   const [dbName, setDbName] = useState('')
+
+  const {ethBalance, walletAddress} = useEthBalance()
 
   /*
   const [cols, setCols] = useState([
@@ -189,19 +196,80 @@ const CreateDb = (props) => {
         console.log('receipt', receipt)
 
         const contractAddress = receipt.contractAddress
+        const userId = props.profile.userId
+
+        await insertDatabaseRecord(dbName, contractAddress, userId)
 
         setPendingCreate(false)
+
+        toastr.success(`Database "${dbName}" Created`)
+
+        props.closeModal()
       })
 
     })()
-  })
+  }, [dbName, props.closeModal, ethConfig])
+
+  const insertDatabaseRecord = async (dbName, contractAddress, userId) => {
+
+    const cols = ['dbName', 'contractAddress', 'userId']
+    const vals = [Web3.utils.stringToHex(dbName), contractAddress, userId]
+
+    const id = Web3.utils.randomHex(32)
+
+    for (let i = 0, len = cols.length; i < len; i++){
+      let insertPromise = elajs.insertVal('database', cols[i], vals[i], {id})
+
+      insertPromise.on('transactionHash', (hash) => {
+        toastr.info(`Running transaction - ${hash} - (${i + 1} / ${len})`, {timeOut: 1500})
+      })
+
+      insertPromise.on('receipt', () => {
+        toastr.success(`Done - (${i + 1} / ${len})`, {timeOut: 1500})
+      })
+
+      await insertPromise
+    }
+  }
 
   return <div>
 
     <Container>
-      <InputGroup className="mb-3">
-        <Input type="text" placeholder="database name" autoComplete="database name" onChange={handleDbName} value={dbName}/>
-      </InputGroup>
+
+      <Row>
+        <Col>
+          <Card className="text-white bg-info">
+            <CardBody>
+              <h3>
+                {ethBalance.toFixed(4)}
+              </h3>
+
+              <div>
+                Your ELASC Balance
+                <HelpIcon className="fa fa-question-circle fa-lg ml-1"/>
+
+                <p className="mt-3">
+                  You must have at least 0.01 ELASC to deploy the smart contract
+                </p>
+              </div>
+            </CardBody>
+          </Card>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col className="p-3">
+          You will be prompted to sign and pay for the deployment transaction.
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <InputGroup className="mb-3">
+            <Input type="text" placeholder="database name" autoComplete="database name" onChange={handleDbName} value={dbName}/>
+          </InputGroup>
+        </Col>
+      </Row>
 
       {/*
       <button className="btn btn-secondary pull-right mb-1" onClick={addColumn}>Add Column</button>
@@ -290,5 +358,14 @@ const TypeDropdown = styled(Dropdown)`
   button.dropdown-toggle {
     text-align: right;
     min-width: 100px;
+  }
+`
+
+const HelpIcon = styled.i`
+
+  cursor: pointer;
+
+  :hover {
+    color: #ccc;
   }
 `

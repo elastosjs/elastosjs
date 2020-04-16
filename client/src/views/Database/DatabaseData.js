@@ -138,6 +138,10 @@ const getColData = (col, val) => {
       case 'BOOL':
         val = Web3.utils.hexToNumber(val)
         break
+
+      case 'STRING':
+        val = Web3.utils.hexToString(val)
+        break
     }
   }
 
