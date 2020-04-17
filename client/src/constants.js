@@ -9,6 +9,7 @@ export default {
     PASSWORD_MIN_LEN: 8
   },
   SCHEMA: {
-    USER_TABLE: 'user'
+    USER_TABLE: 'user',
+    DATABASE_TABLE: 'database'
   }
 }

@@ -76,7 +76,8 @@ npx oz send-tx --network development --to 0x592c129085b61A3110Ebd1DCD99F3Cfe97A5
 
   // we need userId to differentiate between diff accts with the same fm address
   cols = ['dbName', 'contractAddress', 'userId']
-  typesRaw = ['STRING', 'BYTES32', 'BYTES32']
+  // contractAddress should be ADDRESS type
+  typesRaw = ['STRING', 'ADDRESS', 'BYTES32']
   colsHashed = cols.map((colName) => Web3.utils.stringToHex(colName))
   types = typesRaw.map((colName) => Web3.utils.stringToHex(colName))
   await elastosjs.createTable('database', 2, colsHashed, types)

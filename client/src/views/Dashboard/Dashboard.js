@@ -27,19 +27,21 @@ import { NetworkContext } from '../../context/NetworkContext'
 import { connect } from 'react-redux'
 import { ProfileActionTypes } from '../../store/redux/profile'
 import CreateDb from '../../forms/CreateDb'
+import Web3 from 'web3'
 
 const Dashboard = (props) => {
 
+  const [ethConfig, setEthConfig] = useContext(EthContext)
+
   const [card1, setCard1] = useState(false)
 
-  const [ethConfig, setEthConfig] = useContext(EthContext)
-  const [network, setNetwork] = useContext(NetworkContext)
+  const [gsnBalanceMap, setGsnBalanceMap] = useState({})
 
   const {ethBalance, walletAddress} = useEthBalance()
 
   const [dbCreateOpen, setDbCreateOpen] = useState( false)
 
-  const databases = useDatabase(props.profile.isAdmin)
+  const databases = useDatabase(props.profile)
 
   const goDatabase = useCallback((ev) => {
 
@@ -56,6 +58,26 @@ const Dashboard = (props) => {
 
     window.location.hash = 'databases'
   })
+
+  useEffect(() => {
+    (async () => {
+
+      const elajsUser = ethConfig.elajsUser
+      const gsnBalanceMap = {}
+
+      databases.map(async (db) => {
+        try {
+          elajsUser.setDatabase(db.contractAddress)
+          gsnBalanceMap[db.contractAddress] = await elajsUser.getGSNBalance()
+          setGsnBalanceMap(Object.assign({}, gsnBalanceMap))
+        } catch (err){
+          // console.error(`Error fetching GSNBalance for contract address: ${db.contractAddress}`, err)
+        }
+      })
+
+
+    })()
+  }, [databases, setGsnBalanceMap])
 
   return (
     <div className="animated fadeIn">
@@ -139,9 +161,9 @@ const Dashboard = (props) => {
                 </td>
               </tr> :
               databases.map((database) => {
-                return <tr key={database.name} style={{cursor: 'pointer'}} onClick={goDatabase} data-contractaddress={database.contractAddress}>
+                return <tr key={database.id} style={{cursor: 'pointer'}} onClick={goDatabase} data-contractaddress={database.contractAddress} data-id={database.id}>
                   <td>
-                    {database.name}
+                    {database.dbName}
                   </td>
                   <td>
                     <a target="_blank" href={`https://testnet.elaeth.io/address/${database.contractAddress}/transactions`}>
@@ -149,7 +171,13 @@ const Dashboard = (props) => {
                     </a>
                   </td>
                   <td>
-                    {database.gsnBalance.toFixed(5)}
+                    {database.gsnBalance ?
+                      database.gsnBalance.toFixed(5) + ' ETH':
+                      (
+                        gsnBalanceMap[database.contractAddress] ?
+                          Web3.utils.fromWei(gsnBalanceMap[database.contractAddress].toString()) + ' ETH' : ''
+                      )
+                    }
                   </td>
                   {/*
                   <td>

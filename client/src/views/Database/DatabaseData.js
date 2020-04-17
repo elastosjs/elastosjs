@@ -34,6 +34,10 @@ const DatabaseData = (props) => {
 
   const tableDropdown = useMemo(() => {
 
+    if (!tables){
+      return
+    }
+
     // no table selected, show them all
     if (!selectedTable){
 

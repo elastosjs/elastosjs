@@ -188,6 +188,9 @@ const CreateDb = (props) => {
       // await elajs.createTable(dbName, 3, colsHashed, types)
       const deployPromise = elajs.deployDatabase(ethAddress)
 
+      let contractAddress = ''
+      const userId = props.profile.userId
+
       deployPromise.on('transactionHash', (hash) => {
         toastr.info(`Transaction Sent: ${hash}`)
       })
@@ -195,17 +198,28 @@ const CreateDb = (props) => {
       deployPromise.on('receipt', async (receipt) => {
         console.log('receipt', receipt)
 
-        const contractAddress = receipt.contractAddress
-        const userId = props.profile.userId
+        contractAddress = receipt.contractAddress
 
-        await insertDatabaseRecord(dbName, contractAddress, userId)
-
-        setPendingCreate(false)
-
-        toastr.success(`Database "${dbName}" Created`)
-
-        props.closeModal()
       })
+
+      await deployPromise
+
+      await ethConfig.elajsUser.defaultWeb3.currentProvider.baseProvider.enable()
+
+      ethConfig.elajsUser.setDatabase(contractAddress)
+
+      const initResult = await ethConfig.elajsUser.initializeContract(ethAddress)
+
+      console.log('initResult', initResult)
+
+      await insertDatabaseRecord(dbName, contractAddress, userId)
+
+      setPendingCreate(false)
+
+      toastr.success(`Database "${dbName}" Created`)
+
+      props.closeModal()
+
 
     })()
   }, [dbName, props.closeModal, ethConfig])
@@ -220,9 +234,11 @@ const CreateDb = (props) => {
     for (let i = 0, len = cols.length; i < len; i++){
       let insertPromise = elajs.insertVal('database', cols[i], vals[i], {id})
 
+      /*
       insertPromise.on('transactionHash', (hash) => {
         toastr.info(`Running transaction - ${hash} - (${i + 1} / ${len})`, {timeOut: 1500})
       })
+      */
 
       insertPromise.on('receipt', () => {
         toastr.success(`Done - (${i + 1} / ${len})`, {timeOut: 1500})

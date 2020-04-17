@@ -78,6 +78,17 @@ const getEthConfig = async (network) => {
     contractAddress: contracts[network].elajsStore
   })
 
+  /*
+  ***********************************************************************************************************************
+  * Dynamic ELA_JS Setup
+  * This one is used for the user's smart contracts
+  ***********************************************************************************************************************
+   */
+  const elajsUser = new ELA_JS({
+    defaultWeb3: fmWeb3,
+    ephemeralWeb3: ozWeb3
+  })
+
   const persistConfig = {
     key: 'root',
     storage,
@@ -112,6 +123,7 @@ const getEthConfig = async (network) => {
     persistor,
     // drizzle,
     elajs,
+    elajsUser,
 
     ready: true
   }

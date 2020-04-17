@@ -58,7 +58,7 @@ const DatabaseView = (props) => {
   * Database Data
   ************************************************************************
    */
-  const databases = useDatabase(props.profile.isAdmin)
+  const databases = useDatabase(props.profile)
 
   const [selectedTable, setSelectedTable] = useState()
 
@@ -107,7 +107,7 @@ const DatabaseView = (props) => {
     if (!props.profile.selectedDbContract){
       return <DropdownMenu>
         {databases.map((db) => {
-          return <DropdownItem key={db.name} onClick={selectDatabase} data-dbname={db.name}>{db.name}</DropdownItem>
+          return <DropdownItem key={db.dbName} onClick={selectDatabase} data-dbname={db.dbName}>{db.dbName}</DropdownItem>
         })}
       </DropdownMenu>
     }
@@ -119,7 +119,7 @@ const DatabaseView = (props) => {
       <DropdownItem disabled>{selectedDb ? selectedDb.name : 'None'}</DropdownItem>
       <DropdownItem divider />
       {otherDbs.length > 1 ? otherDbs.map((db) => {
-        return <DropdownItem key={db.name} onClick={selectDatabase}>{db.name}</DropdownItem>
+        return <DropdownItem key={db.dbName} onClick={selectDatabase}>{db.dbName}</DropdownItem>
       }) : <DropdownItem>No Other Databases</DropdownItem>}
     </DropdownMenu>
 
@@ -145,13 +145,13 @@ const DatabaseView = (props) => {
               Database:
             </Label>
             <DropdownToggle caret>
-              {selectedDb ? selectedDb.name : 'None Selected'}
+              {selectedDb ? selectedDb.dbName : 'None Selected'}
             </DropdownToggle>
             {databaseDropdown}
           </Dropdown>
         </Col>
         <Col lg="4" className="text-right">
-          <button className="btn btn-primary">Create New Database</button>
+          <button className="btn btn-primary" onClick={() => setDbCreateOpen(true)}>Create New Database</button>
         </Col>
       </Row>
       <Row className="mt-5">
@@ -200,7 +200,7 @@ const DatabaseView = (props) => {
                           <button className="btn btn-primary btn-sm">Add Funds</button>
                         </ButtonGroup>
                         <h3>
-                          {selectedDb ? selectedDb.gsnBalance.toFixed(5) : 0}
+                          {selectedDb && selectedDb.gsnBalance ? selectedDb.gsnBalance.toFixed(5) : 0}
                         </h3>
 
                         <div>

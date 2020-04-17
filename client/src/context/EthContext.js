@@ -12,7 +12,9 @@ const EthProvider = (props) => {
     ozWeb3: null,
     store: null,
     persistor: null,
-    drizzle: null,
+    // drizzle: null,
+    elajs: null,
+    elajsUser: null,
 
     ready: false
   })

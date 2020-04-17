@@ -112,6 +112,7 @@ const RegisterTransaction = (props) => {
 
       props.dispatch({
         type: ProfileActionTypes.REGISTER,
+        userId: id,
         username: props.elajsAcct.username,
         ethAddress: props.ethAddress
       })
