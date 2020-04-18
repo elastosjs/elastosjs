@@ -57,6 +57,9 @@ const getAdminDatabases = async (ethConfig, network) => {
  */
 const getDatabases = async (ethConfig, userId) => {
 
+  // set the database
+  await ethConfig.elajsUser.defaultWeb3.currentProvider.baseProvider.enable()
+
   // fetch all the rows
   const databaseIds = await ethConfig.elajs.getTableIds('database')
 
@@ -79,12 +82,21 @@ const getDatabases = async (ethConfig, userId) => {
         // pass
       }
 
-      // GSN balance should be done in another function, this is more involved since each one is its own instance
+      ethConfig.elajsUser.setDatabase(contractAddress)
 
+      // now for each contract/database we need to fetch the tables!
+      let tables = await ethConfig.elajsUser.getTables()
+
+      // GSN balance should be done in another function, this is more involved since each one is its own instance
       databases.push({
         id,
         dbName,
-        contractAddress
+        contractAddress,
+        tables: tables.map((table) => {
+          return {
+            name: Web3.utils.hexToString(table)
+          }
+        })
       })
     }
   }

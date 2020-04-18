@@ -32,6 +32,7 @@ import Loading from '../Pages/Loading'
 import Web3 from 'web3'
 
 import CreateDb from '../../forms/CreateDb'
+import CreateTable from '../../forms/CreateTable'
 import AddFundsDb from '../../forms/AddFundsDb'
 
 import DatabaseTable from './DatabaseTable'
@@ -54,11 +55,13 @@ const DatabaseView = (props) => {
 
   const [dbOpen, setDbOpen] = useState(false)
 
+  const [createTableOpen, setCreateTableOpen] = useState(false)
+
   const [dbAddFundsOpen, setDbAddFundsOpen] = useState( false)
 
   const [dbCreateOpen, setDbCreateOpen] = useState( false)
 
-  const [activeTab, setActiveTab] = useState('0');
+  const [activeTab, setActiveTab] = useState('1');
 
   const [gsnBalanceHelpOpen, setGsnBalanceHelpOpen] = useState(false)
 
@@ -289,7 +292,10 @@ const DatabaseView = (props) => {
                   </Col>
                 </Row> :
                 <div className="text-muted">
-                  Please select a database or <a href="#" onClick={(ev) => {ev.preventDefault();setDbCreateOpen(true)}}>Create a New Database</a>
+                  Please select a database or
+                  <a href="#" onClick={(ev) => {ev.preventDefault();setDbCreateOpen(true)}}>
+                    Create a New Database
+                  </a>
                 </div>
               }
             </TabPane>
@@ -302,59 +308,65 @@ const DatabaseView = (props) => {
               <Row>
                 <Col>
                   {selectedTable ?
-                    <Breadcrumb>
-                      <BreadcrumbItem>
-                        <a href="#" onClick={selectTable} data-tablename="" >
-                          Back to Tables List
-                        </a>
-                      </BreadcrumbItem>
-                      <BreadcrumbItem active>{selectedTable}</BreadcrumbItem>
-                    </Breadcrumb> : ''}
+                    <div>
+                      <button className="btn btn-info pull-right mb-3">Create Table</button>
+                      <Breadcrumb>
+                        <BreadcrumbItem>
+                          <a href="#" onClick={selectTable} data-tablename="" >
+                            Back to Tables List
+                          </a>
+                        </BreadcrumbItem>
+                        <BreadcrumbItem active>{selectedTable}</BreadcrumbItem>
+                      </Breadcrumb>
+                    </div>  : ''}
                   {selectedTable ?
 
                     <DatabaseTable setActiveTab={setActiveTab} tableMetadata={tableMetadata} tableSchema={tableSchema}/> :
 
-                    <Table hover responsive className="table-outline mb-0 d-none d-sm-table" style={{'backgroundColor': '#fff'}}>
-                      <thead className="thead-light">
-                      <tr>
-                        <th>Table Name</th>
-                        <th>Rows</th>
-                        {/* <th># of Tables</th> */}
-                        <th className="text-right">Actions</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      {!selectedDb || !selectedDb.tables || selectedDb.tables.length === 0 ?
+                    <div>
+                      <button className="btn btn-info pull-right mb-3">Create Table</button>
+                      <Table hover responsive className="table-outline mb-0 d-none d-sm-table" style={{clear: 'both', 'backgroundColor': '#fff'}}>
+                        <thead className="thead-light">
                         <tr>
-                          <td colSpan="3">
-                            No Tables - <a href="#">Create Table</a>
-                          </td>
-                        </tr> :
-                        selectedDb.tables.map((table, i) => {
+                          <th>Table Name</th>
+                          <th>Rows</th>
+                          {/* <th># of Tables</th> */}
+                          <th className="text-right">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {!selectedDb || !selectedDb.tables || selectedDb.tables.length === 0 ?
+                          <tr>
+                            <td colSpan="3">
+                              No Tables - <a href="#" onClick={(ev) => {ev.preventDefault();setCreateTableOpen(true)}}>Create Table</a>
+                            </td>
+                          </tr> :
+                          selectedDb.tables.map((table, i) => {
 
-                          const style = {display: 'flex', justifyContent: 'flex-end'}
-                          if (i === 0){
-                            style.borderTop = 0
-                          }
+                            const style = {display: 'flex', justifyContent: 'flex-end'}
+                            if (i === 0){
+                              style.borderTop = 0
+                            }
 
-                          return <tr key={table.name}>
-                            <td>
-                              <a href="#" onClick={selectTable} data-tablename={table.name}>
-                                {table.name}
-                              </a>
-                            </td>
-                            <td>
-                              0
-                            </td>
-                            <td className="text-right align-items-center" style={style}>
-                              <button className="btn btn-primary mr-3">View Data</button>{' '}
-                              <i className="cui-trash icons font-2xl"/>
-                            </td>
-                          </tr>
-                        })
-                      }
-                      </tbody>
-                    </Table>
+                            return <tr key={table.name}>
+                              <td>
+                                <a href="#" onClick={selectTable} data-tablename={table.name}>
+                                  {table.name}
+                                </a>
+                              </td>
+                              <td>
+                                0
+                              </td>
+                              <td className="text-right align-items-center" style={style}>
+                                <button className="btn btn-primary mr-3">View Data</button>{' '}
+                                <i className="cui-trash icons font-2xl"/>
+                              </td>
+                            </tr>
+                          })
+                        }
+                        </tbody>
+                      </Table>
+                    </div>
                   }
                 </Col>
               </Row>
@@ -389,6 +401,24 @@ const DatabaseView = (props) => {
         </ModalHeader>
         <ModalBody>
           <CreateDb closeModal={() => setDbCreateOpen(false)}/>
+        </ModalBody>
+      </Modal>
+
+      {/*
+      ************************************************************************************************
+      Create Table Modal
+      ************************************************************************************************
+      */}
+      <Modal isOpen={createTableOpen} style={{marginTop: '5%'}}>
+        <ModalHeader>
+          Create New Table
+        </ModalHeader>
+        <ModalBody>
+          <CreateTable
+            closeModal={() => setCreateTableOpen(false)}
+            selectedDb={selectedDb}
+            triggerEffect={triggerEffect}
+          />
         </ModalBody>
       </Modal>
 

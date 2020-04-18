@@ -23,128 +23,12 @@ import { EthContext } from '../context/EthContext'
 import { connect } from 'react-redux'
 import Web3 from 'web3'
 
-/*
-const DIRECTION = {
-  UP: 0,
-  DOWN: 1
-}
- */
 
 const CreateDb = (props) => {
 
   const [dbName, setDbName] = useState('')
 
   const {ethBalance, walletAddress} = useEthBalance()
-
-  /*
-  const [cols, setCols] = useState([
-    {
-      name: 'A',
-      type: 'BYTES32',
-      typeDropdownOpen: false
-    },
-    {
-      name: 'B',
-      type: 'UINT',
-      typeDropdownOpen: false
-    },
-    {
-      name: 'C',
-      type: 'BOOL',
-      typeDropdownOpen: false
-    },
-    {
-      name: 'D',
-      type: 'BOOL',
-      typeDropdownOpen: false
-    }
-  ])
-
-  const handleTypeSelect = useCallback((ev) => {
-    const colIndex = ev.currentTarget.dataset.colindex
-    const type = ev.target.dataset.type
-
-    cols[colIndex] = {
-      ...cols[colIndex],
-      type: type
-    }
-
-    setCols(cols.slice())
-  })
-
-  const handleColNameChange = useCallback((ev) => {
-
-    let newVal = ev.currentTarget.value
-    const colIndex = ev.currentTarget.dataset.colindex
-
-    // revert spaces
-    if (/\s/.test(newVal)){
-      newVal = cols[colIndex].name
-      toastr.warning('Column name cannot have spaces')
-    }
-
-    cols[colIndex] = {
-      ...cols[colIndex],
-      name: newVal
-    }
-
-    setCols(cols.slice())
-  })
-
-  const addColumn = useCallback(() => {
-
-    cols.push({
-      name: '',
-      type: 'BYTES32',
-      typeDropdownOpen: false
-    })
-
-    setCols(cols.slice())
-  })
-
-  const removeColumn = useCallback((ev) => {
-
-    const colIndex = parseInt(ev.currentTarget.dataset.colindex)
-
-    cols.splice(colIndex, 1)
-
-    setCols(cols.slice())
-
-  })
-
-  const handleMove = useCallback((ev, dir) => {
-
-    const colIndex = parseInt(ev.currentTarget.dataset.colindex)
-
-    if (dir === DIRECTION.UP){
-      if (colIndex === 0){
-        return
-      }
-
-      // remove whatever is at the intended location
-      setCols([
-        ...cols.slice(0, colIndex - 1),
-        cols[colIndex],
-        cols[colIndex - 1],
-        ...cols.slice(colIndex + 1)
-      ])
-
-    } else {
-      // down
-      if (colIndex >= cols.length - 1){
-        return
-      }
-
-      setCols([
-        ...cols.slice(0, colIndex),
-        cols[colIndex + 1],
-        cols[colIndex],
-        ...cols.slice(colIndex + 2)
-      ])
-    }
-
-  })
-  */
 
   const handleDbName = useCallback((ev) => {
 
@@ -179,11 +63,6 @@ const CreateDb = (props) => {
     toastr.info('Please wait - this will take 10-15 seconds')
 
     ;(async () => {
-
-      /*
-      const colNames = _.map(cols, 'name')
-      const colTypes = _.map(cols, 'type')
-      */
 
       // await elajs.createTable(dbName, 3, colsHashed, types)
       const deployPromise = elajs.deployDatabase(ethAddress)
@@ -350,31 +229,6 @@ export default connect(mapStateToProps)(CreateDb)
 
 const Container = styled.div`
   clear: both;
-`
-
-const ColSortBox = styled(InputGroupText)`
-  cursor: pointer;
-  
-  :hover {
-    background-color: rgb(47, 53, 58);
-    color: #fff;
-  }
-`
-
-const ColTrashBox = styled(InputGroupText)`
-  cursor: pointer;
-  
-  :hover {
-    background-color: #dc3545;
-    color: #fff;
-  }
-`
-
-const TypeDropdown = styled(Dropdown)`
-  button.dropdown-toggle {
-    text-align: right;
-    min-width: 100px;
-  }
 `
 
 const HelpIcon = styled.i`
