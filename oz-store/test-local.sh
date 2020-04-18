@@ -1,4 +1,7 @@
+
 #!/bin/sh
+
+# we redeploy the contract so we start fresh, otherwise tests will fail
 
 # This is for local development only
 
@@ -22,17 +25,11 @@ npx oz-gsn fund-recipient --recipient $contractAddr --amount 100000000000000000
 
 print_progress "contractAddr = $contractAddr"
 
-# copy the contract JSON for the client
-cp -f ./build/contracts/ELAJSStore.json ../client/src/contracts/ELAJSStore-development.json
-
-# update the contract address for the client
-sed -i '' -e "s!\(elajsStore: '\).*!\1$contractAddr'!" ../client/src/config.js
-
-# copy the contract JSON for ela-js
-cp -f ./build/contracts/ELAJSStore.json ~/workspace/ela-js/src/contracts/ELAJSStore.json
+# we write the updated contract address to the test.env file so it can use it on next run
+sed -i '' -e "s!^\(ELAJSSTORE_CONTRACT_ADDR=\).*!\1$contractAddr!" ./env/local.env
 
 END=`date +%s`
 
 print_success "\nDone. Runtime: $((END-START)) seconds."
 
-exit 1
+NODE_ENV=local node_modules/mocha/bin/mocha ./test/index.js --timeout 30000 --bail --exit

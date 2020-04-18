@@ -1,0 +1,14 @@
+{
+  "contracts": {},
+  "solidityLibs": {},
+  "proxies": {
+    "oz-store/ELAJSStore": [
+      {
+        "address": "0xf759A0e8F2fFBb5F5a9DD50f1106668FBE29bC93",
+        "kind": "NonProxy",
+        "bytecodeHash": "ccffa1673f57de4c0521d1699a0ef79875242cf50b1601973f006ff8f453b8a2"
+      }
+    ]
+  },
+  "manifestVersion": "2.2"
+}

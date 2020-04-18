@@ -10,16 +10,17 @@ if (!process.env.NODE_ENV){
 let envPath, mnemonic, gasPrice, gasLimit, transactionDelay
 
 switch (process.env.NODE_ENV){
-  case 'development':
-    envPath = '/../env/test.env'
+
+  case 'local':
+    envPath = '/../env/local.env'
     mnemonic = secrets.mnemonicDev
     gasPrice = '1000000000'
     gasLimit = 7000000
     transactionDelay = 1500
     break
 
-  case 'elaethtest':
-    envPath = '/../env/elaethtest.env'
+  case 'testnet':
+    envPath = '/../env/testnet.env'
     mnemonic = secrets.mnemonic2
     gasPrice = '1000000000'
     gasLimit = 7000000

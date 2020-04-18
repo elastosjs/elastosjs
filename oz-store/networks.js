@@ -7,6 +7,14 @@ const mnemonic = secrets.mnemonic2
 
 module.exports = {
   networks: {
+    test: {
+      protocol: 'http',
+      host: 'localhost',
+      port: 8545,
+      gas: '8000000',
+      gasPrice: '1000000000',
+      network_id: '*',
+    },
     development: {
       protocol: 'http',
       host: 'localhost',

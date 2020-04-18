@@ -36,7 +36,7 @@ const App = (props) => {
               {/* <Route path="/" name="Splash" component={Splash}/> */}
 
               <Route exact path="/" name="Splash" component={Splash}/>
-              <Route hash="learn" name="Learn" component={Learn}/>
+              <Route exact path="/learn" name="Learn" component={Learn}/>
               <Route name="Dashboard" component={Dashboard}/>
             </Switch>
           </React.Suspense>

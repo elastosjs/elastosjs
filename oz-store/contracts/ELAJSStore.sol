@@ -27,8 +27,8 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     // bool public useEvents = false;
 
     // DateTime Contract address
-    address public dateTimeAddr = 0xe982E462b094850F12AF94d21D470e21bE9D0E9C; // development
-    // address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
+    // address public dateTimeAddr = 0xe982E462b094850F12AF94d21D470e21bE9D0E9C; // development
+    address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
 
     // Initialize the DateTime contract ABI with the already deployed contract
     DateTime dateTime = DateTime(dateTimeAddr);
@@ -91,8 +91,8 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         bytes32 tableName,
         bytes32 tableKey,
         uint8 permission,
-        bytes32[] memory _columnName,
-        bytes32[] memory _columnDtype
+        bytes32[] memory columnName,
+        bytes32[] memory columnDtype
 
     ) public onlyOwner {
 
@@ -113,13 +113,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         tableId.addKey(tableKey);
 
         // now insert the schema
-        TableLib.Table memory tableSchema = TableLib.create(
-            tableName,
-            _columnName,
-            _columnDtype
-        );
-
-        saveSchema(tableKey, tableSchema);
+        saveSchema(tableName, tableKey, columnName, columnDtype);
     }
 
     // TODO: this isn't complete
@@ -142,7 +136,20 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     }
     */
 
-    function saveSchema(bytes32 tableKey, TableLib.Table memory tableSchema) internal returns (bool) {
+    function saveSchema(
+        bytes32 tableName,
+        bytes32 tableKey,
+        bytes32[] memory columnName,
+        bytes32[] memory columnDtype
+
+    ) public onlyOwner returns (bool) {
+
+        TableLib.Table memory tableSchema = TableLib.create(
+            tableName,
+            columnName,
+            columnDtype
+        );
+
         bytes memory encoded = tableSchema.encode();
 
         // we store the encoded table schema on the base tableKey
@@ -173,13 +180,22 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         _;
     }
 
-    /*
+
+    /**
+     * Primarily exists to assist in query WHERE searches, therefore we
+     * want the index to exist on the value and table, filtering on owner
+     * is important for performance
+     */
     event InsertVal (
-        bytes32 indexed fieldIdTableKey,
-        address indexed owner,
-        bytes32 val
+        bytes32 indexed tableKey,
+        bytes32 indexed fieldKey,
+        bytes32 indexed val,
+
+        bytes32 id,
+
+        address owner
     );
-    */
+
 
     /**
      * @dev Prior to insert, we check the permissions and autoIncrement
@@ -221,7 +237,8 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // we won't serialize the type, that's way too much redundant data
         database.setValueForKey(fieldIdTableKey, bytes32(val));
 
-        // emit InsertVal(fieldIdTableKey, _msgSender(), val);
+        // emit an event to assist in queries
+        emit InsertVal(tableKey, fieldKey, val, id, _msgSender());
 
     }
 
@@ -278,14 +295,19 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
         database.setValueForKey(idTableKey, bytes32(rowMetadata));
 
-        emit InsertRow(id, tableKey, _msgSender());
+        // emit InsertRow(id, tableKey, _msgSender());
     }
 
+    /**
+     * Primarily to assist querying all ids belonging to an owner
+     */
+    /*
     event InsertRow (
         bytes32 indexed _id,
         bytes32 indexed _tableKey,
         address indexed _rowOwner
     );
+    */
 
     function getRowOwner(bytes32 idTableKey) external returns (address rowOwner, bytes4 createdDate){
 
@@ -347,6 +369,8 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // set data (overwrite)
         database.setValueForKey(fieldIdTableKey, bytes32(val));
 
+        // emit an event to assist in queries
+        emit InsertVal(tableKey, fieldKey, val, id, _msgSender());
     }
 
     function deleteCheck(bytes32 tableKey, bytes32 idTableKey, bytes32 idKey, bytes32 id) internal {
