@@ -8,6 +8,7 @@ import './App.scss';
 import './scss/override.scss';
 
 import Splash from './views/Pages/Splash'
+import Learn from './views/Pages/Learn'
 import Dashboard from './Dashboard'
 
 import { NetworkProvider } from './context/NetworkContext'
@@ -32,7 +33,10 @@ const App = (props) => {
         <HashRouter>
           <React.Suspense fallback={Loading()}>
             <Switch>
+              {/* <Route path="/" name="Splash" component={Splash}/> */}
+
               <Route exact path="/" name="Splash" component={Splash}/>
+              <Route hash="learn" name="Learn" component={Learn}/>
               <Route name="Dashboard" component={Dashboard}/>
             </Switch>
           </React.Suspense>

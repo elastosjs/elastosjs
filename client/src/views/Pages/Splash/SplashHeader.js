@@ -6,7 +6,12 @@ const SplashHeader = (props) => {
 
   return (
     <Wrapper className="HeaderWrapper">
-      <ElastosLogo src="/assets/img/Elastos_Icon_RGB.png"/>
+      <ElastosLogo src="/assets/img/Elastos_Icon_RGB.png" onClick={() => window.location.href = '/'} style={{cursor: 'pointer'}}/>
+
+      <ElastosBadge>
+        Alpha (Testnet)
+      </ElastosBadge>
+
       <Button className="LoginBtn" to="/login">
         <button className="btn btn-primary" href="getting-started/intro.html">Login / Sign-Up</button>
       </Button>
@@ -15,11 +20,18 @@ const SplashHeader = (props) => {
           Documentation
         </button>
       </BlankButton>
-      <BlankButton target="_blank" href="https://elastos.academy">
+      <BlankButton target="_blank" href="https://tutorials.elastosjs.com">
         <button className="btn btn-link">
           Tutorials
         </button>
       </BlankButton>
+      {/*
+      <BlankButton href="/#/learn">
+        <button className="btn btn-link">
+          Learn
+        </button>
+      </BlankButton>
+      */}
     </Wrapper>
   )
 
@@ -31,6 +43,26 @@ const ElastosLogo = styled.img`
   left: 0;
   top: 2px;
   padding: 8px;
+`
+
+const ElastosBadge = styled.div`
+  position: absolute;
+  left: 75px;
+  
+  padding: 6px 12px;
+  margin-top: 8px;
+  border: 1px solid #4f789c;
+  border-radius: 4px;
+  background-color: #9b5f52;
+  
+  color: white;
+  
+  text-transform: uppercase;
+  
+  font-family: 'Bio Sans'
+  font-weight: 300;
+  
+  cursor: default;
 `
 
 const Wrapper = styled.div`

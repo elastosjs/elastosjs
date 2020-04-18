@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, CardBody, CardGroup, Col, Progress, Row } from 'reactstrap';
+import { CardGroup, Card, CardBody, CardHeader, Col, Progress, Row } from 'reactstrap';
 import styled from 'styled-components'
 
 import ElastosMergeImg from '../../../assets/img/elastos_merge_2.png'
@@ -46,8 +46,13 @@ export default class SplashCover extends React.Component {
       </div>
     )
 
+    /*
+    ************************************************************************************************************************
+    * HERO - 4 BOXES
+    ************************************************************************************************************************
+     */
     const Hero = () => (
-      <div className="animated fadeIn">
+      <div className="animated fadeIn my-3">
         <Row>
           {/* STEP 1 - Sign-Up for a Developer Account */}
           <Col lg="3" className="d-flex">
@@ -110,7 +115,7 @@ export default class SplashCover extends React.Component {
                 <List>
                   <li>Let your users onboard to your dApp for free</li>
                   <li>Use our GSN strategy or your own</li>
-                  <li>Learn more about <a href="">GSN</a></li>
+                  <li>Learn more about <a target="_blank" href="https://docs.openzeppelin.com/gsn-provider/0.1/gsn-faq">GSN</a></li>
                 </List>
               </CardBody>
             </Card>
@@ -119,32 +124,59 @@ export default class SplashCover extends React.Component {
       </div>
     )
 
+    /*
+    ************************************************************************************************************************
+    * SECOND SECTION - GREEN
+    ************************************************************************************************************************
+     */
     const ElastosETH = () => (
-      <ElastosETHContainer className="p-5">
-        <img style={{float: 'right', width: '25%'}} src={MetamaskLogo}/>
+      <ElastosETHContainer className="p-5 my-5">
+        {/* <img style={{float: 'right', width: '25%'}} src={MetamaskLogo}/> */}
         <Row>
-          <Col sm="6">
-            <span className="normal" style={{'fontSize': '20px'}}>Elastos is building equivalent versions of your favorite tools</span>
+          <Col>
+            <span className="normal" style={{textTransform: 'uppercase', 'fontSize': '20px'}}>
+              A Cheaper, More Secure, Ethereum-Based Blockchain
+            </span>
           </Col>
         </Row>
         <Row>
-          <Col sm="6">
-            <span className="normal">Block Explorer</span> &#x27A1; use our testnet block explorer at <a href="https://testnet.elaeth.io" target="_blank">https://testnet.elaeth.io</a>, mainet at <a href="https://explorer.elaeth.io" target="_blank">https://explorer.elaeth.io</a>
+          <Col>
+            <CardGroup>
+              <Card className="mx-3">
+                <CardHeader>
+                  <h2>1 ELA = 1 ETH</h2>
+                </CardHeader>
+
+                <CardBody>
+                  Our ELA token is over 100x cheaper than ETH, at that ratio running your smart contracts is a lot
+                  more inexpensive, enabling more uses for Solidity.
+                </CardBody>
+              </Card>
+              <Card className="mx-3">
+                <CardHeader>
+                  <h2>More Gas Per Block</h2>
+                </CardHeader>
+                <CardBody>
+                  We use dPoS instead of PoW allowing us to process more transactions per block and adjust gas limits dynamically based on demand.
+                </CardBody>
+              </Card>
+              <Card className="mx-3">
+                <CardHeader>
+                  <h2>50%+ BTC Hashrate</h2>
+                </CardHeader>
+                <CardBody>
+                  Our main Elastos chain secures the ETH sidechain with over 50% of BTC's hashrate giving more security than even Ethereum.
+                </CardBody>
+              </Card>
+            </CardGroup>
           </Col>
         </Row>
         <Row>
-          <Col sm="6">
-            <span className="normal">MetaMask</span> &#x27A1; directly works on our new RPC port at <a href="https://rpc.elaeth.io" target="_blank">https://rpc.elaeth.io</a>(testnet) and <a href="https://rpc.elaeth.io" target="_blank">https://mainrpc.elaeth.io</a>(mainnet)
-          </Col>
+
         </Row>
         <Row>
-          <Col sm="6">
-            <span className="normal">Remix</span> &#x27A1; same as above, point it at our new RPC port
-          </Col>
-        </Row>
-        <Row>
-          <Col sm="6">
-            <span className="normal">Myetherwallet</span> &#x27A1; accessible at <a href="https://wallet.elaeth.io" target="_blank">https://wallet.elaeth.io</a>
+          <Col>
+            Our ETH Sidechain is only one component of an ecosystem of decentralized solutions.
           </Col>
         </Row>
         {/*
@@ -157,6 +189,36 @@ export default class SplashCover extends React.Component {
       </ElastosETHContainer>
     )
 
+    const ElastosETHContainer = styled.div`
+      background-position: center;
+      background-image: url('/assets/bg/footer_bg_3.png');
+    
+      font-family: "Bio Sans", sans-serif;
+      font-weight: 400;
+      color: white;
+    
+      font-size: 16px;
+    
+      .row {
+        margin-bottom: 16px;
+      }
+      
+      .card {
+        text-align: center;
+        color: #666;
+        
+        h2 {
+          color: #222;
+        }
+      }
+    `
+
+
+    /*
+    ************************************************************************************************************************
+    * THIRD SECTION - BUILD ON THE MODERN INTERNET
+    ************************************************************************************************************************
+     */
     const ElastosBuild = () => (
       <ElastosBuildContainer className="p-5">
         <Row>
@@ -169,7 +231,7 @@ export default class SplashCover extends React.Component {
             <br/>
             <List>
               <li>
-                Elastos is open source with over 100 repos - github.com/elastos
+                Elastos is open source with over 100 repos - <a target="_blank" href="https://github.com/elastos">github.com/elastos</a>
               </li>
               <li>
                 Our Ethereum Sidechain is only one of multiple services, including Elastos Carrier (P2P decentralized persistent), Elastos Hive (IPFS/Storage Solutions) and more.
@@ -200,6 +262,19 @@ export default class SplashCover extends React.Component {
       </ElastosBuildContainer>
     );
 
+    const ElastOS = () => (
+      <ElastOSContainer>
+        <Row>
+
+        </Row>
+      </ElastOSContainer>
+    )
+
+    /*
+    ************************************************************************************************************************
+    * TOP SECTION
+    ************************************************************************************************************************
+     */
     return (
       <SplashContainer>
         <div className="inner">
@@ -275,9 +350,10 @@ export default class SplashCover extends React.Component {
           </TitleMarkdownBlock>
 
           <PromoSection>
-            <Button target="_blank" href="https://docs.elastosjs.com"><b>Get Started</b></Button>
-            <Button href="#">Learn How It Works</Button>
-            <Button target="_blank" href="https://www.cyberrepublic.org">Get Funded By Cyber Republic</Button>
+            <Button target="_blank" href="https://tutorials.elastosjs.com"><b>Get Started</b></Button>
+            {/* <Button href="/#/learn">The Elastos Blockchain</Button> */}
+            <Button target="_blank" href="https://www.elastos.org">The Elastos Blockchain</Button>
+            <Button target="_blank" href="https://www.cyberrepublic.org">The Cyber Republic DAO - <b>Get Funding</b></Button>
           </PromoSection>
         </div>
 
@@ -289,6 +365,8 @@ export default class SplashCover extends React.Component {
         <ElastosETH/>
 
         <ElastosBuild/>
+
+        {/* <ElastOS/> */}
 
       </SplashContainer>
     )
@@ -340,13 +418,12 @@ const TitleInfo = styled.div`
   }
 `
 
-const ElastosETHContainer = styled.div`
-  background-position: center;
-  background-image: url('/assets/bg/footer_bg_3.png');
+
+
+const ElastosBuildContainer = styled.div`
 
   font-family: "Bio Sans", sans-serif;
   font-weight: 300;
-  color: white;
 
   font-size: 16px;
 
@@ -355,12 +432,18 @@ const ElastosETHContainer = styled.div`
   }
 `
 
-
-const ElastosBuildContainer = styled.div`
+const ElastOSContainer = styled.div`
+  background-position: center;
+  background-image: url('/assets/bg/ElastOS_Promo.png');
+  background-size: 75%;
+  background-repeat: no-repeat;
 
   font-family: "Bio Sans", sans-serif;
   font-weight: 300;
-
+  color: white;
+  
+  height: 400px;
+  
   font-size: 16px;
 
   .row {
