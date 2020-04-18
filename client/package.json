@@ -46,6 +46,7 @@
     "redux-thunk": "^2.3.0",
     "simple-line-icons": "^2.4.1",
     "styled-components": "^5.0.1",
+    "use-force-update": "^1.0.7",
     "web3": "^1.2.6"
   },
   "devDependencies": {

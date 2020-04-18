@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useEthBalance } from '../../hooks/useEthBalance'
 import { useDatabase } from '../../hooks/useDatabase'
-import { useForceUpdate } from '../../hooks/useForceUpdate'
+import { useEffectTrigger } from '../../hooks/useEffectTrigger'
 import {
   Badge,
   Button,
@@ -42,9 +42,9 @@ const Dashboard = (props) => {
 
   const [dbCreateOpen, setDbCreateOpen] = useState( false)
 
-  const forceUpdate = useForceUpdate()
+  const [effectTrigger, triggerEffect] = useEffectTrigger()
 
-  const databases = useDatabase(props.profile, forceUpdate)
+  const databases = useDatabase(props.profile, effectTrigger)
 
   const goDatabase = useCallback((ev) => {
 
@@ -81,7 +81,7 @@ const Dashboard = (props) => {
 
 
     })()
-  }, [databases, setGsnBalanceMap])
+  }, [databases, setGsnBalanceMap, effectTrigger])
 
   return (
     <div className="animated fadeIn">
@@ -204,7 +204,7 @@ const Dashboard = (props) => {
           Create New Database
         </ModalHeader>
         <ModalBody>
-          <CreateDb closeModal={() => setDbCreateOpen(false)}/>
+          <CreateDb closeModal={() => setDbCreateOpen(false)} triggerEffect={triggerEffect}/>
         </ModalBody>
       </Modal>
     </div>

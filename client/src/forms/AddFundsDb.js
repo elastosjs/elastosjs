@@ -2,21 +2,52 @@ import React, { useState, useCallback, useContext, useRef } from 'react'
 import { useEthBalance } from '../hooks/useEthBalance'
 import { connect } from 'react-redux'
 import { Card, CardBody, Col, Row, Input, CardFooter } from 'reactstrap'
-
-
+import { toastr } from 'react-redux-toastr'
+import Web3 from 'web3'
+import { EthContext } from '../context/EthContext'
 
 const AddFundsDb = (props) => {
 
   const { ethBalance, walletAddress } = useEthBalance()
 
+  const [ethConfig, setEthConfig] = useContext(EthContext)
+
+  const elajs = ethConfig.elajs
+
   const inputAddAmt = useRef(null)
 
-  const handleAddFunds = () => {
+  const handleAddFunds = async () => {
 
-    const amt = inputAddAmt.current.value
+    const amt = parseFloat(inputAddAmt.current.value)
 
-    debugger
+    if (isNaN(amt) || amt <= 0){
+      toastr.error('You need to specify an amount greater than 0')
+      return
+    }
 
+    if (ethBalance <= 0){
+      toastr.error('You have no ELASC in your main account')
+      return
+    }
+
+    if (amt > 2){
+      toastr.error('You cannot add more than 2 ELASC at once')
+      return
+    }
+
+    if (!walletAddress || !props.selectedDb || !props.selectedDb.contractAddress){
+      toastr.error('System Error - Missing contract address')
+      return
+    }
+
+    // we send the funds from our Fortmatic account which has funds
+    await elajs.addFunds(walletAddress, props.selectedDb.contractAddress, amt.toString())
+
+    toastr.success('Funds added successfully')
+
+    props.triggerEffect()
+
+    props.closeModal()
   }
 
   return <div>
@@ -44,8 +75,9 @@ const AddFundsDb = (props) => {
 
           </CardBody>
           <CardFooter className="text-dark">
-            We recommend keeping your database funded with at least 0.1 ETHSC.
-            Currently your database has {props.gsnBalance} ELASC.
+            We recommend keeping your database funded with at <b>least 0.1 ETHSC</b> and no more than 2.<br/>
+            <br/>
+            Currently your database has {props.gsnBalance ? Web3.utils.fromWei(props.gsnBalance.toString()) : 0} ELASC.
           </CardFooter>
         </Card>
       </Col>

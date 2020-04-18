@@ -29,6 +29,7 @@ import {
 } from 'reactstrap'
 import styled from 'styled-components'
 import Loading from '../Pages/Loading'
+import Web3 from 'web3'
 
 import CreateDb from '../../forms/CreateDb'
 import AddFundsDb from '../../forms/AddFundsDb'
@@ -42,14 +43,14 @@ import { useTable } from '../../hooks/useTable'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import { ProfileActionTypes } from '../../store/redux/profile'
-import { useForceUpdate } from '../../hooks/useForceUpdate'
+import { useEffectTrigger } from '../../hooks/useEffectTrigger'
 import { EthContext } from '../../context/EthContext'
 
 const DatabaseView = (props) => {
 
   const [ethConfig, setEthConfig] = useContext(EthContext)
 
-  const forceUpdate = useForceUpdate()
+  const [effectTrigger, triggerEffect] = useEffectTrigger()
 
   const [dbOpen, setDbOpen] = useState(false)
 
@@ -73,10 +74,12 @@ const DatabaseView = (props) => {
   * Database Data
   ************************************************************************
    */
-  const databases = useDatabase(props.profile, forceUpdate)
+  const databases = useDatabase(props.profile, effectTrigger)
 
   useEffect(() => {
     (async () => {
+
+      console.log('triggerEffect')
 
       const elajsUser = ethConfig.elajsUser
       const gsnBalanceMap = {}
@@ -91,7 +94,7 @@ const DatabaseView = (props) => {
         }
       })
     })()
-  }, [databases, setGsnBalanceMap])
+  }, [databases, setGsnBalanceMap, effectTrigger])
 
   const [selectedTable, setSelectedTable] = useState()
 
@@ -248,7 +251,7 @@ const DatabaseView = (props) => {
                             selectedDb.gsnBalance.toFixed(5) :
                             (
                               selectedDb && gsnBalanceMap[selectedDb.contractAddress] ?
-                                gsnBalanceMap[selectedDb.contractAddress] : 0
+                                Web3.utils.fromWei(gsnBalanceMap[selectedDb.contractAddress]) : 0
                             )
                           }
                         </h3>
@@ -399,7 +402,12 @@ const DatabaseView = (props) => {
           Add Funds to Database: <b className="text-primary">{selectedDb ? selectedDb.dbName : ''}</b>
         </ModalHeader>
         <ModalBody>
-          <AddFundsDb closeModal={() => setDbAddFundsOpen(false)} gsnBalance={selectedDb ? parseInt(gsnBalanceMap[selectedDb.contractAddress]) : 0}/>
+          <AddFundsDb
+            closeModal={() => setDbAddFundsOpen(false)}
+            selectedDb={selectedDb}
+            gsnBalance={selectedDb ? parseInt(gsnBalanceMap[selectedDb.contractAddress]) : 0}
+            triggerEffect={triggerEffect}
+          />
         </ModalBody>
       </Modal>
     </div>
