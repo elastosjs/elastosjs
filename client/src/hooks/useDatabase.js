@@ -34,12 +34,10 @@ export const useDatabase = (profile, effectTrigger) => {
 const getAdminDatabases = async (ethConfig, network) => {
 
   const tables = await ethConfig.elajs.getTables()
-  const gsnBalance = parseFloat(Web3.utils.fromWei(await ethConfig.elajs.getGSNBalance()))
 
   return [{
     dbName: 'ElastosJS',
     contractAddress: contracts[network].elajsStore,
-    gsnBalance,
     tables: tables.map((table) => {
       return {
         name: Web3.utils.hexToString(table)

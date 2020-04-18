@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from 'react'
 import Web3 from 'web3'
 import { EthContext } from '../context/EthContext'
 
-export const useEthBalance = () => {
+export const useEthBalance = (effectTrigger) => {
 
   const [ethConfig, setEthConfig] = useContext(EthContext)
 
@@ -23,7 +23,7 @@ export const useEthBalance = () => {
       setEthBalance(balance)
 
     })()
-  }, [ethConfig])
+  }, [ethConfig, effectTrigger])
 
   return {ethBalance, walletAddress}
 

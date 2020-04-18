@@ -23,13 +23,18 @@ import {
   Table,
 } from 'reactstrap'
 import Loading from '../Pages/Loading'
+import Web3 from 'web3'
+
 import { EthContext } from '../../context/EthContext'
 import { NetworkContext } from '../../context/NetworkContext'
 import { connect } from 'react-redux'
 import { ProfileActionTypes } from '../../store/redux/profile'
-import CreateDb from '../../forms/CreateDb'
-import Web3 from 'web3'
 
+import CreateDb from '../../forms/CreateDb'
+import WithdrawFundsDb from '../../forms/WithdrawFundsDb'
+import _ from 'lodash'
+
+// TODO: remove the concept of having gsnBalance on databases from admin db
 const Dashboard = (props) => {
 
   const [ethConfig, setEthConfig] = useContext(EthContext)
@@ -38,17 +43,19 @@ const Dashboard = (props) => {
 
   const [gsnBalanceMap, setGsnBalanceMap] = useState({})
 
-  const {ethBalance, walletAddress} = useEthBalance()
-
   const [dbCreateOpen, setDbCreateOpen] = useState( false)
 
+  const [withdrawFundsOpen, setWithdrawFundsOpen] = useState(false)
+
   const [effectTrigger, triggerEffect] = useEffectTrigger()
+
+  const {ethBalance, walletAddress} = useEthBalance(effectTrigger)
 
   const databases = useDatabase(props.profile, effectTrigger)
 
   const goDatabase = useCallback((ev) => {
 
-    if (ev.target.tagName === 'A'){
+    if (ev.target.tagName === 'A' || ev.target.tagName === 'BUTTON'){
       return
     }
 
@@ -82,6 +89,18 @@ const Dashboard = (props) => {
 
     })()
   }, [databases, setGsnBalanceMap, effectTrigger])
+
+  const [selectedDb, setSelectedDb] = useState({})
+
+  const handleWithdrawFunds = useCallback((ev) => {
+
+    const contractAddr = ev.currentTarget.dataset.contractaddress
+
+    setSelectedDb(_.find(databases, (db) => db.contractAddress === contractAddr))
+
+    setWithdrawFundsOpen(true)
+
+  }, [databases, setWithdrawFundsOpen])
 
   return (
     <div className="animated fadeIn">
@@ -175,12 +194,8 @@ const Dashboard = (props) => {
                     </a>
                   </td>
                   <td>
-                    {database.gsnBalance ?
-                      database.gsnBalance.toFixed(5) + ' ETH':
-                      (
-                        gsnBalanceMap[database.contractAddress] ?
-                          Web3.utils.fromWei(gsnBalanceMap[database.contractAddress].toString()) + ' ETH' : ''
-                      )
+                    {gsnBalanceMap[database.contractAddress] ?
+                      Web3.utils.fromWei(gsnBalanceMap[database.contractAddress].toString()) + ' ETH' : ''
                     }
                   </td>
                   {/*
@@ -189,8 +204,15 @@ const Dashboard = (props) => {
                   </td>
                   */}
                   <td className="text-right">
-                    <button className="btn btn-primary btn-sm">Add Funds</button>{' '}
-                    <button className="btn btn-warning btn-sm">Withdraw Funds</button>
+                    {/* <button className="btn btn-primary btn-sm">Add Funds</button>{' '} */}
+                    <button
+                      className="btn btn-warning btn-sm"
+                      onClick={handleWithdrawFunds}
+                      data-contractaddress={database.contractAddress}
+                      disabled={gsnBalanceMap[database.contractAddress] && gsnBalanceMap[database.contractAddress] > 0 ? '': 'disabled'}
+                    >
+                      Withdraw Funds
+                    </button>
                   </td>
                 </tr>
               })
@@ -199,12 +221,37 @@ const Dashboard = (props) => {
           </Table>
         </Col>
       </Row>
+
+      {/*
+      ************************************************************************************************
+      Create DB Modal
+      ************************************************************************************************
+      */}
       <Modal isOpen={dbCreateOpen} style={{marginTop: '20%'}}>
         <ModalHeader>
           Create New Database
         </ModalHeader>
         <ModalBody>
           <CreateDb closeModal={() => setDbCreateOpen(false)} triggerEffect={triggerEffect}/>
+        </ModalBody>
+      </Modal>
+
+      {/*
+      ************************************************************************************************
+      Withdraw Funds Modal
+      ************************************************************************************************
+      */}
+      <Modal isOpen={withdrawFundsOpen} style={{marginTop: '20%', maxWidth: '600px'}}>
+        <ModalHeader>
+          Withdraw Funds from database: {selectedDb.dbName}
+        </ModalHeader>
+        <ModalBody>
+          <WithdrawFundsDb
+            selectedDb={selectedDb}
+            gsnBalance={gsnBalanceMap[selectedDb.contractAddress]}
+            closeModal={() => setWithdrawFundsOpen(false)}
+            triggerEffect={triggerEffect}
+          />
         </ModalBody>
       </Modal>
     </div>
