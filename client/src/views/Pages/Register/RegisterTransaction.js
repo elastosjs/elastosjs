@@ -144,8 +144,6 @@ const RegisterTransaction = (props) => {
   // load Counter Instance
   const [counterInstance, setCounterInstance] = useState(undefined)
 
-
-
   useEffect(() => {
 
     const instance = new fmWeb3.eth.Contract(counterELAJSON.abi, contracts[network].counterEla)
@@ -268,6 +266,23 @@ const RegisterTransaction = (props) => {
                     <ol start="2">
                       <li>
                         ElastosJS stores no data, uses any cookies or tracking in the spirit of decentralization.
+                      </li>
+                    </ol>
+                  </h3>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col>
+              <Card className="text-white bg-warning">
+                <CardBody>
+                  <h3>
+                    <ol start="3">
+                      <li>
+                        This platform is in ALPHA and testnet only - expect some bugs and please report them to{' '}
+                        <b style={{color: '#007bff'}}>contact@elastojs.com</b>
                       </li>
                     </ol>
                   </h3>

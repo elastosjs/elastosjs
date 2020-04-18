@@ -5,7 +5,7 @@ import Web3 from 'web3'
 import { contracts } from '../config'
 import constants from '../constants'
 
-export const useDatabase = (profile) => {
+export const useDatabase = (profile, forceUpdate) => {
 
   const [ethConfig, setEthConfig] = useContext(EthContext)
   const [network, setNetwork] = useContext(NetworkContext)
@@ -23,7 +23,7 @@ export const useDatabase = (profile) => {
       setDatabases(await getDatabases(ethConfig, profile.userId))
 
     })()
-  }, [ethConfig, network, profile.isAdmin, profile.userId])
+  }, [ethConfig, network, profile.isAdmin, profile.userId, forceUpdate])
 
   return databases
 }
@@ -49,7 +49,10 @@ const getAdminDatabases = async (ethConfig, network) => {
 }
 
 /**
- * TODO: use thegraph.com
+ * TODO: use thegraph.com or Events WHERE query
+ *
+ * For now we are using an expensive search over all ids
+ *
  * @param ethConfig
  * @param network
  * @returns {Promise<void>}

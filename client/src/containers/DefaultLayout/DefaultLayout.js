@@ -41,9 +41,7 @@ const DefaultLayout = (props) => {
     ev && ev.preventDefault()
 
     props.dispatch({
-      type: ProfileActionTypes.SET_CREDENTIALS,
-      username: '',
-      ethAddress: ''
+      type: ProfileActionTypes.LOGOUT
     })
 
     window.location.hash = ''

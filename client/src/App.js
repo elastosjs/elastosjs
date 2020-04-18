@@ -33,8 +33,6 @@ const App = (props) => {
         <HashRouter>
           <React.Suspense fallback={Loading()}>
             <Switch>
-              {/* <Route path="/" name="Splash" component={Splash}/> */}
-
               <Route exact path="/" name="Splash" component={Splash}/>
               <Route exact path="/learn" name="Learn" component={Learn}/>
               <Route name="Dashboard" component={Dashboard}/>

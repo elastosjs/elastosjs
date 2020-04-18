@@ -210,7 +210,7 @@ const CreateDb = (props) => {
 
       const initResult = await ethConfig.elajsUser.initializeContract(ethAddress)
 
-      console.log('initResult', initResult)
+      // console.log('initResult', initResult)
 
       await insertDatabaseRecord(dbName, contractAddress, userId)
 

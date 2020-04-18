@@ -78,7 +78,7 @@ const DefaultHeader = (props) => {
             <DropdownItem divider />
             <DropdownItem><i className="fa fa-shield"></i> Lock Account</DropdownItem>
             */}
-            <DropdownItem><i className="fa fa-user"></i> Account</DropdownItem>
+            <DropdownItem onClick={() => window.location.hash = 'account'}><i className="fa fa-user"></i> Account</DropdownItem>
             <DropdownItem onClick={e => props.onLogout(e)}><i className="fa fa-lock"></i> Logout</DropdownItem>
           </DropdownMenu>
         </UncontrolledDropdown>

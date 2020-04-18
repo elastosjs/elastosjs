@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useEthBalance } from '../../hooks/useEthBalance'
 import { useDatabase } from '../../hooks/useDatabase'
+import { useForceUpdate } from '../../hooks/useForceUpdate'
 import {
   Badge,
   Button,
@@ -41,7 +42,9 @@ const Dashboard = (props) => {
 
   const [dbCreateOpen, setDbCreateOpen] = useState( false)
 
-  const databases = useDatabase(props.profile)
+  const forceUpdate = useForceUpdate()
+
+  const databases = useDatabase(props.profile, forceUpdate)
 
   const goDatabase = useCallback((ev) => {
 
@@ -67,11 +70,12 @@ const Dashboard = (props) => {
 
       databases.map(async (db) => {
         try {
+          await ethConfig.elajsUser.defaultWeb3.currentProvider.baseProvider.enable()
           elajsUser.setDatabase(db.contractAddress)
           gsnBalanceMap[db.contractAddress] = await elajsUser.getGSNBalance()
           setGsnBalanceMap(Object.assign({}, gsnBalanceMap))
         } catch (err){
-          // console.error(`Error fetching GSNBalance for contract address: ${db.contractAddress}`, err)
+          console.error(`Error fetching GSNBalance for contract address: ${db.contractAddress}`, err)
         }
       })
 
@@ -103,7 +107,7 @@ const Dashboard = (props) => {
               </h3>
 
               <div>
-                ELASC Balance<br/>
+                <b>Account</b> ELASC Balance<br/>
                 <b>Address:</b>{' '}
                 <a target="_blank" className="text-white" href={`https://testnet.elaeth.io/address/${walletAddress}/transactions`}>
                   {walletAddress}

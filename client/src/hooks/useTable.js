@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from 'react'
 import { EthContext } from '../context/EthContext'
 import Web3 from 'web3'
 
-export const useTable = (tableName) => {
+export const useTable = (tableName, isAdmin) => {
 
   const [ethConfig, ] = useContext(EthContext)
 
@@ -16,12 +16,18 @@ export const useTable = (tableName) => {
         return
       }
 
-      const metadata = await ethConfig.elajs.getTableMetadata(tableName)
+      let metadata
+
+      if (isAdmin){
+        metadata = await ethConfig.elajs.getTableMetadata(tableName)
+      } else {
+        metadata = await ethConfig.elajsUser.getTableMetadata(tableName)
+      }
 
       setTableMetadata(metadata)
 
     })()
-  }, [ethConfig, tableName])
+  }, [ethConfig, tableName, isAdmin])
 
   useEffect(() => {
     (async () => {
@@ -30,7 +36,12 @@ export const useTable = (tableName) => {
         return
       }
 
-      const schema = await ethConfig.elajs.getTableSchema(tableName)
+      let schema
+      if (isAdmin){
+        schema = await ethConfig.elajs.getTableSchema(tableName)
+      } else {
+        schema = await ethConfig.elajsUser.getTableSchema(tableName)
+      }
 
       const colsResult = schema.columns.map((colData) => {
         return {
@@ -42,7 +53,7 @@ export const useTable = (tableName) => {
       setTableSchema(colsResult)
 
     })()
-  }, [ethConfig, tableName])
+  }, [ethConfig, tableName, isAdmin])
 
 
   return {tableMetadata, tableSchema}

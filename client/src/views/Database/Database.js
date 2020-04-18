@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo, useContext } from 'react'
 import {
-  Badge,
-  Button,
-  ButtonDropdown,
+  Popover,
+  PopoverBody,
+  PopoverHeader,
   ButtonGroup,
   ButtonToolbar,
   Card,
@@ -29,25 +29,40 @@ import {
 } from 'reactstrap'
 import styled from 'styled-components'
 import Loading from '../Pages/Loading'
+
 import CreateDb from '../../forms/CreateDb'
+import AddFundsDb from '../../forms/AddFundsDb'
+
 import DatabaseTable from './DatabaseTable'
 import DatabaseData from './DatabaseData'
+
 import classnames from 'classnames'
 import { useDatabase } from '../../hooks/useDatabase'
 import { useTable } from '../../hooks/useTable'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import { ProfileActionTypes } from '../../store/redux/profile'
+import { useForceUpdate } from '../../hooks/useForceUpdate'
+import { EthContext } from '../../context/EthContext'
 
 const DatabaseView = (props) => {
 
+  const [ethConfig, setEthConfig] = useContext(EthContext)
+
+  const forceUpdate = useForceUpdate()
+
   const [dbOpen, setDbOpen] = useState(false)
 
-  const [dbFundOpen, setDbFundOpen] = useState( false)
+  const [dbAddFundsOpen, setDbAddFundsOpen] = useState( false)
 
   const [dbCreateOpen, setDbCreateOpen] = useState( false)
 
   const [activeTab, setActiveTab] = useState('0');
+
+  const [gsnBalanceHelpOpen, setGsnBalanceHelpOpen] = useState(false)
+
+  const [gsnBalanceMap, setGsnBalanceMap] = useState({})
+
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -58,11 +73,29 @@ const DatabaseView = (props) => {
   * Database Data
   ************************************************************************
    */
-  const databases = useDatabase(props.profile)
+  const databases = useDatabase(props.profile, forceUpdate)
+
+  useEffect(() => {
+    (async () => {
+
+      const elajsUser = ethConfig.elajsUser
+      const gsnBalanceMap = {}
+
+      databases.map(async (db) => {
+        try {
+          elajsUser.setDatabase(db.contractAddress)
+          gsnBalanceMap[db.contractAddress] = await elajsUser.getGSNBalance()
+          setGsnBalanceMap(Object.assign({}, gsnBalanceMap))
+        } catch (err){
+          console.error(`Error fetching GSNBalance for contract address: ${db.contractAddress}`, err)
+        }
+      })
+    })()
+  }, [databases, setGsnBalanceMap])
 
   const [selectedTable, setSelectedTable] = useState()
 
-  const {tableMetadata, tableSchema} = useTable(selectedTable)
+  const {tableMetadata, tableSchema} = useTable(selectedTable, props.profile.isAdmin)
 
   /*
   useEffect(() => {
@@ -82,8 +115,19 @@ const DatabaseView = (props) => {
 
   }, [props.profile.selectedDbContract, databases])
    */
-  const selectDatabase = useCallback(() => {
-    // setSelectedTable(ev.currentTarget.dataset.contractaddress)
+
+  /**
+   * Any scenario where we are selecting databases is not in admin mode, in this case
+   * we are connecting our secondary ela-js instance to each contract
+   *
+   */
+  const selectDatabase = useCallback((ev) => {
+    setSelectedTable('')
+
+    props.dispatch({
+      type: ProfileActionTypes.SET_SELECTED_DB,
+      selectedDbContract: ev.currentTarget.dataset.dbcontractaddr
+    })
   })
 
   const selectTable = useCallback((ev) => {
@@ -107,7 +151,7 @@ const DatabaseView = (props) => {
     if (!props.profile.selectedDbContract){
       return <DropdownMenu>
         {databases.map((db) => {
-          return <DropdownItem key={db.dbName} onClick={selectDatabase} data-dbname={db.dbName}>{db.dbName}</DropdownItem>
+          return <DropdownItem key={db.dbName} onClick={selectDatabase} data-dbcontractaddr={db.contractAddress}>{db.dbName}</DropdownItem>
         })}
       </DropdownMenu>
     }
@@ -119,13 +163,13 @@ const DatabaseView = (props) => {
       <DropdownItem disabled>{selectedDb ? selectedDb.name : 'None'}</DropdownItem>
       <DropdownItem divider />
       {otherDbs.length > 1 ? otherDbs.map((db) => {
-        return <DropdownItem key={db.dbName} onClick={selectDatabase}>{db.dbName}</DropdownItem>
+        return <DropdownItem key={db.dbName} onClick={selectDatabase} data-dbcontractaddr={db.contractAddress}>{db.dbName}</DropdownItem>
       }) : <DropdownItem>No Other Databases</DropdownItem>}
     </DropdownMenu>
 
   }, [databases, props.profile.selectedDbContract])
 
-  // returns selected db name from contract
+  // returns selected db name from contract - gsnBalance is held separately so this can be memoized
   const selectedDb = useMemo(() => {
 
     if (!databases){
@@ -197,15 +241,27 @@ const DatabaseView = (props) => {
                     <Card className="text-white bg-info">
                       <CardBody>
                         <ButtonGroup className="float-right">
-                          <button className="btn btn-primary btn-sm">Add Funds</button>
+                          <button onClick={() => setDbAddFundsOpen(true)} className="btn btn-primary btn-sm">Add Funds</button>
                         </ButtonGroup>
                         <h3>
-                          {selectedDb && selectedDb.gsnBalance ? selectedDb.gsnBalance.toFixed(5) : 0}
+                          {props.profile.isAdmin && selectedDb && selectedDb.gsnBalance ?
+                            selectedDb.gsnBalance.toFixed(5) :
+                            (
+                              selectedDb && gsnBalanceMap[selectedDb.contractAddress] ?
+                                gsnBalanceMap[selectedDb.contractAddress] : 0
+                            )
+                          }
                         </h3>
 
                         <div>
                           GSN Balance
-                          <HelpIcon className="fa fa-question-circle fa-lg ml-1"/>
+                          <Popover placement="bottom" isOpen={gsnBalanceHelpOpen} target="GsnBalanceHelp" toggle={() => setGsnBalanceHelpOpen(!gsnBalanceHelpOpen)}>
+                            <PopoverHeader>GSN Balance</PopoverHeader>s
+                            <PopoverBody>
+                              Your GSN Balance is how much funds your smart contract has to allow anonymous (ephemeral) transactions.
+                            </PopoverBody>
+                          </Popover>
+                          <HelpIcon id="GsnBalanceHelp" className="fa fa-question-circle fa-lg ml-1"/>
                         </div>
                       </CardBody>
                     </Card>
@@ -318,6 +374,12 @@ const DatabaseView = (props) => {
           </TabContent>
         </Col>
       </Row>
+
+      {/*
+      ************************************************************************************************
+      Create DB Modal
+      ************************************************************************************************
+      */}
       <Modal isOpen={dbCreateOpen} style={{marginTop: '20%'}}>
         <ModalHeader>
           Create New Database
@@ -327,6 +389,19 @@ const DatabaseView = (props) => {
         </ModalBody>
       </Modal>
 
+      {/*
+      ************************************************************************************************
+      Add Funds to DB Modal
+      ************************************************************************************************
+      */}
+      <Modal isOpen={dbAddFundsOpen} style={{marginTop: '20%'}}>
+        <ModalHeader>
+          Add Funds to Database: <b className="text-primary">{selectedDb ? selectedDb.dbName : ''}</b>
+        </ModalHeader>
+        <ModalBody>
+          <AddFundsDb closeModal={() => setDbAddFundsOpen(false)} gsnBalance={selectedDb ? parseInt(gsnBalanceMap[selectedDb.contractAddress]) : 0}/>
+        </ModalBody>
+      </Modal>
     </div>
   )
 

@@ -6,6 +6,7 @@ const config = require('../test/config')
 const Web3 = require('web3')
 const { ELA_JS, keccak256, uintToBytes32 } = require('ela-js')
 
+// TODO: make this an argv
 const FM_ETH_ADDRESS = '0xfEB943725Ed070e8D5645736484Ba6494dcBA31a'
 
 const contractAddr = process.env.ELAJSSTORE_CONTRACT_ADDR
