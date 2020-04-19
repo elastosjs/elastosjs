@@ -19,7 +19,7 @@ import _ from 'lodash'
 
 import Web3 from 'web3'
 
-import { namehash, keccak256 } from 'ela-js'
+import { keccak256 } from 'ela-js'
 
 import constants from '../../../constants'
 
@@ -282,7 +282,8 @@ const RegisterTransaction = (props) => {
                     <ol start="3">
                       <li>
                         This platform is in ALPHA and testnet only - expect some bugs and please report them to{' '}
-                        <b style={{color: '#007bff'}}>contact@elastojs.com</b>
+                        <b style={{color: '#007bff'}}>contact@elastojs.com</b>. There is a small chance your data
+                        may be lost on testnet as we upgrade the system.
                       </li>
                     </ol>
                   </h3>

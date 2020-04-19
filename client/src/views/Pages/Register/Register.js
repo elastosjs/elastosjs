@@ -127,7 +127,7 @@ const Register = (props) => {
 
     const ethAddress = await ethConfig.fmWeb3.currentProvider.baseProvider.enable()
 
-    setEthAddress(ethAddress)
+    setEthAddress(ethAddress[0])
 
     setProgress({...progress, val: progress.val += 45})
   }, [])

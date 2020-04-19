@@ -38,28 +38,7 @@ const CreateTable = (props) => {
 
   const [pendingCreate, setPendingCreate] = useState(false)
 
-  const [cols, setCols] = useState([
-    {
-      name: 'A',
-      type: 'BYTES32',
-      typeDropdownOpen: false
-    },
-    {
-      name: 'B',
-      type: 'UINT',
-      typeDropdownOpen: false
-    },
-    {
-      name: 'C',
-      type: 'BOOL',
-      typeDropdownOpen: false
-    },
-    {
-      name: 'D',
-      type: 'BOOL',
-      typeDropdownOpen: false
-    }
-  ])
+  const [cols, setCols] = useState([])
 
   const handleTypeSelect = useCallback((ev) => {
     const colIndex = ev.currentTarget.dataset.colindex

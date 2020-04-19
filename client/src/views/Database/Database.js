@@ -30,6 +30,7 @@ import {
 import styled from 'styled-components'
 import Loading from '../Pages/Loading'
 import Web3 from 'web3'
+import { toastr } from 'react-redux-toastr'
 
 import CreateDb from '../../forms/CreateDb'
 import CreateTable from '../../forms/CreateTable'
@@ -185,6 +186,15 @@ const DatabaseView = (props) => {
     return _.find(databases, (db) => db.contractAddress === props.profile.selectedDbContract)
   }, [databases, props.profile.selectedDbContract])
 
+  const handleDeleteTable = useCallback((ev) => {
+    toastr.info('Under development')
+  })
+
+  const handleViewData = useCallback((ev) => {
+    setSelectedTable(ev.currentTarget.dataset.tablename)
+    setActiveTab('2')
+  })
+
   return (
     !databases ? <Loading/> :
     <div className="animated fadeIn">
@@ -267,7 +277,7 @@ const DatabaseView = (props) => {
                               Your GSN Balance is how much funds your smart contract has to allow anonymous (ephemeral) transactions.
                             </PopoverBody>
                           </Popover>
-                          <HelpIcon id="GsnBalanceHelp" className="fa fa-question-circle fa-lg ml-1"/>
+                          <HoverIcon id="GsnBalanceHelp" className="fa fa-question-circle fa-lg ml-1"/>
                         </div>
                       </CardBody>
                     </Card>
@@ -309,7 +319,7 @@ const DatabaseView = (props) => {
                 <Col>
                   {selectedTable ?
                     <div>
-                      <button className="btn btn-info pull-right mb-3">Create Table</button>
+                      <button className="btn btn-info pull-right mb-3" onClick={() => setCreateTableOpen(true)}>Create Table</button>
                       <Breadcrumb>
                         <BreadcrumbItem>
                           <a href="#" onClick={selectTable} data-tablename="" >
@@ -324,7 +334,7 @@ const DatabaseView = (props) => {
                     <DatabaseTable setActiveTab={setActiveTab} tableMetadata={tableMetadata} tableSchema={tableSchema}/> :
 
                     <div>
-                      <button className="btn btn-info pull-right mb-3">Create Table</button>
+                      <button className="btn btn-info pull-right mb-3" onClick={() => setCreateTableOpen(true)}>Create Table</button>
                       <Table hover responsive className="table-outline mb-0 d-none d-sm-table" style={{clear: 'both', 'backgroundColor': '#fff'}}>
                         <thead className="thead-light">
                         <tr>
@@ -358,8 +368,12 @@ const DatabaseView = (props) => {
                                 0
                               </td>
                               <td className="text-right align-items-center" style={style}>
-                                <button className="btn btn-primary mr-3">View Data</button>{' '}
-                                <i className="cui-trash icons font-2xl"/>
+                                <button className="btn btn-primary mr-3" onClick={handleViewData} data-tablename={table.name}>View Data</button>{' '}
+                                <HoverIcon
+                                  className="cui-trash icons font-2xl"
+                                  onClick={handleDeleteTable}
+                                  data-tablename={table.name}
+                                />
                               </td>
                             </tr>
                           })
@@ -453,11 +467,10 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps)(DatabaseView)
 
-const HelpIcon = styled.i`
-
+const HoverIcon = styled.i`
   cursor: pointer;
 
   :hover {
-    color: #ccc;
+    color: #777;
   }
 `

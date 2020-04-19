@@ -57,6 +57,10 @@ const DatabaseTable = (props) => {
     })
   })
 
+  const handleDeleteCol = useCallback((ev) => {
+
+  })
+
   return (
     <div>
       <Row className="mb-3">
@@ -105,7 +109,7 @@ const DatabaseTable = (props) => {
                       {col.type}
                     </td>
                     <td className="text-right align-items-center" style={style}>
-                      <i className="cui-trash icons font-2xl"/>
+                      <i className="cui-trash icons font-2xl" onClick={handleDeleteCol}/>
                     </td>
                   </tr>
                 })

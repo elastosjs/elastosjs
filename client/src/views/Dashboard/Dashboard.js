@@ -32,12 +32,15 @@ import { ProfileActionTypes } from '../../store/redux/profile'
 
 import CreateDb from '../../forms/CreateDb'
 import WithdrawFundsDb from '../../forms/WithdrawFundsDb'
+import AddFundsAcct from '../../forms/AddFundsAcct'
 import _ from 'lodash'
 
 // TODO: remove the concept of having gsnBalance on databases from admin db
 const Dashboard = (props) => {
 
   const [ethConfig, setEthConfig] = useContext(EthContext)
+
+  const [network, setNetwork] = useContext(NetworkContext)
 
   const [card1, setCard1] = useState(false)
 
@@ -46,6 +49,8 @@ const Dashboard = (props) => {
   const [dbCreateOpen, setDbCreateOpen] = useState( false)
 
   const [withdrawFundsOpen, setWithdrawFundsOpen] = useState(false)
+
+  const [addFundsAcctOpen, setAddFundsAcctOpen] = useState(false)
 
   const [effectTrigger, triggerEffect] = useEffectTrigger()
 
@@ -107,6 +112,7 @@ const Dashboard = (props) => {
       <Row>
         <Col sm="12" lg="6">
           <Card className="text-white bg-info">
+            {!walletAddress ? <Loading margin="1" size="50"/> :
             <CardBody className="pb-0">
               <ButtonGroup className="float-right">
                 <ButtonDropdown id='card1' isOpen={card1} toggle={() => setCard1(!card1)}>
@@ -114,7 +120,7 @@ const Dashboard = (props) => {
                     <i className="icon-settings"></i>
                   </DropdownToggle>
                   <DropdownMenu right>
-                    <DropdownItem>Add Funds</DropdownItem>
+                    <DropdownItem onClick={() => setAddFundsAcctOpen(true)}>Add Funds</DropdownItem>
                     <DropdownItem>Send Funds</DropdownItem>
                   </DropdownMenu>
                 </ButtonDropdown>
@@ -132,7 +138,7 @@ const Dashboard = (props) => {
                   {walletAddress}
                 </a>
               </div>
-            </CardBody>
+            </CardBody>}
             <div>
               <br/>
             </div>
@@ -159,6 +165,23 @@ const Dashboard = (props) => {
         </Col>
       </Row>
 
+      {ethBalance === 0 ?
+        <Row>
+          <Col>
+            <Card className="bg-white">
+              <CardBody>
+                <h3>Welcome to ElastosJS - Testnet</h3>
+                <br/>
+                <p>
+                  To get started click the <i className="icon-settings"/> icon above and <b>Add Funds</b> to your account from
+                  the Elastos ETH Testnet Faucet.
+                </p>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row> : ''
+      }
+
       <Row>
         <Col>
           <Table hover responsive className="table-outline mb-0 d-none d-sm-table" style={{'backgroundColor': '#fff'}}>
@@ -184,7 +207,7 @@ const Dashboard = (props) => {
                 </td>
               </tr> :
               databases.map((database) => {
-                return <tr key={database.id} style={{cursor: 'pointer'}} onClick={goDatabase} data-contractaddress={database.contractAddress} data-id={database.id}>
+                return <tr key={database.id} className="animated fadeIn" style={{cursor: 'pointer'}} onClick={goDatabase} data-contractaddress={database.contractAddress} data-id={database.id}>
                   <td>
                     {database.dbName}
                   </td>
@@ -254,6 +277,24 @@ const Dashboard = (props) => {
           />
         </ModalBody>
       </Modal>
+
+      {/*
+      ************************************************************************************************
+      Add Funds to Account Modal
+      ************************************************************************************************
+      */}
+      <Modal isOpen={addFundsAcctOpen} style={{marginTop: '20%', maxWidth: '600px'}}>
+        <ModalHeader>
+          Add ELASC to Account
+        </ModalHeader>
+        <ModalBody>
+          <AddFundsAcct
+            closeModal={() => setAddFundsAcctOpen(false)}
+            triggerEffect={triggerEffect}
+          />
+        </ModalBody>
+      </Modal>
+
     </div>
   );
 
