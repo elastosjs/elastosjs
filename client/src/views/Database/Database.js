@@ -62,12 +62,13 @@ const DatabaseView = (props) => {
 
   const [dbCreateOpen, setDbCreateOpen] = useState( false)
 
-  const [activeTab, setActiveTab] = useState('1');
+  const [activeTab, setActiveTab] = useState('0');
 
   const [gsnBalanceHelpOpen, setGsnBalanceHelpOpen] = useState(false)
 
   const [gsnBalanceMap, setGsnBalanceMap] = useState({})
 
+  const [ready, setReady] = useState(false)
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -78,7 +79,7 @@ const DatabaseView = (props) => {
   * Database Data
   ************************************************************************
    */
-  const databases = useDatabase(props.profile, effectTrigger)
+  const databases = useDatabase(props.profile, effectTrigger, setReady)
 
   useEffect(() => {
     (async () => {
@@ -196,7 +197,7 @@ const DatabaseView = (props) => {
   })
 
   return (
-    !databases ? <Loading/> :
+    !ready ? <Loading/> :
     <div className="animated fadeIn">
       <Row>
         <Col lg="8">
@@ -302,7 +303,7 @@ const DatabaseView = (props) => {
                   </Col>
                 </Row> :
                 <div className="text-muted">
-                  Please select a database or
+                  Please select a database or{' '}
                   <a href="#" onClick={(ev) => {ev.preventDefault();setDbCreateOpen(true)}}>
                     Create a New Database
                   </a>

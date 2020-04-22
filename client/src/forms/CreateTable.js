@@ -266,6 +266,7 @@ const CreateTable = (props) => {
               </DropdownToggle>
               <DropdownMenu onClick={handleTypeSelect} data-colindex={i}>
                 <DropdownItem data-type="BYTES32">BYTES32</DropdownItem>
+                <DropdownItem data-type="STRING">STRING</DropdownItem>
                 <DropdownItem data-type="BOOL">BOOL</DropdownItem>
                 <DropdownItem data-type="UINT">UINT</DropdownItem>
               </DropdownMenu>

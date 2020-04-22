@@ -11,20 +11,42 @@ export const useEthBalance = (effectTrigger) => {
 
   const fmWeb3 = ethConfig.fmWeb3
 
+  let balanceCheckInterval
+
   useEffect(() => {
-    (async () => {
 
-      const accounts = await fmWeb3.eth.getAccounts()
+    // on entry always clear it in case
+    if (balanceCheckInterval){
+      clearInterval(balanceCheckInterval)
+    }
 
-      setWalletAddress(accounts[0])
+    updateData(fmWeb3, setWalletAddress, setEthBalance)
 
-      const balance = parseFloat(Web3.utils.fromWei(await fmWeb3.eth.getBalance(accounts[0])))
+    balanceCheckInterval = setInterval(() => {
+      updateData(fmWeb3, setWalletAddress, setEthBalance)
+    }, 15000)
 
-      setEthBalance(balance)
+    // this is the clean-up function
+    return () => {
+      clearInterval(balanceCheckInterval)
+    }
 
-    })()
   }, [ethConfig, effectTrigger])
 
   return {ethBalance, walletAddress}
+
+}
+
+const updateData = async (fmWeb3, setWalletAddress, setEthBalance) => {
+
+  console.log('useEthBalance polled')
+
+  const accounts = await fmWeb3.eth.getAccounts()
+
+  setWalletAddress(accounts[0])
+
+  const balance = parseFloat(Web3.utils.fromWei(await fmWeb3.eth.getBalance(accounts[0])))
+
+  setEthBalance(balance)
 
 }

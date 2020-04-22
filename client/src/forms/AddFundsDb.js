@@ -16,7 +16,7 @@ const AddFundsDb = (props) => {
 
   const inputAddAmt = useRef(null)
 
-  const handleAddFunds = async () => {
+  const handleAddFunds = useCallback(async () => {
 
     const amt = parseFloat(inputAddAmt.current.value)
 
@@ -48,7 +48,7 @@ const AddFundsDb = (props) => {
     props.triggerEffect()
 
     props.closeModal()
-  }
+  }, [ethBalance, walletAddress, props.selectedDb])
 
   return <div>
     <Row>

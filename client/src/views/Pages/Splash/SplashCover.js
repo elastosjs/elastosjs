@@ -25,7 +25,7 @@ export default class SplashCover extends React.Component {
 
     const ProjectTitle = props => (
       <h2 className="projectTitle">
-        <img src="/assets/img/elastosJS.svg" alt="Elastos Logo"/>
+        <img src="/assets/img/elajs.png" style={{height: '200px'}}  alt="Elastos Logo"/>
         <small></small>
       </h2>
     )
@@ -92,7 +92,7 @@ export default class SplashCover extends React.Component {
                 <h4>Connect to Your Storage</h4>
                 <CodeWrapper>
                   <code>
-                    elajs.config({'{'}<br/>
+                    elajs.setDatabase({'{'}<br/>
                     &nbsp;&nbsp;contract: '0xfD...Df'<br/>
                     {'}'})<br/>
                     <br/>

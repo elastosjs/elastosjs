@@ -5,7 +5,7 @@ import Web3 from 'web3'
 import { contracts } from '../config'
 import constants from '../constants'
 
-export const useDatabase = (profile, effectTrigger) => {
+export const useDatabase = (profile, effectTrigger, setReady) => {
 
   const [ethConfig, setEthConfig] = useContext(EthContext)
   const [network, setNetwork] = useContext(NetworkContext)
@@ -22,6 +22,7 @@ export const useDatabase = (profile, effectTrigger) => {
 
       setDatabases(await getDatabases(ethConfig, profile.userId))
 
+      setReady && setReady(true)
     })()
   }, [ethConfig, network, profile.isAdmin, profile.userId, effectTrigger])
 

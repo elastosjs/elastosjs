@@ -30,7 +30,7 @@ const DatabaseData = (props) => {
 
   const tables = _.find(databases, (db) => db.contractAddress === props.profile.selectedDbContract).tables
 
-  const tableData = useTableData(selectedTable, tableSchema)
+  const tableData = useTableData(selectedTable, tableSchema, props.profile.isAdmin)
 
   const tableDropdown = useMemo(() => {
 

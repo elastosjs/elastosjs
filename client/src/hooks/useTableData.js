@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from 'react'
 import { EthContext } from '../context/EthContext'
 import Web3 from 'web3'
 
-export const useTableData = (tableName, tableSchema) => {
+export const useTableData = (tableName, tableSchema, isAdmin) => {
 
   const [ethConfig, ] = useContext(EthContext)
 
@@ -17,11 +17,21 @@ export const useTableData = (tableName, tableSchema) => {
         return
       }
 
-      const tableIds = await ethConfig.elajs.getTableIds(tableName)
+      let tableIds
+
+      if (isAdmin){
+        tableIds = await ethConfig.elajs.getTableIds(tableName)
+      } else {
+        tableIds = await ethConfig.elajsUser.getTableIds(tableName)
+      }
 
       const rowQueries = tableIds.map((id) => {
         return tableSchema.map((col) => {
-          return ethConfig.elajs._getVal(tableName, id, col.name)
+          if (isAdmin){
+            return ethConfig.elajs._getVal(tableName, id, col.name)
+          } else {
+            return ethConfig.elajsUser._getVal(tableName, id, col.name)
+          }
         })
       })
 

@@ -97,8 +97,9 @@ const CreateDb = (props) => {
 
       toastr.success(`Database "${dbName}" Created`)
 
-      props.closeModal()
+      props.triggerEffect()
 
+      props.closeModal()
 
     })()
   }, [dbName, props.closeModal, ethConfig])
