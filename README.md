@@ -25,6 +25,8 @@ Open a new terminal window, we won't use `nohup` so we want a separate terminal.
 `npx ganache-cli --deterministic --gasLimit 8000000 --gasPrice 1000000000 --db ganache-db`
 
 
+
+
 ## With thanks and credits to:
 
 - Medici ETHDenver Hackathon Team (of which I was a part of)
