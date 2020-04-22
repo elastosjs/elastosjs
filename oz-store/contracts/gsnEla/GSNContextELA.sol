@@ -18,9 +18,10 @@ contract GSNContextELA is InitializableELA, ContextELA {
 
     event RelayHubChanged(address indexed oldRelayHub, address indexed newRelayHub);
 
-    function initialize() public initializer {
+    function initialize(address relayHubAddr) public initializer {
         // _upgradeRelayHub(0x2EDA8d1A61824dFa812C4bd139081B9BcB972A6D);
-        _upgradeRelayHub(0xD216153c06E857cD7f72665E0aF1d7D82172F494);
+        // _upgradeRelayHub(0xD216153c06E857cD7f72665E0aF1d7D82172F494);
+        _upgradeRelayHub(relayHubAddr);
     }
 
     function _getRelayHub() internal view returns (address relayHub) {

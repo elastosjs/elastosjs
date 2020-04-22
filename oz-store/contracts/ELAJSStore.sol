@@ -27,11 +27,11 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     // bool public useEvents = false;
 
     // DateTime Contract address
-    address public dateTimeAddr = 0xe982E462b094850F12AF94d21D470e21bE9D0E9C; // development
+    // address constant public dateTimeAddr = 0xe982E462b094850F12AF94d21D470e21bE9D0E9C; // development
     // address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
 
     // Initialize the DateTime contract ABI with the already deployed contract
-    DateTime dateTime = DateTime(dateTimeAddr);
+    DateTime dateTime;
 
     // This counts the number of times this contract was called via GSN (expended owner gas) for rate limiting
     // mapping is a keccak256('YYYY-MM-DD') => uint (TODO: we can probably compress this by week (4 bytes per day -> 28 bytes)
@@ -67,9 +67,10 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
 
     // ************************************* SETUP FUNCTIONS *************************************
-    function initialize() public initializer {
+    function initialize(address relayHubAddr, address dateTimeAddr) public initializer {
+        dateTime = DateTime(dateTimeAddr);
         OwnableELA.initialize(msg.sender);
-        GSNRecipientELA.initialize();
+        GSNRecipientELA.initialize(relayHubAddr);
         _initialize();
     }
 

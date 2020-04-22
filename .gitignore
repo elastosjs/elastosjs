@@ -26,6 +26,7 @@ oz-accounts.md
 
 build
 
+.openzeppelin
 openzeppelin-gsn-helpers-0.2.3/
 ganache-db/
 env/*

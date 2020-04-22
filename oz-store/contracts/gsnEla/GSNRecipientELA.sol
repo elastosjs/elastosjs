@@ -12,8 +12,8 @@ import "./IRelayHubELA.sol";
  * must do so themselves.
  */
 contract GSNRecipientELA is InitializableELA, IRelayRecipientELA, GSNContextELA, GSNBouncerBaseELA {
-    function initialize() public initializer {
-        GSNContextELA.initialize();
+    function initialize(address relayHubAddr) public initializer {
+        GSNContextELA.initialize(relayHubAddr);
     }
 
     function getHubAddr() public view returns (address) {
