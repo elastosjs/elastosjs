@@ -26,12 +26,11 @@ import Web3 from 'web3'
 
 import FortmaticLogo from '../../../assets/img/fortmatic_logo.svg'
 import constants from '../../../constants'
-import { contracts } from '../../../config'
+
 import _ from 'lodash'
 
 import { keccak256, namehash } from 'ela-js'
 
-import ELAJStoreDev from '../../../contracts/ELAJSStore-development.json'
 import { ProfileActionTypes } from '../../../store/redux/profile'
 import { connect } from 'react-redux'
 

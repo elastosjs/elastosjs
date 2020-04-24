@@ -29,11 +29,6 @@ import elastosJSLogo from '../../../assets/img/elastosJS.svg'
 
 import { ProfileActionTypes } from '../../../store/redux/profile'
 
-import ELAJStoreDev from '../../../contracts/ELAJSStore-development.json'
-// import ELAJStoreTestnet from '../../../contracts/ELAJSStore-development.json'
-
-// import counterELAJSON from '../../../contracts/CounterELA.json'
-
 const USER_TABLE = constants.SCHEMA.USER_TABLE
 
 const RegisterTransaction = (props) => {

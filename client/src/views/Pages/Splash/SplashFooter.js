@@ -28,13 +28,13 @@ const SplashFooter = () => (
         <a href="https://t.me/elastosgroup" target="_blank">
           Elastos Telegram
         </a>
-        <a href="https://twitter.com/Cyber__Republic" target="_blank">
+        <a href="https://twitter.com/ElastosInfo" target="_blank">
           Twitter
         </a>
         <a href="https://www.reddit.com/r/Elastos" target="_blank">
           Reddit
         </a>
-        <a href="mailto:contact@cyberrepublic.org" target="_blank">
+        <a href="mailto:contact@elajs.com" target="_blank">
           Contact Us
         </a>
       </Col>
@@ -42,7 +42,7 @@ const SplashFooter = () => (
         <h5>More</h5>
         <a href="https://news.elastos.org" target="_blank">Elastos News</a>
         <a href="https://elanews.net" target="_blank">Community News</a>
-        <a href="https://github.com/cyber-republic/elastosjs" target="_blank">Our GitHub</a>
+        <a href="https://github.com/elastojs" target="_blank">Our GitHub</a>
         {/*<a
               className="github-button"
               href={this.props.config.repoUrl}
@@ -60,7 +60,9 @@ const SplashFooter = () => (
     <section className="center text-white">
       This is a community developed website, all information, materials and views expressed are not that of Elastos Foundation.
     </section>
-    <section className="copyright text-muted center">Copyright © 2020 CyberRepublic ETH Task Force</section>
+    <section className="copyright text-muted center">
+      <a target="_blank" href="https://elaeth.io">Copyright © 2020 CyberRepublic ETH Task Force</a>
+    </section>
   </NavFooter>
 )
 

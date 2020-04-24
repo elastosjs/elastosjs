@@ -51,7 +51,8 @@ npx oz send-tx --network development --to 0x592c129085b61A3110Ebd1DCD99F3Cfe97A5
   const elastosjs = new ELA_JS({
     defaultWeb3: web3,
     ephemeralWeb3: ozWeb3,
-    contractAddress: contractAddr
+    contractAddress: contractAddr,
+    debug: true
   })
 
   /*

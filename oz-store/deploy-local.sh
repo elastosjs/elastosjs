@@ -26,12 +26,12 @@ print_progress "contractAddr = $contractAddr"
 cp -f ./build/contracts/ELAJSStore.json ../client/src/contracts/ELAJSStore-development.json
 
 # update the contract address for the client
-sed -i '' -e "s!\(elajsStore: '\).*!\1$contractAddr'!" ../client/src/config.js
+sed -i '' -e "s!\(LOCAL]: { elajsStore: '\).*!\1$contractAddr'!" ../client/src/config.js
 
 # we write the updated contract address to the development.env file
 sed -i '' -e "s!^\(ELAJSSTORE_CONTRACT_ADDR=\).*!\1$contractAddr!" ./env/development.env
 
-# copy the contract JSON for ela-js
+# copy the contract JSON for ela-js (always do this regardless of the network)
 cp -f ./build/contracts/ELAJSStore.json ~/workspace/ela-js/src/contracts/ELAJSStore.json
 
 # ela-js also needs the contract address for its tests

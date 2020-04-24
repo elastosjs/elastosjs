@@ -1,6 +1,12 @@
+/*
+****************************************************************************************
+* NO LONGER USED BECAUSE WE HAVE NO WEBSOCKET YET
+****************************************************************************************
+ */
+
 // import Web3 from 'web3'
 
-import ELAJSStore from "../contracts/ELAJSStore-development.json"
+// import ELAJSStore from "../contracts/ELAJSStore-development.json"
 
 // import constants from '../constants'
 
@@ -37,7 +43,7 @@ const options = (network, web3) => {
       block: false,
       customProvider: web3.lib
     },
-    contracts: [ELAJSStore],
+    // contracts: [ELAJSStore],
     polls: {
       accounts: 15000,
       blocks: 15000
