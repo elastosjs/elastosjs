@@ -265,7 +265,7 @@ const DatabaseView = (props) => {
                             selectedDb.gsnBalance.toFixed(5) :
                             (
                               selectedDb && gsnBalanceMap[selectedDb.contractAddress] ?
-                                Web3.utils.fromWei(gsnBalanceMap[selectedDb.contractAddress]) : 0
+                                parseFloat(Web3.utils.fromWei(gsnBalanceMap[selectedDb.contractAddress])).toFixed(4) : 0
                             )
                           }
                         </h3>

@@ -206,38 +206,31 @@ const Register = (props) => {
                   Welcome to ElastosJS and the Modern Internet
                 </h3>
                 <p>
-                  Registration will open shortly, for now you can preview what ElastosJS by reading our
-                  tutorial at<br/>
-                  <br/>
-                  <a target="_blank" href="https://tutorials.elastosjs.com" style={{fontSize: '1.8rem'}}>https://tutorials.elastosjs.com</a>
-                </p>
-                {/*
-                <p>
                   To safeguard your data and funds we use Fortmatic to protect
                   your encryption keys and funds.
                 </p>
                 <p>
-                  You will need to also create an ElastosJS account.
+                  You will need to also create an elajs account.
                 </p>
                 <Progress value={progress.val}>
                   {progress.msg}
                 </Progress>
-                */}
               </RegisterHeader>
-              {/*
               <CardGroup style={{ clear: 'both' }}>
                 {/*
-              ******************************************************************************************************************
-              ElastosJS Acct
-              ******************************************************************************************************************
+                ******************************************************************************************************************
+                ElastosJS Acct
+                ******************************************************************************************************************
+                */}
                 <Card className={'flip-card ' + (elajsAcct.dataCommitted ? 'flip-card-active' : '')}
                       style={{ borderTopLeftRadius: 0 }}>
                   <RegisterForm setElajsAcct={setElajsAcct} elajsAcct={elajsAcct}/>
                 </Card>
                 {/*
-              ******************************************************************************************************************
-              Fortmatic Connect
-              ******************************************************************************************************************
+                ******************************************************************************************************************
+                Fortmatic Connect
+                ******************************************************************************************************************
+                */}
                 <Card className="bg-tertiary px-4" style={{ width: '44%', borderTopRightRadius: 0 }}>
                   <CardBody>
                     <div>
@@ -278,7 +271,6 @@ const Register = (props) => {
                   }
                 </CardBody>
               </Card>
-              */}
             </Col>
           </Row>
         </Container> :

@@ -338,9 +338,9 @@ const Login = (props) => {
               <Card className={'flip-card ' + (elajsAcct.dataCommitted ? 'flip-card-active' : '')}>
                 <div className="flip-card-inner">
                   <CardBody className="flip-card-front px-4 py-5">
-                    <h2>ElastosJS Auth</h2>
+                    <h2>elajs Auth</h2>
                     <p className="text-muted">
-                      This is your ElastosJS account
+                      This is your elajs account
                       {/* <i className="fa fa-question-circle fa-lg ml-1"></i> */}
                     </p>
                     <InputGroup className="mb-3">
@@ -372,7 +372,7 @@ const Login = (props) => {
                   </CardBody>
                   <CardBody className="flip-card-back p-4">
                     <h4 className="mt-5">
-                      ElastosJS Account<br/>
+                      elajs Account<br/>
                     </h4>
 
                     <p className="text-left p-4 mt-2">

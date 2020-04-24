@@ -135,9 +135,9 @@ const RegisterForm = (props) => {
       ************************************************************************************************
       */}
       <CardBody className="flip-card-front p-4">
-        <h2>ElastosJS Auth</h2>
+        <h2>elajs Auth</h2>
         <p className="text-muted">
-          This is your ElastosJS account
+          This is your elajs account
           {/* <i className="fa fa-question-circle fa-lg ml-1"/> */}
         </p>
         <InputGroup className="mb-4">
@@ -173,13 +173,13 @@ const RegisterForm = (props) => {
         </InputGroup>
         <Row>
           <Col>
-            <Button color="primary" className="px-4 mt-2" onClick={handleCreateAcct}>Create ElastosJS Account</Button>
+            <Button color="primary" className="px-4 mt-2" onClick={handleCreateAcct}>Create elajs Account</Button>
           </Col>
         </Row>
       </CardBody>
       <CardBody className="flip-card-back p-4">
         <h4 className="mt-5">
-          ElastosJS Account<br/>
+          elajs Account<br/>
           Created
         </h4>
 

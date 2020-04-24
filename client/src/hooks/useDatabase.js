@@ -17,10 +17,9 @@ export const useDatabase = (profile, effectTrigger, setReady) => {
 
       if (profile.isAdmin){
         setDatabases(await getAdminDatabases(ethConfig, network))
-        return
+      } else {
+        setDatabases(await getDatabases(ethConfig, profile.userId))
       }
-
-      setDatabases(await getDatabases(ethConfig, profile.userId))
 
       setReady && setReady(true)
     })()
@@ -37,6 +36,7 @@ const getAdminDatabases = async (ethConfig, network) => {
   const tables = await ethConfig.elajs.getTables()
 
   return [{
+    id: 'admin',
     dbName: 'ElastosJS',
     contractAddress: contracts[network].elajsStore,
     tables: tables.map((table) => {
