@@ -20,6 +20,7 @@ contract DateTime {
     function getDay(uint timestamp) public pure returns (uint8);
 }
 
+// TODO: move schema methods to another contract, we're hitting limits for this
 // TODO: good practice to have functions not callable externally and internally
 contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
@@ -586,6 +587,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         delegate = address(tableMetadata>>8);
     }
 
+    // TODO: we want to add the schema updated time here, then we can have a reliable schema cache
     function setTableMetadata(bytes32 _tableKey, uint8 permission, address delegate) private onlyOwner {
         uint256 tableMetadata;
 

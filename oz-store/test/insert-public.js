@@ -129,6 +129,7 @@ describe('Tests for Insert Public Table', () => {
     */
 
     // console.log(`INSERT -> ${fieldIdTableKey}`)
+
     await ephemeralInstance.methods.insertVal(tableKey, idKey, fieldKey, id, VAL).send({
       from: ozWeb3.accounts[0]
     })

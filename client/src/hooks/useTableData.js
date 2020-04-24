@@ -25,6 +25,7 @@ export const useTableData = (tableName, tableSchema, isAdmin) => {
         tableIds = await ethConfig.elajsUser.getTableIds(tableName)
       }
 
+      // this fires off a multitude of async SC calls
       const rowQueries = tableIds.map((id) => {
         return tableSchema.map((col) => {
           if (isAdmin){
