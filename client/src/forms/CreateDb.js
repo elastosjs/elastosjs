@@ -48,9 +48,10 @@ const CreateDb = (props) => {
   * Create Database Call
   ************************************************************************************************************
    */
-  const [ethConfig, setEthConfig] = useContext(EthContext)
+  const [ethConfig, ] = useContext(EthContext)
 
-  const elajs = ethConfig.elajs
+  const elajsDb = ethConfig.elajsDb
+  const elajsDbUser = ethConfig.elajsDbUser
 
   const {ethAddress} = props.profile
 
@@ -65,7 +66,7 @@ const CreateDb = (props) => {
     ;(async () => {
 
       // await elajs.createTable(dbName, 3, colsHashed, types)
-      const deployPromise = elajs.deployDatabase(ethAddress)
+      const deployPromise = elajsDb.deployDatabase(ethAddress)
 
       let contractAddress = ''
       const userId = props.profile.userId
@@ -83,11 +84,11 @@ const CreateDb = (props) => {
 
       await deployPromise
 
-      await ethConfig.elajsUser.defaultWeb3.currentProvider.baseProvider.enable()
+      await elajsDbUser.defaultWeb3.currentProvider.baseProvider.enable()
 
-      ethConfig.elajsUser.setDatabase(contractAddress)
+      elajsDbUser.setDatabase(contractAddress)
 
-      const initResult = await ethConfig.elajsUser.initializeContract(ethAddress)
+      const initResult = await elajsDbUser.initializeContract(ethAddress)
 
       // console.log('initResult', initResult)
 
@@ -97,7 +98,7 @@ const CreateDb = (props) => {
 
       toastr.success(`Database "${dbName}" Created`)
 
-      props.triggerEffect()
+      props.triggerEffect && props.triggerEffect()
 
       props.closeModal()
 
@@ -112,7 +113,7 @@ const CreateDb = (props) => {
     const id = Web3.utils.randomHex(32)
 
     for (let i = 0, len = cols.length; i < len; i++){
-      let insertPromise = elajs.insertVal('database', cols[i], vals[i], {id})
+      let insertPromise = elajsDb.insertVal('database', cols[i], vals[i], {id})
 
       /*
       insertPromise.on('transactionHash', (hash) => {

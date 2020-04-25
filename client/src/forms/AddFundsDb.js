@@ -10,9 +10,9 @@ const AddFundsDb = (props) => {
 
   const { ethBalance, walletAddress } = useEthBalance()
 
-  const [ethConfig, setEthConfig] = useContext(EthContext)
+  const [ethConfig, ] = useContext(EthContext)
 
-  const elajs = ethConfig.elajs
+  const elajsDb = ethConfig.elajsDb
 
   const inputAddAmt = useRef(null)
 
@@ -41,7 +41,7 @@ const AddFundsDb = (props) => {
     }
 
     // we send the funds from our Fortmatic account which has funds
-    await elajs.addFunds(walletAddress, props.selectedDb.contractAddress, amt.toString())
+    await elajsDb.addFunds(walletAddress, props.selectedDb.contractAddress, amt.toString())
 
     toastr.success('Funds added successfully')
 

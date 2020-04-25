@@ -20,18 +20,18 @@ export const useTableData = (tableName, tableSchema, isAdmin) => {
       let tableIds
 
       if (isAdmin){
-        tableIds = await ethConfig.elajs.getTableIds(tableName)
+        tableIds = await ethConfig.elajsDb.getTableIds(tableName)
       } else {
-        tableIds = await ethConfig.elajsUser.getTableIds(tableName)
+        tableIds = await ethConfig.elajsDbUser.getTableIds(tableName)
       }
 
       // this fires off a multitude of async SC calls
       const rowQueries = tableIds.map((id) => {
         return tableSchema.map((col) => {
           if (isAdmin){
-            return ethConfig.elajs._getVal(tableName, id, col.name)
+            return ethConfig.elajsDb._getVal(tableName, id, col.name)
           } else {
-            return ethConfig.elajsUser._getVal(tableName, id, col.name)
+            return ethConfig.elajsDbUser._getVal(tableName, id, col.name)
           }
         })
       })

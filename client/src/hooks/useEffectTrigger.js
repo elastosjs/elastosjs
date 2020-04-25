@@ -6,7 +6,7 @@ export const useEffectTrigger = () => {
 
   const triggerEffect = useCallback(() => {
     setTick(effectTrigger + 1)
-  }, [])
+  }, [effectTrigger])
 
   return [effectTrigger, triggerEffect]
 }

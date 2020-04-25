@@ -30,7 +30,7 @@ import { ProfileActionTypes, ActionRegister } from '../../../store/redux/profile
 
 const Register = (props) => {
 
-  const [ethConfig, setEthConfig] = useContext(EthContext)
+  const [ethConfig, ] = useContext(EthContext)
 
   const [canRegister, setCanRegister] = useState(false)
 

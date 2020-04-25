@@ -50,7 +50,7 @@ import { EthContext } from '../../context/EthContext'
 
 const DatabaseView = (props) => {
 
-  const [ethConfig, setEthConfig] = useContext(EthContext)
+  const [ethConfig, ] = useContext(EthContext)
 
   const [effectTrigger, triggerEffect] = useEffectTrigger()
 
@@ -81,18 +81,18 @@ const DatabaseView = (props) => {
    */
   const databases = useDatabase(props.profile, effectTrigger, setReady)
 
+  // this works fine for admin db too because it's only a public call
   useEffect(() => {
     (async () => {
 
-      console.log('triggerEffect')
-
-      const elajsUser = ethConfig.elajsUser
       const gsnBalanceMap = {}
+      const elajsDbUser = ethConfig.elajsDbUser
 
       databases.map(async (db) => {
         try {
-          elajsUser.setDatabase(db.contractAddress)
-          gsnBalanceMap[db.contractAddress] = await elajsUser.getGSNBalance()
+          elajsDbUser.setDatabase(db.contractAddress)
+          await elajsDbUser.defaultWeb3.currentProvider.baseProvider.enable() // we should call enable for each setDatabase change
+          gsnBalanceMap[db.contractAddress] = await elajsDbUser.getGSNBalance()
           setGsnBalanceMap(Object.assign({}, gsnBalanceMap))
         } catch (err){
           console.error(`Error fetching GSNBalance for contract address: ${db.contractAddress}`, err)
@@ -415,7 +415,10 @@ const DatabaseView = (props) => {
           Create New Database
         </ModalHeader>
         <ModalBody>
-          <CreateDb closeModal={() => setDbCreateOpen(false)}/>
+          <CreateDb
+            closeModal={() => setDbCreateOpen(false)}
+            triggerEffect={triggerEffect}
+          />
         </ModalBody>
       </Modal>
 

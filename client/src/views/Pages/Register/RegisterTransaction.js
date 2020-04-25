@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react'
 import {
-  Button,
   Card,
   CardBody,
   CardHeader,
@@ -23,17 +22,15 @@ import { keccak256 } from 'ela-js'
 
 import constants from '../../../constants'
 
-import Loading from '../Loading'
-
 import elastosJSLogo from '../../../assets/img/elastosJS.svg'
-
+import { toastr } from 'react-redux-toastr'
 import { ProfileActionTypes } from '../../../store/redux/profile'
 
 const USER_TABLE = constants.SCHEMA.USER_TABLE
 
 const RegisterTransaction = (props) => {
 
-  const [ethConfig, setEthConfig] = useContext(EthContext)
+  const [ethConfig, ] = useContext(EthContext)
 
   const [agree, setAgree] = useState(false)
 
@@ -41,7 +38,7 @@ const RegisterTransaction = (props) => {
   const [registerDone, setRegisterDone] = useState(false)
   const [transactions, setTransactions] = useState({})
 
-  const elajs = ethConfig.elajs
+  const elajsDb = ethConfig.elajsDb
 
   const {elajsAcct, ethAddress} = props
 
@@ -77,7 +74,7 @@ const RegisterTransaction = (props) => {
       let curTransactions = {}
 
       for (let i = 0; i < cols.length; i++){
-        let insertPromise = elajs.insertVal(USER_TABLE, cols[i], values[i], {id: id})
+        let insertPromise = elajsDb.insertVal(USER_TABLE, cols[i], values[i], {id: id})
 
         curTransactions[i] = {
           promise: insertPromise
@@ -112,6 +109,8 @@ const RegisterTransaction = (props) => {
         ethAddress: props.ethAddress
       })
 
+      toastr.success('Registration Successful - Click Continue')
+
       setRegisterDone(true)
 
     } catch (err){
@@ -120,7 +119,7 @@ const RegisterTransaction = (props) => {
       console.error(err)
     }
 
-  }, [agree, elajs, elajsAcct, ethAddress])
+  }, [agree, elajsDb, elajsAcct, ethAddress])
 
   /*
   useEffect(() => {
@@ -244,7 +243,7 @@ const RegisterTransaction = (props) => {
                       <li>
                         Data stored on our Smart Contracts is <b>Public!</b> Any data you wish to keep private must be
                         encrypted by you.
-                        ElastosJS accepts <u>no responsibility</u> for data issues arising from any applications you created.
+                        elajs accepts <u>no responsibility</u> for data issues arising from any applications you created.
                       </li>
                     </ol>
                   </h3>
@@ -260,7 +259,7 @@ const RegisterTransaction = (props) => {
                   <h3>
                     <ol start="2">
                       <li>
-                        ElastosJS stores no data, uses any cookies or tracking in the spirit of decentralization.
+                        elajs stores no data, uses any cookies or tracking in the spirit of decentralization.
                       </li>
                     </ol>
                   </h3>

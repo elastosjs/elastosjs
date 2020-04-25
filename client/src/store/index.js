@@ -18,13 +18,12 @@ import { elajs } from 'ela-js'
 
 import reducers from './reducers'
 
-import constants from '../constants'
+// import constants from '../constants'
 import {
   contracts,
   FortmaticAPIKey,
   FortmaticNodeOptions
 } from '../config'
-
 
 
 /**
@@ -36,6 +35,8 @@ import {
  * @param network
  */
 const getEthConfig = async (network) => {
+
+  console.log('NETWORK', network, contracts)
 
   const fm = new Fortmatic(FortmaticAPIKey[network], FortmaticNodeOptions[network])
   const gsnProvider = new GSNProvider(fm.getProvider())
@@ -54,24 +55,31 @@ const getEthConfig = async (network) => {
 
   /*
   ***********************************************************************************************************************
-  * ELA_JS Setup
+  * elajs.database Setup
   ***********************************************************************************************************************
    */
   const elajsDb = new elajs.database({
     defaultWeb3: fmWeb3,
     ephemeralWeb3: ozWeb3,
-    contractAddress: contracts[network].elajsStoreAddr
+
+    databaseContractAddr: contracts[network].databaseContractAddr,
+    dateTimeContractAddr: contracts[network].dateTimeContractAddr,
+    relayHubAddr: contracts[network].relayHubAddr
   })
 
   /*
   ***********************************************************************************************************************
-  * Dynamic ELA_JS Setup
+  * Dynamic elajs.database Setup
   * This one is used for the user's smart contracts
+  * - we don't set the databaseContractAddr because this changes
   ***********************************************************************************************************************
    */
-  const elajsUser = new ELA_JS({
+  const elajsDbUser = new elajs.database({
     defaultWeb3: fmWeb3,
-    ephemeralWeb3: ozWeb3
+    ephemeralWeb3: ozWeb3,
+
+    dateTimeContractAddr: contracts[network].dateTimeContractAddr,
+    relayHubAddr: contracts[network].relayHubAddr
   })
 
   const persistConfig = {
@@ -107,8 +115,8 @@ const getEthConfig = async (network) => {
     store,
     persistor,
     // drizzle,
-    elajs,
-    elajsUser,
+    elajsDb,
+    elajsDbUser,
 
     ready: true
   }

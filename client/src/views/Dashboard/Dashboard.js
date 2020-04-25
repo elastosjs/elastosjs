@@ -42,7 +42,7 @@ import _ from 'lodash'
 // TODO: remove the concept of having gsnBalance on databases from admin db
 const Dashboard = (props) => {
 
-  const [ethConfig, setEthConfig] = useContext(EthContext)
+  const [ethConfig, ] = useContext(EthContext)
 
   const [network, setNetwork] = useContext(NetworkContext)
 
@@ -80,17 +80,18 @@ const Dashboard = (props) => {
     window.location.hash = 'databases'
   })
 
+  // this works fine for admin db too because it's only a public call
   useEffect(() => {
     (async () => {
 
-      const elajsUser = ethConfig.elajsUser
       const gsnBalanceMap = {}
+      const elajsDbUser = ethConfig.elajsDbUser
 
       databases.map(async (db) => {
         try {
-          await ethConfig.elajsUser.defaultWeb3.currentProvider.baseProvider.enable()
-          elajsUser.setDatabase(db.contractAddress)
-          gsnBalanceMap[db.contractAddress] = await elajsUser.getGSNBalance()
+          elajsDbUser.setDatabase(db.contractAddress)
+          await elajsDbUser.defaultWeb3.currentProvider.baseProvider.enable() // we should call enable for each setDatabase change
+          gsnBalanceMap[db.contractAddress] = await elajsDbUser.getGSNBalance()
           setGsnBalanceMap(Object.assign({}, gsnBalanceMap))
         } catch (err){
           console.error(`Error fetching GSNBalance for contract address: ${db.contractAddress}`, err)
@@ -132,7 +133,7 @@ const Dashboard = (props) => {
                 </ButtonDropdown>
               </ButtonGroup>
               <h3>
-                <a href="https://docs.elastosjs.com" className="text-white">
+                <a target="_blank" href={`https://testnet.elaeth.io/address/${walletAddress}/transactions`} className="text-white">
                   {ethBalance.toFixed(4)}
                 </a>
               </h3>
@@ -155,14 +156,14 @@ const Dashboard = (props) => {
           <Card className="text-white bg-primary">
             <CardBody className="pb-0">
               <h3>
-                <a href="https://docs.elastosjs.com" className="text-white">
+                <a target="_blank" href="https://docs.elajs.com" className="text-white">
                   Learn <strong>elajs</strong>
                 </a>
               </h3>
               <div>
                 This website manages your databases.<br/>
                 Learn how to connect your dApp read our docs at{' '}
-                <a href="https://docs.elastosjs.com" className="text-white text-dark"><b>https://docs.elajs.com</b></a>
+                <a target="_blank" href="https://docs.elajs.com" className="text-white text-dark"><b>https://docs.elajs.com</b></a>
               </div>
             </CardBody>
             <div>
@@ -319,7 +320,7 @@ const Dashboard = (props) => {
           <a target="_blank" href="https://faucet.elaeth.io">faucet.elaeth.io</a>)
         </ModalBody>
         <ModalFooter>
-          <button className="btn btn-secondaryp pull-right" onClick={() => setSendFundsOpen(false)}>
+          <button className="btn btn-secondary pull-right" onClick={() => setSendFundsOpen(false)}>
             Close
           </button>
         </ModalFooter>

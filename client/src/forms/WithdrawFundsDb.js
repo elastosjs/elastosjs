@@ -12,9 +12,9 @@ const WithdrawFundsDb = (props) => {
 
   const { walletAddress } = useEthBalance()
 
-  const [ethConfig, setEthConfig] = useContext(EthContext)
+  const [ethConfig, ] = useContext(EthContext)
 
-  const elajs = ethConfig.elajs
+  const elajsDbUser = ethConfig.elajsDbUser
 
   const inputAddAmt = useRef(null)
 
@@ -30,11 +30,11 @@ const WithdrawFundsDb = (props) => {
     }
 
     // only the owner can withdraw funds
-    await ethConfig.elajsUser.defaultWeb3.currentProvider.baseProvider.enable()
+    await elajsDbUser.defaultWeb3.currentProvider.baseProvider.enable()
 
-    ethConfig.elajsUser.setDatabase(props.selectedDb.contractAddress)
+    elajsDbUser.setDatabase(props.selectedDb.contractAddress)
 
-    await ethConfig.elajsUser.withdrawAll(walletAddress)
+    await elajsDbUser.withdrawAll(walletAddress)
 
     toastr.success('Funds withdrawn successfully')
 

@@ -28,13 +28,13 @@ print_progress "contractAddr = $contractAddr"
 # update the contract address for the client
 sed -i '' -e "s!\(databaseContractAddr: '\).*!\1$contractAddr',!" ../client/src/config/local.js
 
-# we write the updated contract address to the development.env file
+# we write the updated contract address to the local.env file
 sed -i '' -e "s!^\(ELAJSSTORE_CONTRACT_ADDR=\).*!\1$contractAddr!" ./env/local.env
 
 # copy the contract JSON for ela-js (always do this regardless of the network)
 cp -f ./build/contracts/ELAJSStore.json ~/workspace/ela-js/src/contracts/ELAJSStore.json
 
-# ela-js also needs the contract address for its tests
+# ela-js also needs the contract address for its tests - TODO: decouple this from the ela-js test
 sed -i '' -e "s!^\(ELAJSSTORE_CONTRACT_ADDR=\).*!\1$contractAddr!" ~/workspace/ela-js/test/env/local.env
 
 END=`date +%s`

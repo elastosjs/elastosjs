@@ -1,13 +1,24 @@
 
-// shared with tests - we expect NODE_ENV to be set
+// shared with tests - this checks if NODE_ENV is set
 // this pulls in secrets.json
+// TODO: BFG this maybe since we had FM_ETH_ADDRESS shown
+// TODO: this must be BFGed if we open-source this'
 const config = require('../test/config')
 
+let contracts
+if (process.env.NODE_ENV === 'local'){
+  contracts = require('../../client/src/config/local')
+} else if (process.env.NODE_ENV === 'testnet'){
+  contracts = require('../../client/src/config/testnet')
+}
+
+console.log(contracts)
+
 const Web3 = require('web3')
-const { ELA_JS, keccak256, uintToBytes32 } = require('ela-js')
+const { elajs, keccak256, uintToBytes32 } = require('ela-js')
 
 // TODO: make this an argv
-const FM_ETH_ADDRESS = '0xfEB943725Ed070e8D5645736484Ba6494dcBA31a'
+const FM_ETH_ADDRESS = config.fmEthAddr
 
 const contractAddr = process.env.ELAJSSTORE_CONTRACT_ADDR
 
@@ -48,10 +59,14 @@ npx oz send-tx --network development --to 0x592c129085b61A3110Ebd1DCD99F3Cfe97A5
     fixedGasLimit: config.gasLimit
   })
 
-  const elastosjs = new ELA_JS({
+  const elajsDb = new elajs.database({
     defaultWeb3: web3,
     ephemeralWeb3: ozWeb3,
-    contractAddress: contractAddr,
+
+    databaseContractAddr: contracts.databaseContractAddr,
+    dateTimeContractAddr: contracts.dateTimeContractAddr,
+    relayHubAddr: contracts.relayHubAddr,
+
     debug: true
   })
 
@@ -62,7 +77,7 @@ npx oz send-tx --network development --to 0x592c129085b61A3110Ebd1DCD99F3Cfe97A5
   let typesRaw = ['BYTES32', 'BYTES32', 'BOOL']
   let colsHashed = cols.map((colName) => Web3.utils.stringToHex(colName))
   let types = typesRaw.map((colName) => Web3.utils.stringToHex(colName))
-  await elastosjs.createTable(tableName, 3, colsHashed, types)
+  await elajsDb.createTable(tableName, 3, colsHashed, types)
 
   /*
   ADMIN USER
@@ -73,7 +88,7 @@ npx oz send-tx --network development --to 0x592c129085b61A3110Ebd1DCD99F3Cfe97A5
 
   console.log(`id = ${id}`)
 
-  await elastosjs.insertRow(tableName, cols, values, {id: id})
+  await elajsDb.insertRow(tableName, cols, values, {id: id})
   // TODO: run checks
 
   // we need userId to differentiate between diff accts with the same fm address
@@ -82,7 +97,7 @@ npx oz send-tx --network development --to 0x592c129085b61A3110Ebd1DCD99F3Cfe97A5
   typesRaw = ['STRING', 'ADDRESS', 'BYTES32']
   colsHashed = cols.map((colName) => Web3.utils.stringToHex(colName))
   types = typesRaw.map((colName) => Web3.utils.stringToHex(colName))
-  await elastosjs.createTable('database', 2, colsHashed, types)
+  await elajsDb.createTable('database', 2, colsHashed, types)
 
   process.exit(1)
 

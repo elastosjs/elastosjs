@@ -1,5 +1,6 @@
 
-
+// TODO: we should move to no longer using a non-standard secrets.json,
+// just stop committing the testnet.env file
 const secrets = require('../../secrets.json')
 
 if (!process.env.NODE_ENV){
@@ -15,16 +16,7 @@ switch (process.env.NODE_ENV){
     envPath = '/../env/local.env'
     mnemonic = secrets.mnemonicDev
     gasPrice = '1000000000'
-    gasLimit = 7000000
-    transactionDelay = 1500
-    break
-
-  // this config is still used by elastosjs-setup.js and other dev deploy scripts
-  case 'development':
-    envPath = '/../env/development.env'
-    mnemonic = secrets.mnemonicDev
-    gasPrice = '1000000000'
-    gasLimit = 7000000
+    gasLimit = 8000000
     transactionDelay = 1500
     break
 
@@ -32,7 +24,7 @@ switch (process.env.NODE_ENV){
     envPath = '/../env/testnet.env'
     mnemonic = secrets.mnemonic2
     gasPrice = '1000000000'
-    gasLimit = 7000000
+    gasLimit = 8000000
     transactionDelay = 15000
     break
 }
@@ -42,6 +34,7 @@ require('dotenv').config({
 })
 
 module.exports = {
+  fmEthAddr: secrets.fmEthAddr,
   mnemonic,
   gasPrice,
   gasLimit,

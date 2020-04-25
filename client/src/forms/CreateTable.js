@@ -30,7 +30,7 @@ const DIRECTION = {
 
 const CreateTable = (props) => {
 
-  const [ethConfig, setEthConfig] = useContext(EthContext)
+  const [ethConfig, ] = useContext(EthContext)
 
   const [tableName, setTableName] = useState('')
 
@@ -186,14 +186,14 @@ const CreateTable = (props) => {
       let types = typesRaw.map((type) => Web3.utils.stringToHex(type))
 
       // set the database
-      await ethConfig.elajsUser.defaultWeb3.currentProvider.baseProvider.enable()
+      await ethConfig.elajsDbUser.defaultWeb3.currentProvider.baseProvider.enable()
 
       console.log('props.selectedDb.contractAddress', props.selectedDb.contractAddress)
 
-      ethConfig.elajsUser.setDatabase(props.selectedDb.contractAddress)
+      ethConfig.elajsDbUser.setDatabase(props.selectedDb.contractAddress)
 
       // only the owner can create the table
-      await ethConfig.elajsUser.createTable(tableName, 2, colsHashed, types, walletAddress)
+      await ethConfig.elajsDbUser.createTable(tableName, 2, colsHashed, types, walletAddress)
 
       toastr.success('Table created successfully')
 

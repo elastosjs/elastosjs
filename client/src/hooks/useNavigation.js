@@ -8,7 +8,7 @@ export const useNavigation = (profile) => {
 
   console.log('useNavigation called')
 
-  const [ethConfig, setEthConfig] = useContext(EthContext)
+  const [ethConfig, ] = useContext(EthContext)
 
   const baseNav = {
     items: [

@@ -13,8 +13,8 @@ const EthProvider = (props) => {
     store: null,
     persistor: null,
     // drizzle: null,
-    elajs: null,
-    elajsUser: null,
+    elajsDb: null,
+    elajsDbUser: null,
 
     ready: false
   })

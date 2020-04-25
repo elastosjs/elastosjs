@@ -4,7 +4,7 @@ import { EthContext } from '../context/EthContext'
 
 export const useEthBalance = (effectTrigger) => {
 
-  const [ethConfig, setEthConfig] = useContext(EthContext)
+  const [ethConfig, ] = useContext(EthContext)
 
   const [ethBalance, setEthBalance] = useState(0)
   const [walletAddress, setWalletAddress] = useState('')

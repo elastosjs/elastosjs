@@ -38,7 +38,7 @@ import { connect } from 'react-redux'
 // TODO: DRY merge redundant code between this and Register pages
 const Login = (props) => {
 
-  const [ethConfig, setEthConfig] = useContext(EthContext)
+  const [ethConfig, ] = useContext(EthContext)
   const [network, setNetwork] = useContext(NetworkContext)
 
   const [canLogin, setCanLogin] = useState(false)
@@ -58,7 +58,7 @@ const Login = (props) => {
 
   // const ozWeb3 = ethConfig.ozWeb3
 
-  const elajs = ethConfig.elajs
+  const elajsDb = ethConfig.elajsDb
 
   /*
    ****************************************************************************************************************
@@ -224,7 +224,7 @@ const Login = (props) => {
       const expectedAuthHash = keccak256(id.substring(2) + elajsAcct.password + ethAddress.substring(2) + 'elajs')
 
       // const authHash = await elajs._getVal(fieldIdTableKey).call()
-      const authHash = await elajs._getVal(constants.SCHEMA.USER_TABLE, id, 'authHash')
+      const authHash = await elajsDb._getVal(constants.SCHEMA.USER_TABLE, id, 'authHash')
 
       try {
         if (Web3.utils.hexToNumber(authHash) === 0){
@@ -248,7 +248,7 @@ const Login = (props) => {
       let isAdmin = 0
 
       try {
-        isAdmin = Web3.utils.hexToNumber(await elajs._getVal(constants.SCHEMA.USER_TABLE, id, 'admin'))
+        isAdmin = Web3.utils.hexToNumber(await elajsDb._getVal(constants.SCHEMA.USER_TABLE, id, 'admin'))
       } catch (err){
         // pass
       }

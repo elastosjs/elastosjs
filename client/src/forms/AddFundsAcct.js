@@ -3,7 +3,7 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
+  Alert,
   Col,
   Row,
   InputGroup,
@@ -25,7 +25,7 @@ const AddFundsAcct = (props) => {
 
   const { ethBalance, walletAddress } = useEthBalance()
 
-  const [ethConfig, setEthConfig] = useContext(EthContext)
+  const [ethConfig, ] = useContext(EthContext)
 
   const [network, setNetwork] = useContext(NetworkContext)
 
@@ -51,12 +51,12 @@ const AddFundsAcct = (props) => {
               <p>
                 If you are developing on elajs you can just send funds to the wallet through your ganache.
               </p>
-              <p>
+              <Alert className="warning">
                 If this is online there is an error - please contact us at <a href="mailto:contact@elajs.com">contact@elajs.com</a>
-              </p>
+              </Alert>
             </CardBody>
           </Card>
-          <button onClick={props.closeModal}>
+          <button className="btn btn-secondary pull-right" onClick={props.closeModal}>
             Close
           </button>
         </Col>

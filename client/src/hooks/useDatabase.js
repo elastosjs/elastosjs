@@ -7,7 +7,7 @@ import constants from '../constants'
 
 export const useDatabase = (profile, effectTrigger, setReady) => {
 
-  const [ethConfig, setEthConfig] = useContext(EthContext)
+  const [ethConfig, ] = useContext(EthContext)
   const [network, setNetwork] = useContext(NetworkContext)
 
   const [databases, setDatabases] = useState([])
@@ -33,12 +33,12 @@ export const useDatabase = (profile, effectTrigger, setReady) => {
  */
 const getAdminDatabases = async (ethConfig, network) => {
 
-  const tables = await ethConfig.elajs.getTables()
+  const tables = await ethConfig.elajsDb.getTables()
 
   return [{
     id: 'admin',
     dbName: 'ElastosJS',
-    contractAddress: contracts[network].elajsStore,
+    contractAddress: contracts[network].databaseContractAddr,
     tables: tables.map((table) => {
       return {
         name: Web3.utils.hexToString(table)
@@ -59,10 +59,10 @@ const getAdminDatabases = async (ethConfig, network) => {
 const getDatabases = async (ethConfig, userId) => {
 
   // set the database
-  await ethConfig.elajsUser.defaultWeb3.currentProvider.baseProvider.enable()
+  await ethConfig.elajsDbUser.defaultWeb3.currentProvider.baseProvider.enable()
 
   // fetch all the rows
-  const databaseIds = await ethConfig.elajs.getTableIds('database')
+  const databaseIds = await ethConfig.elajsDb.getTableIds('database')
 
   const databases = []
 
@@ -70,12 +70,12 @@ const getDatabases = async (ethConfig, userId) => {
 
     let id = databaseIds[i]
 
-    let curUserId = await ethConfig.elajs._getVal(constants.SCHEMA.DATABASE_TABLE, id, 'userId')
+    let curUserId = await ethConfig.elajsDb._getVal(constants.SCHEMA.DATABASE_TABLE, id, 'userId')
 
     if (curUserId === userId){
       // hardcoding the table names
-      let dbName = Web3.utils.hexToString(await ethConfig.elajs._getVal(constants.SCHEMA.DATABASE_TABLE, id, 'dbName'))
-      let contractAddress = await ethConfig.elajs._getVal(constants.SCHEMA.DATABASE_TABLE, id, 'contractAddress')
+      let dbName = Web3.utils.hexToString(await ethConfig.elajsDb._getVal(constants.SCHEMA.DATABASE_TABLE, id, 'dbName'))
+      let contractAddress = await ethConfig.elajsDb._getVal(constants.SCHEMA.DATABASE_TABLE, id, 'contractAddress')
 
       try {
         contractAddress = Web3.utils.toChecksumAddress(contractAddress.substring(0, 42))
@@ -83,10 +83,10 @@ const getDatabases = async (ethConfig, userId) => {
         // pass
       }
 
-      ethConfig.elajsUser.setDatabase(contractAddress)
+      ethConfig.elajsDbUser.setDatabase(contractAddress)
 
       // now for each contract/database we need to fetch the tables!
-      let tables = await ethConfig.elajsUser.getTables()
+      let tables = await ethConfig.elajsDbUser.getTables()
 
       // GSN balance should be done in another function, this is more involved since each one is its own instance
       databases.push({

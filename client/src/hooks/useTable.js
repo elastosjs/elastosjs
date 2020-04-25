@@ -19,9 +19,9 @@ export const useTable = (tableName, isAdmin) => {
       let metadata
 
       if (isAdmin){
-        metadata = await ethConfig.elajs.getTableMetadata(tableName)
+        metadata = await ethConfig.elajsDb.getTableMetadata(tableName)
       } else {
-        metadata = await ethConfig.elajsUser.getTableMetadata(tableName)
+        metadata = await ethConfig.elajsDbUser.getTableMetadata(tableName)
       }
 
       setTableMetadata(metadata)
@@ -38,9 +38,9 @@ export const useTable = (tableName, isAdmin) => {
 
       let schema
       if (isAdmin){
-        schema = await ethConfig.elajs.getTableSchema(tableName)
+        schema = await ethConfig.elajsDb.getTableSchema(tableName)
       } else {
-        schema = await ethConfig.elajsUser.getTableSchema(tableName)
+        schema = await ethConfig.elajsDbUser.getTableSchema(tableName)
       }
 
       const colsResult = schema.columns.map((colData) => {
