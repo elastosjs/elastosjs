@@ -12,7 +12,7 @@ import logoSmall from '../../assets/img/brand/elastosJS.svg'
 const DefaultHeader = (props) => {
 
   const handleChangeNet = useCallback(() => {
-    toastr.info('Coming Soon')
+    toastr.warning('Coming Soon')
   })
 
   return (
@@ -40,7 +40,7 @@ const DefaultHeader = (props) => {
       <Nav className="ml-auto" navbar>
 
         <NavItem className="d-md-down-none mr-4">
-          <a target="_blank" href="https://docs.elastosjs.com" className="text-muted">Documentation</a>
+          <a target="_blank" href="https://docs.elajs.com" className="text-muted">Documentation</a>
         </NavItem>
         {/*
         <NavItem className="d-md-down-none">
@@ -84,7 +84,7 @@ const DefaultHeader = (props) => {
         </UncontrolledDropdown>
       </Nav>
       <AppAsideToggler className="d-md-down-none" />
-      {/*<AppAsideToggler className="d-lg-none" mobile />*/}
+      <AppAsideToggler className="d-lg-none" mobile />
     </React.Fragment>
   );
 

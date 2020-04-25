@@ -15,12 +15,12 @@ const SplashHeader = (props) => {
       <Button className="LoginBtn" to="/login">
         <button className="btn btn-primary" href="getting-started/intro.html">Login / Sign-Up</button>
       </Button>
-      <BlankButton target="_blank" href="https://docs.elastosjs.com">
+      <BlankButton target="_blank" href="https://docs.elajs.com">
         <button className="btn btn-link">
           Documentation
         </button>
       </BlankButton>
-      <BlankButton target="_blank" href="https://tutorials.elastosjs.com">
+      <BlankButton target="_blank" href="https://tutorials.elajs.com">
         <button className="btn btn-link">
           Tutorials
         </button>

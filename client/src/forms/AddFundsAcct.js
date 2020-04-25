@@ -38,8 +38,34 @@ const AddFundsAcct = (props) => {
 
   }, [walletAddress])
 
-  if (network === constants.NETWORK.LOCAL || network === constants.NETWORK.LOCAL){
+  if (network === constants.NETWORK.LOCAL){
+    return <div>
+      <Row>
+        <Col>
+          <Card className="text-white bg-primary">
+            <CardBody>
+              <h3>
+                The system setting is for a local blockchain deployment
+              </h3>
+              <br/>
+              <p>
+                If you are developing on elajs you can just send funds to the wallet through your ganache.
+              </p>
+              <p>
+                If this is online there is an error - please contact us at <a href="mailto:contact@elajs.com">contact@elajs.com</a>
+              </p>
+            </CardBody>
+          </Card>
+          <button onClick={props.closeModal}>
+            Close
+          </button>
+        </Col>
+      </Row>
+    </div>
 
+  }
+
+  if (network === constants.NETWORK.TESTNET){
     return <div>
       <Row>
         <Col>

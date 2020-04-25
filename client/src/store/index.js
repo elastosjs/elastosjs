@@ -14,33 +14,18 @@ import { GSNProvider } from '@openzeppelin/gsn-provider'
 
 import { fromConnection, ephemeral } from "@openzeppelin/network"
 
-import { ELA_JS } from 'ela-js'
+import { elajs } from 'ela-js'
 
 import reducers from './reducers'
 
 import constants from '../constants'
-import { contracts } from '../config'
+import {
+  contracts,
+  FortmaticAPIKey,
+  FortmaticNodeOptions
+} from '../config'
 
-const FortmaticNodeOptions = {
-  [constants.NETWORK.LOCAL]: {
-    rpcUrl: 'http://127.0.0.1:8545',
-    chainId: 1586791657977
-  },
-  [constants.NETWORK.TESTNET]: {
-    rpcUrl: 'https://rpc.elaeth.io',
-    chainId: 3
-  },
-  [constants.NETWORK.MAINNET]: {
-    rpcUrl: 'https://mainrpc.elaeth.io',
-    chainId: 1
-  }
-}
 
-const FormaticAPIKey = {
-  [constants.NETWORK.LOCAL]: 'pk_test_0E66799043CB51BC',
-  [constants.NETWORK.TESTNET]: 'pk_test_0E66799043CB51BC',
-  [constants.NETWORK.MAINNET]: 'pk_live_CB781950FDA18ED6'
-}
 
 /**
  * ~We have TWO web3 instances,~
@@ -52,7 +37,7 @@ const FormaticAPIKey = {
  */
 const getEthConfig = async (network) => {
 
-  const fm = new Fortmatic(FormaticAPIKey[network], FortmaticNodeOptions[network])
+  const fm = new Fortmatic(FortmaticAPIKey[network], FortmaticNodeOptions[network])
   const gsnProvider = new GSNProvider(fm.getProvider())
   const fmWeb3 = new Web3(gsnProvider)
 
@@ -72,10 +57,10 @@ const getEthConfig = async (network) => {
   * ELA_JS Setup
   ***********************************************************************************************************************
    */
-  const elajs = new ELA_JS({
+  const elajsDb = new elajs.database({
     defaultWeb3: fmWeb3,
     ephemeralWeb3: ozWeb3,
-    contractAddress: contracts[network].elajsStore
+    contractAddress: contracts[network].elajsStoreAddr
   })
 
   /*

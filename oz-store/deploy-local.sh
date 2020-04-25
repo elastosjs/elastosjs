@@ -14,22 +14,22 @@ print_success () {
 
 npx oz compile --solc-version 0.5.0 --evm-version byzantium
 
-contractAddr=`npx oz deploy ELAJSStore --network development --kind regular`
+contractAddr=`npx oz deploy ELAJSStore --network local --kind regular`
 
-npx oz send-tx --to $contractAddr --network development --method initialize --args 0xD216153c06E857cD7f72665E0aF1d7D82172F494,0x254dffcd3277C0b1660F6d42EFbB754edaBAbC2B
+npx oz send-tx --to $contractAddr --network local --method initialize --args 0xD216153c06E857cD7f72665E0aF1d7D82172F494,0x254dffcd3277C0b1660F6d42EFbB754edaBAbC2B
 
 npx oz-gsn fund-recipient --recipient $contractAddr --amount 100000000000000000
 
 print_progress "contractAddr = $contractAddr"
 
-# copy the contract JSON for the client
-cp -f ./build/contracts/ELAJSStore.json ../client/src/contracts/ELAJSStore-development.json
+# copy the contract JSON for the client - only needed for drizzle which we aren't using
+# cp -f ./build/contracts/ELAJSStore.json ../client/src/contracts/ELAJSStore-development.json
 
 # update the contract address for the client
-sed -i '' -e "s!\(LOCAL]: { elajsStore: '\).*!\1$contractAddr'!" ../client/src/config.js
+sed -i '' -e "s!\(databaseContractAddr: '\).*!\1$contractAddr',!" ../client/src/config/local.js
 
 # we write the updated contract address to the development.env file
-sed -i '' -e "s!^\(ELAJSSTORE_CONTRACT_ADDR=\).*!\1$contractAddr!" ./env/development.env
+sed -i '' -e "s!^\(ELAJSSTORE_CONTRACT_ADDR=\).*!\1$contractAddr!" ./env/local.env
 
 # copy the contract JSON for ela-js (always do this regardless of the network)
 cp -f ./build/contracts/ELAJSStore.json ~/workspace/ela-js/src/contracts/ELAJSStore.json

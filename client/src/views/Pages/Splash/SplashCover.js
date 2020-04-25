@@ -340,7 +340,7 @@ export default class SplashCover extends React.Component {
 
           <TitleMarkdownBlock className="my-5 pl-3">
 
-            A complete storage and Javascript SDK to get started on Elastos
+            A decentralized storage and Javascript SDK to get started on Elastos
             <br/>
             <br/>
 

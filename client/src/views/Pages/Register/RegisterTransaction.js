@@ -277,7 +277,7 @@ const RegisterTransaction = (props) => {
                     <ol start="3">
                       <li>
                         This platform is in ALPHA and testnet only - expect some bugs and please report them to{' '}
-                        <b style={{color: '#007bff'}}>contact@elastojs.com</b>. There is a small chance your data
+                        <b style={{color: '#007bff'}}>contact@elajs.com</b>. There is a small chance your data
                         may be lost on testnet as we upgrade the system.
                       </li>
                     </ol>

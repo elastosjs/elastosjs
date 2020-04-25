@@ -14,11 +14,15 @@ import {
   CardHeader,
   CardTitle,
   Col,
-  Dropdown,
   DropdownItem,
   DropdownMenu,
-  DropdownToggle, Modal, ModalBody, ModalHeader,
-  Progress,
+  DropdownToggle,
+
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
+
   Row,
   Table,
 } from 'reactstrap'
@@ -51,6 +55,8 @@ const Dashboard = (props) => {
   const [withdrawFundsOpen, setWithdrawFundsOpen] = useState(false)
 
   const [addFundsAcctOpen, setAddFundsAcctOpen] = useState(false)
+
+  const [sendFundsOpen, setSendFundsOpen] = useState(false)
 
   const [effectTrigger, triggerEffect] = useEffectTrigger()
 
@@ -112,7 +118,7 @@ const Dashboard = (props) => {
       <Row>
         <Col sm="12" lg="6">
           <Card className="text-white bg-info">
-            {!walletAddress ? <Loading margin="1" size="50"/> :
+            {!walletAddress ? <Loading margin="1" size="70"/> :
             <CardBody className="pb-0">
               <ButtonGroup className="float-right">
                 <ButtonDropdown id='card1' isOpen={card1} toggle={() => setCard1(!card1)}>
@@ -121,7 +127,7 @@ const Dashboard = (props) => {
                   </DropdownToggle>
                   <DropdownMenu right>
                     <DropdownItem onClick={() => setAddFundsAcctOpen(true)}>Add Funds</DropdownItem>
-                    <DropdownItem>Send Funds</DropdownItem>
+                    <DropdownItem onClick={() => setSendFundsOpen(true)}>Send Funds</DropdownItem>
                   </DropdownMenu>
                 </ButtonDropdown>
               </ButtonGroup>
@@ -150,12 +156,13 @@ const Dashboard = (props) => {
             <CardBody className="pb-0">
               <h3>
                 <a href="https://docs.elastosjs.com" className="text-white">
-                  Learn ElastosJS
+                  Learn <strong>elajs</strong>
                 </a>
               </h3>
               <div>
-                Your database is a smart contract, to learn how to connect your dApp read our docs at{' '}
-                <a href="https://docs.elastosjs.com" className="text-white text-dark"><b>https://docs.elastosjs.com</b></a>
+                This website manages your databases.<br/>
+                Learn how to connect your dApp read our docs at{' '}
+                <a href="https://docs.elastosjs.com" className="text-white text-dark"><b>https://docs.elajs.com</b></a>
               </div>
             </CardBody>
             <div>
@@ -295,6 +302,28 @@ const Dashboard = (props) => {
         </ModalBody>
       </Modal>
 
+      {/*
+      ************************************************************************************************
+      Send Funds to Account Modal
+      ************************************************************************************************
+      */}
+      <Modal isOpen={sendFundsOpen} style={{marginTop: '20%', maxWidth: '600px'}}>
+        <ModalHeader>
+          Send Outgoing ELASC
+        </ModalHeader>
+        <ModalBody>
+          <p>
+            Under Development
+          </p>
+          (This is the testnet, you can request more ELASC from{' '}
+          <a target="_blank" href="https://faucet.elaeth.io">faucet.elaeth.io</a>)
+        </ModalBody>
+        <ModalFooter>
+          <button className="btn btn-secondaryp pull-right" onClick={() => setSendFundsOpen(false)}>
+            Close
+          </button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 
