@@ -29,7 +29,7 @@ const FortmaticAPIKey = {
 const FortmaticNodeOptions = {
   [constants.NETWORK.LOCAL]: {
     rpcUrl: 'http://127.0.0.1:8545',
-    chainId: 1586791657977
+    chainId: 1588066097663
   },
   [constants.NETWORK.TESTNET]: {
     rpcUrl: 'https://rpc.elaeth.io',

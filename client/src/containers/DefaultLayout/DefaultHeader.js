@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import { toastr } from 'react-redux-toastr'
 
 import { AppAsideToggler, AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
-import logo from '../../assets/img/brand/elastosJS.svg'
-import logoSmall from '../../assets/img/brand/elastosJS.svg'
+import logo from '../../assets/img/elajs.png'
+import logoSmall from '../../assets/img/elajs.png'
 
 const DefaultHeader = (props) => {
 
@@ -19,8 +19,8 @@ const DefaultHeader = (props) => {
     <React.Fragment>
       <AppSidebarToggler className="d-lg-none" display="md" mobile />
       <AppNavbarBrand
-        full={{ src: logo, width: 89, height: 25, alt: 'ElastosJS Logo' }}
-        minimized={{ src: logoSmall, width: 30, height: 30, alt: 'ElastosJS Logo' }}
+        full={{ src: logo, height: 25, alt: 'ElastosJS Logo' }}
+        minimized={{ src: logoSmall, height: 30, alt: 'ElastosJS Logo' }}
       />
       <AppSidebarToggler className="d-md-down-none" display="lg" />
 

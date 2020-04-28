@@ -139,7 +139,7 @@ const Dashboard = (props) => {
               </h3>
 
               <div>
-                <b>Account</b> ELASC Balance<br/>
+                <b>Account</b> ELAETHSC Balance<br/>
                 <b>Address:</b>{' '}
                 <a target="_blank" className="text-white" href={`https://testnet.elaeth.io/address/${walletAddress}/transactions`}>
                   {walletAddress}
@@ -293,7 +293,7 @@ const Dashboard = (props) => {
       */}
       <Modal isOpen={addFundsAcctOpen} style={{marginTop: '20%', maxWidth: '600px'}}>
         <ModalHeader>
-          Add ELASC to Account
+          Add ELAETHSC to Account
         </ModalHeader>
         <ModalBody>
           <AddFundsAcct
@@ -310,13 +310,13 @@ const Dashboard = (props) => {
       */}
       <Modal isOpen={sendFundsOpen} style={{marginTop: '20%', maxWidth: '600px'}}>
         <ModalHeader>
-          Send Outgoing ELASC
+          Send Outgoing ELAETHSC
         </ModalHeader>
         <ModalBody>
           <p>
             Under Development
           </p>
-          (This is the testnet, you can request more ELASC from{' '}
+          (This is the testnet, you can request more ELAETHSC from{' '}
           <a target="_blank" href="https://faucet.elaeth.io">faucet.elaeth.io</a>)
         </ModalBody>
         <ModalFooter>

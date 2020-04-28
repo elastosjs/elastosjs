@@ -26,12 +26,12 @@ const AddFundsDb = (props) => {
     }
 
     if (ethBalance <= 0){
-      toastr.error('You have no ELASC in your main account')
+      toastr.error('You have no ELAETHSC in your main account')
       return
     }
 
     if (amt > 2){
-      toastr.error('You cannot add more than 2 ELASC at once')
+      toastr.error('You cannot add more than 2 ELAETHSC at once')
       return
     }
 
@@ -61,7 +61,7 @@ const AddFundsDb = (props) => {
                   {ethBalance.toFixed(4)}
                 </h3>
 
-                Your ELASC Balance
+                Your ELAETHSC Balance
               </Col>
               <Col className="text-center" sm="2">
                 <i className="fa fa-arrow-right fa-lg"/>
@@ -77,7 +77,7 @@ const AddFundsDb = (props) => {
           <CardFooter className="text-dark">
             We recommend keeping your database funded with at <b>least 0.1 ETHSC</b> and no more than 2.<br/>
             <br/>
-            Currently your database has {props.gsnBalance ? Web3.utils.fromWei(props.gsnBalance.toString()) : 0} ELASC.
+            Currently your database has {props.gsnBalance ? Web3.utils.fromWei(props.gsnBalance.toString()) : 0} ELAETHSC.
           </CardFooter>
         </Card>
       </Col>

@@ -56,12 +56,12 @@ const WithdrawFundsDb = (props) => {
     }
 
     if (ethBalance <= 0){
-      toastr.error('You have no ELASC in your main account')
+      toastr.error('You have no ELATHSC in your main account')
       return
     }
 
     if (amt > 2){
-      toastr.error('You cannot add more than 2 ELASC at once')
+      toastr.error('You cannot add more than 2 ELAETHSC at once')
       return
     }
 

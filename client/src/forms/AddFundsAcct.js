@@ -76,7 +76,7 @@ const AddFundsAcct = (props) => {
               </h3>
               <br/>
               <p>
-                1. Copy your ELASC Address below to your clipboard
+                1. Copy your ELAETHSC Address below to your clipboard
               </p>
               <InputGroup>
                 <Input type="text" readOnly value={walletAddress}/>
@@ -89,7 +89,7 @@ const AddFundsAcct = (props) => {
               <br/>
               <p>
                 2. Click this link to go to the Elastos ETH Testnet Faucet, once there
-                you can paste your address and you should receive your test ELASC within a minute.
+                you can paste your address and you should receive your test ELAETHSC within a minute.
               </p>
               <LinkContainer>
                 <a target="_blank" href="https://faucet.elaeth.io" onClick={() => setFaucetClicked(true)}><b>https://faucet.elaeth.io</b></a>
@@ -115,7 +115,7 @@ const AddFundsAcct = (props) => {
       <Col>
         <Card className="text-white bg-danger">
           <CardHeader>
-            Add ELASC - Caution You Are on Mainnet
+            Add ELAETHSC - Caution You Are on Mainnet
           </CardHeader>
           <CardBody>
             <h3>

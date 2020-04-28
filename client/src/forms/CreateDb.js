@@ -35,7 +35,7 @@ const CreateDb = (props) => {
     let newVal = ev.currentTarget.value
 
     if (/\s/.test(newVal)){
-      toastr.warning('Column name cannot have spaces')
+      toastr.warning('Database name cannot have spaces')
       newVal = dbName
     }
 
@@ -58,6 +58,11 @@ const CreateDb = (props) => {
   const [pendingCreate, setPendingCreate] = useState(false)
 
   const createDatabase = useCallback(() => {
+
+    if (dbName.length === 0){
+      toastr.warning('Database name cannot be empty')
+      return
+    }
 
     setPendingCreate(true)
 
@@ -142,11 +147,11 @@ const CreateDb = (props) => {
               </h3>
 
               <div>
-                Your ELASC Balance
+                Your ELAETHSC Balance
                 <HelpIcon className="fa fa-question-circle fa-lg ml-1"/>
 
                 <p className="mt-3">
-                  You must have at least 0.01 ELASC to deploy the smart contract
+                  You must have at least 0.01 ELAETHSC to deploy the smart contract
                 </p>
               </div>
             </CardBody>

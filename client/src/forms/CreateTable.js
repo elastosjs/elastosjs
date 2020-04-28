@@ -217,11 +217,11 @@ const CreateTable = (props) => {
               </h3>
 
               <div>
-                Your ELASC Balance
+                Your ELAETHSC Balance
                 <HelpIcon className="fa fa-question-circle fa-lg ml-1"/>
 
                 <p className="mt-3">
-                  You must have at least 0.01 ELASC to run the transaction
+                  You must have at least 0.01 ELAETHSC to run the transaction
                 </p>
               </div>
             </CardBody>
