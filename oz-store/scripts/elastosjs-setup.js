@@ -3,6 +3,8 @@
 // this pulls in secrets.json
 // TODO: BFG this maybe since we had FM_ETH_ADDRESS shown
 // TODO: this must be BFGed if we open-source this'
+
+
 const config = require('../test/config')
 
 let contracts

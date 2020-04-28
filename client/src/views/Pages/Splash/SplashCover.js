@@ -350,10 +350,10 @@ export default class SplashCover extends React.Component {
           </TitleMarkdownBlock>
 
           <PromoSection>
-            <Button target="_blank" href="https://tutorials.elastosjs.com"><b>Get Started</b></Button>
+            <Button target="_blank" href="https://tutorials.elajs.com"><b>Get Started</b></Button>
             {/* <Button href="/#/learn">The Elastos Blockchain</Button> */}
-            <Button target="_blank" href="https://www.elastos.org">The Elastos Blockchain</Button>
-            <Button target="_blank" href="https://www.cyberrepublic.org">The Cyber Republic DAO - <b>Get Funding</b></Button>
+            <Button target="_blank" href="https://github.com/elastos/Elastos.Community">The Elastos Blockchain</Button>
+            {/* <Button target="_blank" href="https://www.cyberrepublic.org">The Cyber Republic DAO - <b>Get Funding</b></Button> */}
           </PromoSection>
         </div>
 

@@ -28,7 +28,7 @@ print_progress "contractAddr = $contractAddr"
 # update the contract address for the client
 sed -i '' -e "s!\(databaseContractAddr: '\).*!\1$contractAddr',!" ../client/src/config/local.js
 
-# we write the updated contract address to the local.env file
+# we write the updated contract address to the local.env file - for local tests and elastojs-setup.js
 sed -i '' -e "s!^\(ELAJSSTORE_CONTRACT_ADDR=\).*!\1$contractAddr!" ./env/local.env
 
 # copy the contract JSON for ela-js (always do this regardless of the network)

@@ -36,7 +36,7 @@ import {
  */
 const getEthConfig = async (network) => {
 
-  console.log('NETWORK', network, contracts)
+  console.log(`NETWORK = ${network} - database: ${contracts[network].databaseContractAddr}`)
 
   const fm = new Fortmatic(FortmaticAPIKey[network], FortmaticNodeOptions[network])
   const gsnProvider = new GSNProvider(fm.getProvider())

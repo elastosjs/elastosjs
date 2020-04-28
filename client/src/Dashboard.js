@@ -47,8 +47,6 @@ const Dashboard = () => {
     })()
   }, [network])
 
-  console.log(`network = ${network}`)
-
   return (
     !(ethConfig.ready && ethConfig.fmWeb3) ?
     <Loading/> :

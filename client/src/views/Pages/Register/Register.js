@@ -203,7 +203,7 @@ const Register = (props) => {
               </div>
               <RegisterHeader>
                 <h3>
-                  Welcome to ElastosJS and the Modern Internet
+                  Welcome to elajs and <u>The Modern Internet</u>
                 </h3>
                 <p>
                   To safeguard your data and funds we use Fortmatic to protect
@@ -267,7 +267,7 @@ const Register = (props) => {
                   </button>
                   {canRegister ?
                     <p>Click here to Register</p> :
-                    <p className="text-muted">You must register an ElastosJS account and connect Fortmatic to Continue</p>
+                    <p className="text-muted">You must register an elajs account and connect Fortmatic to Continue</p>
                   }
                 </CardBody>
               </Card>

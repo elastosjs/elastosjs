@@ -178,7 +178,7 @@ const Dashboard = (props) => {
           <Col>
             <Card className="bg-white">
               <CardBody>
-                <h3>Welcome to ElastosJS - Testnet</h3>
+                <h3>Welcome to elajs - Testnet</h3>
                 <br/>
                 <p>
                   To get started click the <i className="icon-settings"/> icon above and <b>Add Funds</b> to your account from

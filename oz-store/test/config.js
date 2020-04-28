@@ -3,8 +3,8 @@
 // just stop committing the testnet.env file
 const secrets = require('../../secrets.json')
 
-if (!process.env.NODE_ENV){
-  console.error('missing NODE_ENV')
+if (!process.env.NODE_ENV || !['local', 'testnet', 'mainnet'].includes(process.env.NODE_ENV)){
+  console.error('missing or incorrect NODE_ENV')
   process.exit(0)
 }
 
