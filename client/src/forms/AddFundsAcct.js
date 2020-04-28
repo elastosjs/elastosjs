@@ -137,7 +137,6 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps)(AddFundsAcct)
 
 const CopyIcon = styled.i`
-
   cursor: pointer;
 
   :hover {

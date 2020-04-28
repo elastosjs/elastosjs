@@ -170,7 +170,7 @@ const DatabaseView = (props) => {
       <DropdownItem header>Change Database</DropdownItem>
       <DropdownItem disabled>{selectedDb ? selectedDb.name : 'None'}</DropdownItem>
       <DropdownItem divider />
-      {otherDbs.length > 1 ? otherDbs.map((db) => {
+      {otherDbs.length > 0 ? otherDbs.map((db) => {
         return <DropdownItem key={db.dbName} onClick={selectDatabase} data-dbcontractaddr={db.contractAddress}>{db.dbName}</DropdownItem>
       }) : <DropdownItem>No Other Databases</DropdownItem>}
     </DropdownMenu>

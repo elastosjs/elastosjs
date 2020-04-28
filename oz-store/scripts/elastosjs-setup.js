@@ -66,7 +66,6 @@ npx oz send-tx --network development --to 0x592c129085b61A3110Ebd1DCD99F3Cfe97A5
     ephemeralWeb3: ozWeb3,
 
     databaseContractAddr: contracts.databaseContractAddr,
-    dateTimeContractAddr: contracts.dateTimeContractAddr,
     relayHubAddr: contracts.relayHubAddr,
 
     debug: true

@@ -65,7 +65,6 @@ const getEthConfig = async (network) => {
     ephemeralWeb3: ozWeb3,
 
     databaseContractAddr: contracts[network].databaseContractAddr,
-    dateTimeContractAddr: contracts[network].dateTimeContractAddr,
     relayHubAddr: contracts[network].relayHubAddr
   })
 
@@ -80,7 +79,6 @@ const getEthConfig = async (network) => {
     defaultWeb3: fmWeb3,
     ephemeralWeb3: ozWeb3,
 
-    dateTimeContractAddr: contracts[network].dateTimeContractAddr,
     relayHubAddr: contracts[network].relayHubAddr
   })
 

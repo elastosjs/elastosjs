@@ -26,7 +26,7 @@ print_progress "contractAddr = $contractAddr"
 cp -f ./build/contracts/ELAJSStore.json ../client/src/contracts/ELAJSStore-testnet.json
 
 # update the contract address for the client
-sed -i '' -e "s!\(TESTNET]: { elajsStore: '\).*!\1$contractAddr'!" ../client/src/config.js
+sed -i '' -e "s!\(TESTNET]: { elajsStore: '\).*!\1$contractAddr'!" ../client/src/config/testnet.js
 
 # we write the updated contract address to the testnet.env file so it can use it on next run
 sed -i '' -e "s!^\(ELAJSSTORE_CONTRACT_ADDR=\).*!\1$contractAddr!" ./env/testnet.env

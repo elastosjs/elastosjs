@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useContext } from 'react'
+import React, { useState, useCallback, useContext, useMemo } from 'react'
 import {
   Row,
   Col,
@@ -12,7 +12,7 @@ import {
   DropdownToggle,
   DropdownMenu,
   Card,
-  CardBody
+  CardBody, Label
 } from 'reactstrap'
 import _ from 'lodash'
 import { useEthBalance } from '../hooks/useEthBalance'
@@ -22,11 +22,18 @@ import { connect } from 'react-redux'
 import styled from 'styled-components'
 import Web3 from 'web3'
 import { EthContext } from '../context/EthContext'
+import constants from '../constants'
 
 const DIRECTION = {
   UP: 0,
   DOWN: 1
 }
+
+const TABLE_PERMISSION = new Map([
+  [1, constants.TABLE.PERMISSION.PRIVATE],
+  [2, constants.TABLE.PERMISSION.PUBLIC],
+  [3, constants.TABLE.PERMISSION.EDITABLE]
+])
 
 const CreateTable = (props) => {
 
@@ -37,6 +44,10 @@ const CreateTable = (props) => {
   const { ethBalance, walletAddress } = useEthBalance()
 
   const [pendingCreate, setPendingCreate] = useState(false)
+
+  const [tablePermission, setTablePermission] = useState(2)
+
+  const [tablePermOpen, setTablePermOpen] = useState(false)
 
   const [cols, setCols] = useState([])
 
@@ -86,6 +97,26 @@ const CreateTable = (props) => {
 
     setCols(cols.slice())
   })
+
+  const PermissionsDropdown = useMemo(() => {
+
+    const otherPermissions = []
+    TABLE_PERMISSION.forEach((val, key) => {
+      if (tablePermission !== key){
+        otherPermissions.push({val, key})
+      }
+    })
+
+    return <DropdownMenu>
+      <DropdownItem header>Change Permissions</DropdownItem>
+      <DropdownItem disabled>{TABLE_PERMISSION.get(tablePermission)}</DropdownItem>
+      <DropdownItem divider />
+      {otherPermissions.map(({val, key}) => {
+        return <DropdownItem key={key} data-key={key} onClick={() => setTablePermission(key)}>{val}</DropdownItem>
+      })}
+    </DropdownMenu>
+
+  }, [tablePermission, setTablePermission])
 
   const removeColumn = useCallback((ev) => {
 
@@ -193,7 +224,7 @@ const CreateTable = (props) => {
       ethConfig.elajsDbUser.setDatabase(props.selectedDb.contractAddress)
 
       // only the owner can create the table
-      await ethConfig.elajsDbUser.createTable(tableName, 2, colsHashed, types, walletAddress)
+      await ethConfig.elajsDbUser.createTable(tableName, tablePermission, colsHashed, types, walletAddress)
 
       toastr.success('Table created successfully')
 
@@ -243,9 +274,20 @@ const CreateTable = (props) => {
         </Col>
       </Row>
 
+      <Dropdown className="pull-left" isOpen={tablePermOpen} toggle={() => setTablePermOpen(!tablePermOpen)}>
+        <Label className="mr-2">
+          Permission:
+        </Label>
+        <DropdownToggle caret>
+          {TABLE_PERMISSION.get(tablePermission)}
+        </DropdownToggle>
+        {PermissionsDropdown}
+      </Dropdown>
+
+
       <button className="btn btn-secondary pull-right mb-1" onClick={addColumn}>Add Column</button>
 
-      <ListGroup style={{clear: 'both'}}>
+      <ListGroup className="mt-2" style={{clear: 'both'}}>
         {cols.map((col, i) => {
           return <InputGroup className="mb-1" key={i}>
             <InputGroupAddon addonType="prepend">

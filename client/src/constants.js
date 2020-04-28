@@ -11,5 +11,12 @@ export default {
   SCHEMA: {
     USER_TABLE: 'user',
     DATABASE_TABLE: 'database'
+  },
+  TABLE: {
+    PERMISSION: {
+      PRIVATE: 'PRIVATE',
+      PUBLIC: 'PUBLIC',
+      EDITABLE: 'EDITABLE'
+    }
   }
 }
