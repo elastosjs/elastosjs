@@ -19,7 +19,7 @@ npx oz compile --solc-version 0.5.0 --evm-version byzantium
 
 contractAddr=`npx oz deploy ELAJSStore --network elaethtest --kind regular`
 
-npx oz send-tx --to $contractAddr --network elaethtest --method initialize --args 0x2EDA8d1A61824dFa812C4bd139081B9BcB972A6D,0xEDb211a2dBbdE62012440177e65b68E0A66E4531
+npx oz send-tx --to $contractAddr --network elaethtest --method initialize --args 0x2EDA8d1A61824dFa812C4bd139081B9BcB972A6D
 
 node ../oz-gsn/deploy-relayhub/run-fund.js $contractAddr
 

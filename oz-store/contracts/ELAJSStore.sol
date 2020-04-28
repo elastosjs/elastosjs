@@ -14,29 +14,18 @@ import "./ozEla/OwnableELA.sol";
 import "./gsnEla/GSNRecipientELA.sol";
 import "./gsnEla/IRelayHubELA.sol";
 
-contract DateTime {
-    function getYear(uint timestamp) public pure returns (uint16);
-    function getMonth(uint timestamp) public pure returns (uint8);
-    function getDay(uint timestamp) public pure returns (uint8);
-}
-
 // TODO: move schema methods to another contract, we're hitting limits for this
 // TODO: good practice to have functions not callable externally and internally
 contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
+    uint constant DAY_IN_SECONDS = 86400;
+
     // TODO: have a dynamic mode to only use Events -> https://thegraph.com
     // bool public useEvents = false;
 
-    // DateTime Contract address
-    // address constant public dateTimeAddr = 0x254dffcd3277C0b1660F6d42EFbB754edaBAbC2B; // development
-    // address constant public dateTimeAddr = 0xEDb211a2dBbdE62012440177e65b68E0A66E4531; // testnet
-
-    // Initialize the DateTime contract ABI with the already deployed contract
-    DateTime dateTime;
-
     // This counts the number of times this contract was called via GSN (expended owner gas) for rate limiting
     // mapping is a keccak256('YYYY-MM-DD') => uint (TODO: we can probably compress this by week (4 bytes per day -> 28 bytes)
-    mapping(bytes32 => uint256) public gsnCounter;
+    mapping(uint256 => uint256) public gsnCounter;
 
     // Max times we allow this to be called per day
     uint40 public gsnMaxCallsPerDay;
@@ -68,8 +57,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
 
     // ************************************* SETUP FUNCTIONS *************************************
-    function initialize(address relayHubAddr, address dateTimeAddr) public initializer {
-        dateTime = DateTime(dateTimeAddr);
+    function initialize(address relayHubAddr) public initializer {
         OwnableELA.initialize(msg.sender);
         GSNRecipientELA.initialize(relayHubAddr);
         _initialize();
@@ -244,7 +232,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     }
 
-    /*
     function insertValVar(
         bytes32 tableKey,
         bytes32 idKey,
@@ -274,7 +261,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // finally set the data
         database.setValueForKey(fieldIdTableKey, val);
     }
-    */
 
     /**
      * @dev we are essentially claiming this [id].[table] for the msg.sender, and setting the id createdDate
@@ -283,23 +269,11 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
         require(database.containsKey(idTableKey) == false, "row already has owner");
 
-        uint256 rowMetadata;
-
-        uint16 year = dateTime.getYear(now);
-        uint8 month = dateTime.getMonth(now);
-        uint8 day = dateTime.getDay(now);
-
-        rowMetadata |= year;
-        rowMetadata |= uint256(month)<<16;
-        rowMetadata |= uint256(day)<<24;
-
-        bytes4 createdDate = bytes4(uint32(rowMetadata));
+        uint256 rowMetadata = uint256(uint32(now));
 
         rowMetadata |= uint256(_msgSender())<<32;
 
         database.setValueForKey(idTableKey, bytes32(rowMetadata));
-
-        // emit InsertRow(id, tableKey, _msgSender());
     }
 
     /**
@@ -531,7 +505,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         }
     }
 
-    /*
     function getRowValueVar(bytes32 fieldIdTableKey) external view returns (bytes memory) {
 
         if (database.containsKey(fieldIdTableKey)) {
@@ -540,7 +513,6 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
             return new bytes(0);
         }
     }
-    */
 
     /**
      * @dev Warning this produces an Error: overflow (operation="setValue", fault="overflow", details="Number can only safely store up to 53 bits")
@@ -628,15 +600,10 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         uint256 maxPossibleCharge
     ) external view returns (uint256, bytes memory) {
 
-        bytes32 curDate = getCurDate();
+        uint256 curDay = getCurDay();
+        uint256 curCounter = gsnCounter[curDay];
 
-        // check gsnCounter for today and compare to limit
-        // local relayer is suddenly failing for this next line
-        uint256 curCounter = gsnCounter[curDate];
-
-        // emit AcceptRelayCall(curCounter, gsnMaxCallsPerDay);
-
-        if (curCounter >= uint256(gsnMaxCallsPerDay)){
+        if (curCounter >= gsnMaxCallsPerDay){
             return _rejectRelayedCall(11);
         }
 
@@ -647,35 +614,22 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         gsnMaxCallsPerDay = uint40(max);
     }
 
-
-    function debug() public view returns (bytes32, uint256, uint40, bool){
-        bytes32 curDate = getCurDate();
-        uint256 curCounter = gsnCounter[curDate];
-
-        bool check = false;
-        if (curCounter >= uint256(gsnMaxCallsPerDay)){
-            check = true;
-        }
-
-        return (curDate, curCounter, gsnMaxCallsPerDay, check);
-    }
-
+    /*
     event GsnCounterIncrease (
         address indexed _from,
         bytes4 indexed curDate
     );
-
+    */
 
     /**
      * Increase the GSN Counter for today
      */
     function increaseGsnCounter() internal {
 
-        bytes32 curDate = getCurDate();
+        uint256 curDay = getCurDay();
+        uint256 curCounter = gsnCounter[curDay];
 
-        uint256 curCounter = gsnCounter[curDate];
-
-        gsnCounter[curDate] = curCounter + 1;
+        gsnCounter[curDay] = curCounter + 1;
 
         // emit GsnCounterIncrease(_msgSender(), bytes4(uint32(curDate)));
     }
@@ -683,19 +637,8 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     /*
      *
      */
-    function getCurDate() public view returns (bytes32) {
-
-        uint256 curDate;
-
-        uint16 year = dateTime.getYear(now);
-        uint8 month = dateTime.getMonth(now);
-        uint8 day = dateTime.getDay(now);
-
-        curDate |= year;
-        curDate |= uint256(month)<<16;
-        curDate |= uint256(day)<<24;
-
-        return bytes32(curDate);
+    function getCurDay() public view returns (uint256) {
+        return uint256(uint(now) / uint(DAY_IN_SECONDS));
     }
 
     // We won't do any pre or post processing, so leave _preRelayedCall and _postRelayedCall empty

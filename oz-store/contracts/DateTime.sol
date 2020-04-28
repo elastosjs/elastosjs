@@ -1,4 +1,5 @@
 pragma solidity ^0.5.0;
+pragma experimental ABIEncoderV2;
 
 contract DateTime {
 
@@ -59,7 +60,7 @@ contract DateTime {
         }
     }
 
-    function parseTimestamp(uint timestamp) internal pure returns (_DateTime memory dt) {
+    function parseTimestamp(uint timestamp) public pure returns (_DateTime memory dt) {
         uint secondsAccountedFor = 0;
         uint buf;
         uint8 i;

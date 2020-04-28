@@ -32,7 +32,7 @@ describe('Tests for Insert Public Table', () => {
     ozWeb3 = await fromConnection(process.env.PROVIDER_URL, {
       gsn: { signKey: ephemeral() },
       pollInterval: 5000,
-      // fixedGasPrice: config.gasPrice,
+      fixedGasPrice: config.gasPrice,
       // fixedGasLimit: config.gasLimit
     })
 
@@ -131,7 +131,8 @@ describe('Tests for Insert Public Table', () => {
     // console.log(`INSERT -> ${fieldIdTableKey}`)
 
     await ephemeralInstance.methods.insertVal(tableKey, idKey, fieldKey, id, VAL).send({
-      from: ozWeb3.accounts[0]
+      from: ozWeb3.accounts[0],
+      // gasLimit: 8000000, // this does actually get passed to the relayer
     })
 
     // console.log('done insert')
@@ -160,7 +161,7 @@ describe('Tests for Insert Public Table', () => {
 
   })
 
-  it.skip('Should INSERT a test value (int, str) with multiple fields to an ID', async () => {
+  it('Should INSERT a test value (int, str) with multiple fields to an ID', async () => {
 
     const VAL_RAW = 5121
     const VAL = uintToBytes32(VAL_RAW)
@@ -244,7 +245,7 @@ describe('Tests for Insert Public Table', () => {
 
   })
 
-  it.skip('Should UPDATE a test value (str)', async () => {
+  it('Should UPDATE a test value (str)', async () => {
 
     const VAL_RAW = 'Mary'
     const VAL = Web3.utils.stringToHex(VAL_RAW)
@@ -278,13 +279,14 @@ describe('Tests for Insert Public Table', () => {
     // get date created
     const rowMetadata = await ephemeralInstance.methods.getRowOwner(idTableKey).call()
 
-    const buf = new Buffer.from(rowMetadata.createdDate.substring(2), 'hex')
+    const dateInSeconds = Web3.utils.hexToNumber(rowMetadata.createdDate)
 
-    expect(new Date().getFullYear()).to.be.equal(buf[2]*16**2 + buf[3])
+    // testnet gives us approx 45s here usually
+    expect(Math.abs(new Date().getTime() - dateInSeconds*1000)).to.be.lt(90000)
 
   })
 
-  it.skip('Should DELETE a the global test id value', async () => {
+  it('Should DELETE a the global test id value', async () => {
 
     const fieldStr = 'firstName'
     const fieldIdTableKey = namehash.hash(`${fieldStr}.${idStr}.user`)
@@ -344,7 +346,7 @@ describe('Tests for Insert Public Table', () => {
     fieldIdTableKeys.shift()
   })
 
-  it.skip('Should delete a row with 2 vals', async () => {
+  it('Should delete a row with 2 vals', async () => {
     // console.log('delete done')
 
     val = await ephemeralInstance.methods.getRowValue(fieldIdTableKeys[0]).call()
