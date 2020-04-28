@@ -28,7 +28,7 @@ cp -f ./build/contracts/ELAJSStore.json ../client/src/contracts/ELAJSStore-testn
 # update the contract address for the client
 sed -i '' -e "s!\(TESTNET]: { elajsStore: '\).*!\1$contractAddr'!" ../client/src/config.js
 
-# we write the updated contract address to the development.env file
+# we write the updated contract address to the testnet.env file so it can use it on next run
 sed -i '' -e "s!^\(ELAJSSTORE_CONTRACT_ADDR=\).*!\1$contractAddr!" ./env/testnet.env
 
 # copy the contract JSON for ela-js (always do this regardless of the network)

@@ -17,9 +17,9 @@ print_success () {
 
 npx oz compile --solc-version 0.5.0 --evm-version byzantium
 
-contractAddr=`npx oz deploy ELAJSStore --network development --kind regular`
+contractAddr=`npx oz deploy ELAJSStore --network local --kind regular`
 
-npx oz send-tx --to $contractAddr --network development --method initialize --args 0xD216153c06E857cD7f72665E0aF1d7D82172F494,0x254dffcd3277C0b1660F6d42EFbB754edaBAbC2B
+npx oz send-tx --to $contractAddr --network local --method initialize --args 0xD216153c06E857cD7f72665E0aF1d7D82172F494,0x0E696947A06550DEf604e82C26fd9E493e576337
 
 npx oz-gsn fund-recipient --recipient $contractAddr --amount 100000000000000000
 

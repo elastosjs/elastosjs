@@ -14,7 +14,6 @@ import "./ozEla/OwnableELA.sol";
 import "./gsnEla/GSNRecipientELA.sol";
 import "./gsnEla/IRelayHubELA.sol";
 
-
 contract DateTime {
     function getYear(uint timestamp) public pure returns (uint16);
     function getMonth(uint timestamp) public pure returns (uint8);
@@ -77,7 +76,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     }
 
     function _initialize() internal {
-        gsnMaxCallsPerDay = 1000;
+        gsnMaxCallsPerDay = uint40(1000);
 
         // init the key for schemasTables, our set is one-to-many-fixed, so table names must be max 32 bytes
         database.addKey(schemasTables, PolymorphicDictionaryLib.DictionaryType.OneToManyFixed);
@@ -245,6 +244,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     }
 
+    /*
     function insertValVar(
         bytes32 tableKey,
         bytes32 idKey,
@@ -274,6 +274,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         // finally set the data
         database.setValueForKey(fieldIdTableKey, val);
     }
+    */
 
     /**
      * @dev we are essentially claiming this [id].[table] for the msg.sender, and setting the id createdDate
@@ -530,6 +531,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         }
     }
 
+    /*
     function getRowValueVar(bytes32 fieldIdTableKey) external view returns (bytes memory) {
 
         if (database.containsKey(fieldIdTableKey)) {
@@ -538,6 +540,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
             return new bytes(0);
         }
     }
+    */
 
     /**
      * @dev Warning this produces an Error: overflow (operation="setValue", fault="overflow", details="Number can only safely store up to 53 bits")
@@ -603,6 +606,12 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     function() external payable {}
 
     // ************************************* GSN FUNCTIONS *************************************
+    /*
+    event AcceptRelayCall (
+        uint256 curCounter,
+        uint40 gsnMaxCallsPerDay
+    );
+    */
 
     /**
      * As a first layer of defense we employ a max number of checks per day
@@ -619,15 +628,17 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         uint256 maxPossibleCharge
     ) external view returns (uint256, bytes memory) {
 
-        bytes32 curDateHashed = getGsnCounter();
+        bytes32 curDate = getCurDate();
 
         // check gsnCounter for today and compare to limit
-        uint256 curCounter = gsnCounter[curDateHashed];
+        // local relayer is suddenly failing for this next line
+        uint256 curCounter = gsnCounter[curDate];
 
-        if (curCounter >= gsnMaxCallsPerDay){
-            return _rejectRelayedCall(2);
+        // emit AcceptRelayCall(curCounter, gsnMaxCallsPerDay);
+
+        if (curCounter >= uint256(gsnMaxCallsPerDay)){
+            return _rejectRelayedCall(11);
         }
-
 
         return _approveRelayedCall();
     }
@@ -636,23 +647,35 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         gsnMaxCallsPerDay = uint40(max);
     }
 
-    /*
+
+    function debug() public view returns (bytes32, uint256, uint40, bool){
+        bytes32 curDate = getCurDate();
+        uint256 curCounter = gsnCounter[curDate];
+
+        bool check = false;
+        if (curCounter >= uint256(gsnMaxCallsPerDay)){
+            check = true;
+        }
+
+        return (curDate, curCounter, gsnMaxCallsPerDay, check);
+    }
+
     event GsnCounterIncrease (
         address indexed _from,
         bytes4 indexed curDate
     );
-    */
+
 
     /**
      * Increase the GSN Counter for today
      */
     function increaseGsnCounter() internal {
 
-        bytes32 curDateHashed = getGsnCounter();
+        bytes32 curDate = getCurDate();
 
-        uint256 curCounter = gsnCounter[curDateHashed];
+        uint256 curCounter = gsnCounter[curDate];
 
-        gsnCounter[curDateHashed] = curCounter + 1;
+        gsnCounter[curDate] = curCounter + 1;
 
         // emit GsnCounterIncrease(_msgSender(), bytes4(uint32(curDate)));
     }
@@ -660,7 +683,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
     /*
      *
      */
-    function getGsnCounter() internal view returns (bytes32 curDateHashed) {
+    function getCurDate() public view returns (bytes32) {
 
         uint256 curDate;
 
@@ -672,7 +695,7 @@ contract ELAJSStore is OwnableELA, GSNRecipientELA {
         curDate |= uint256(month)<<16;
         curDate |= uint256(day)<<24;
 
-        curDateHashed = keccak256(abi.encodePacked(curDate));
+        return bytes32(curDate);
     }
 
     // We won't do any pre or post processing, so leave _preRelayedCall and _postRelayedCall empty

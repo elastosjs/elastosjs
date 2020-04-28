@@ -32,15 +32,15 @@ describe('Tests for Insert Public Table', () => {
     ozWeb3 = await fromConnection(process.env.PROVIDER_URL, {
       gsn: { signKey: ephemeral() },
       pollInterval: 5000,
-      fixedGasPrice: config.gasPrice,
-      fixedGasLimit: config.gasLimit
+      // fixedGasPrice: config.gasPrice,
+      // fixedGasLimit: config.gasLimit
     })
 
     ozWeb3Other = await fromConnection(process.env.PROVIDER_URL, {
       gsn: { signKey: ephemeral() },
       pollInterval: 5000,
-      fixedGasPrice: config.gasPrice,
-      fixedGasLimit: config.gasLimit
+      // fixedGasPrice: config.gasPrice,
+      // fixedGasLimit: config.gasLimit
     })
 
     web3 = new Web3(new HDWalletProvider(
@@ -160,7 +160,7 @@ describe('Tests for Insert Public Table', () => {
 
   })
 
-  it('Should INSERT a test value (int, str) with multiple fields to an ID', async () => {
+  it.skip('Should INSERT a test value (int, str) with multiple fields to an ID', async () => {
 
     const VAL_RAW = 5121
     const VAL = uintToBytes32(VAL_RAW)
@@ -244,7 +244,7 @@ describe('Tests for Insert Public Table', () => {
 
   })
 
-  it('Should UPDATE a test value (str)', async () => {
+  it.skip('Should UPDATE a test value (str)', async () => {
 
     const VAL_RAW = 'Mary'
     const VAL = Web3.utils.stringToHex(VAL_RAW)
@@ -284,7 +284,7 @@ describe('Tests for Insert Public Table', () => {
 
   })
 
-  it('Should DELETE a the global test id value', async () => {
+  it.skip('Should DELETE a the global test id value', async () => {
 
     const fieldStr = 'firstName'
     const fieldIdTableKey = namehash.hash(`${fieldStr}.${idStr}.user`)
@@ -344,7 +344,7 @@ describe('Tests for Insert Public Table', () => {
     fieldIdTableKeys.shift()
   })
 
-  it('Should delete a row with 2 vals', async () => {
+  it.skip('Should delete a row with 2 vals', async () => {
     // console.log('delete done')
 
     val = await ephemeralInstance.methods.getRowValue(fieldIdTableKeys[0]).call()

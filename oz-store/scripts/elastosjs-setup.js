@@ -90,6 +90,10 @@ npx oz send-tx --network development --to 0x592c129085b61A3110Ebd1DCD99F3Cfe97A5
 
   console.log(`id = ${id}`)
 
+  await elajsDb.insertVal(tableName, cols[0], values[0], {id: id})
+
+  /*
+
   await elajsDb.insertRow(tableName, cols, values, {id: id})
   // TODO: run checks
 
@@ -100,6 +104,7 @@ npx oz send-tx --network development --to 0x592c129085b61A3110Ebd1DCD99F3Cfe97A5
   colsHashed = cols.map((colName) => Web3.utils.stringToHex(colName))
   types = typesRaw.map((colName) => Web3.utils.stringToHex(colName))
   await elajsDb.createTable('database', 2, colsHashed, types)
+  */
 
   process.exit(1)
 
