@@ -5,8 +5,11 @@ import {
   Table,
   Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap'
+import styled from 'styled-components'
 import Loading from '../Pages/Loading'
 import { connect } from 'react-redux'
+
+import { toastr } from 'react-redux-toastr'
 
 const DatabaseTable = (props) => {
 
@@ -58,7 +61,7 @@ const DatabaseTable = (props) => {
   })
 
   const handleDeleteCol = useCallback((ev) => {
-
+    toastr.info('Under Development')
   })
 
   return (
@@ -143,3 +146,11 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps)(DatabaseTable)
+
+const TrashIcon = styled.i`
+  cursor: pointer;
+  
+  &:hover {
+  
+  }
+`
