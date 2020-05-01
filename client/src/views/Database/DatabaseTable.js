@@ -112,7 +112,7 @@ const DatabaseTable = (props) => {
                       {col.type}
                     </td>
                     <td className="text-right align-items-center" style={style}>
-                      <i className="cui-trash icons font-2xl" onClick={handleDeleteCol}/>
+                      <TrashIcon className="cui-trash icons font-2xl" onClick={handleDeleteCol}/>
                     </td>
                   </tr>
                 })
@@ -151,6 +151,8 @@ const TrashIcon = styled.i`
   cursor: pointer;
   
   &:hover {
-  
+    transition-property: color;
+    transition-duration: 0.1s;
+    color: #2eadd3;
   }
 `

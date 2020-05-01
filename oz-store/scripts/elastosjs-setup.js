@@ -22,9 +22,7 @@ const { elajs, keccak256, uintToBytes32 } = require('ela-js')
 // TODO: make this an argv
 const FM_ETH_ADDRESS = config.fmEthAddr
 
-const contractAddr = process.env.ELAJSSTORE_CONTRACT_ADDR
-
-console.log(`contractAddr = ${contractAddr}`)
+console.log(process.env.PROVIDER_URL)
 
 const HDWalletProvider = require('@truffle/hdwallet-provider')
 const { fromConnection, ephemeral } = require("@openzeppelin/network")
@@ -71,34 +69,36 @@ npx oz send-tx --network development --to 0x592c129085b61A3110Ebd1DCD99F3Cfe97A5
     debug: true
   })
 
-  /*
-  CREATE TABLE
-   */
-  let cols = ['ethAddressHash', 'authHash', 'admin']
-  let typesRaw = ['BYTES32', 'BYTES32', 'BOOL']
-  let colsHashed = cols.map((colName) => Web3.utils.stringToHex(colName))
-  let types = typesRaw.map((colName) => Web3.utils.stringToHex(colName))
-  await elajsDb.createTable(tableName, 3, colsHashed, types)
-
-  /*
-  ADMIN USER
-   */
   const id = keccak256('clarencel' + FM_ETH_ADDRESS)
-  // const colTypes = ['BYTES32', 'BYTES32', 'BOOL']
-  const values = [keccak256(FM_ETH_ADDRESS), keccak256(id.substring(2) + 'testtest1' + FM_ETH_ADDRESS.substring(2) + 'elajs'), uintToBytes32(1)]
 
-  console.log(`id = ${id}`)
+  // CREATE TABLE
+  const colsUser = ['ethAddressHash', 'authHash', 'admin']
+  // console.log(await elajsDb.getVal(tableName, id, 'admin'))
+  // console.log(await elajsDb.getTableSchema('database'))
 
-  await elajsDb.insertRow(tableName, cols, values, {id: id})
+  const typesUser = ['BYTES32', 'BYTES32', 'BOOL']
+  await elajsDb.createTable(tableName, 3, colsUser, typesUser)
+
+  // ADMIN USER
+
+  const values = [keccak256(FM_ETH_ADDRESS), keccak256(id.substring(2) + 'testtest1' + FM_ETH_ADDRESS.substring(2) + 'elajs'), true]
+
+  // console.log(`id = ${id}`)
+  // console.log(colsUser)
+  // console.log(values)
+
+  await elajsDb.insertRow(tableName, colsUser, values, {id: id})
+
   // TODO: run checks
 
+
   // we need userId to differentiate between diff accts with the same fm address
-  cols = ['dbName', 'contractAddress', 'userId']
+
+  const colsDatabase = ['dbName', 'contractAddress', 'userId']
   // contractAddress should be ADDRESS type
-  typesRaw = ['STRING', 'ADDRESS', 'BYTES32']
-  colsHashed = cols.map((colName) => Web3.utils.stringToHex(colName))
-  types = typesRaw.map((colName) => Web3.utils.stringToHex(colName))
-  await elajsDb.createTable('database', 2, colsHashed, types)
+  const typesDatabase = ['STRING', 'ADDRESS', 'BYTES32']
+  await elajsDb.createTable('database', 2, colsDatabase, typesDatabase)
+
 
   process.exit(1)
 

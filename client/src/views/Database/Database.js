@@ -46,11 +46,9 @@ import { connect } from 'react-redux'
 import _ from 'lodash'
 import { ProfileActionTypes } from '../../store/redux/profile'
 import { useEffectTrigger } from '../../hooks/useEffectTrigger'
-import { EthContext } from '../../context/EthContext'
+import { useGsnBalanceMap } from '../../hooks/useGsnBalanceMap'
 
 const DatabaseView = (props) => {
-
-  const [ethConfig, ] = useContext(EthContext)
 
   const [effectTrigger, triggerEffect] = useEffectTrigger()
 
@@ -66,8 +64,6 @@ const DatabaseView = (props) => {
 
   const [gsnBalanceHelpOpen, setGsnBalanceHelpOpen] = useState(false)
 
-  const [gsnBalanceMap, setGsnBalanceMap] = useState({})
-
   const [ready, setReady] = useState(false)
 
   const toggle = (tab) => {
@@ -81,28 +77,7 @@ const DatabaseView = (props) => {
    */
   const databases = useDatabase(props.profile, effectTrigger, setReady)
 
-  // this works fine for admin db too because it's only a public call
-  useEffect(() => {
-    (async () => {
-
-      const gsnBalanceMap = {}
-      const elajsDbUser = ethConfig.elajsDbUser
-
-      for (let i = 0, len = databases.length; i < len; i++){
-        const db = databases[i]
-
-        try {
-          elajsDbUser.setDatabase(db.contractAddress)
-          await elajsDbUser.defaultWeb3.currentProvider.baseProvider.enable() // we should call enable for each setDatabase change
-
-          gsnBalanceMap[db.contractAddress] = await elajsDbUser.getGSNBalance()
-          setGsnBalanceMap(Object.assign({}, gsnBalanceMap))
-        } catch (err){
-          console.error(`Error fetching GSNBalance for contract address: ${db.contractAddress}`, err)
-        }
-      }
-    })()
-  }, [databases, setGsnBalanceMap, effectTrigger])
+  const gsnBalanceMap = useGsnBalanceMap(databases, effectTrigger)
 
   const [selectedTable, setSelectedTable] = useState()
 
@@ -478,6 +453,8 @@ const HoverIcon = styled.i`
   cursor: pointer;
 
   :hover {
-    color: #777;
+    transition-property: color;
+    transition-duration: 0.1s;
+    color: #2eadd3;
   }
 `

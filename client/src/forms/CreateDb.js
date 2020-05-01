@@ -118,7 +118,7 @@ const CreateDb = (props) => {
     const id = Web3.utils.randomHex(32)
 
     for (let i = 0, len = cols.length; i < len; i++){
-      let insertPromise = elajsDb.insertVal('database', cols[i], vals[i], {id})
+      let insertPromise = elajsDb._insertVal('database', cols[i], vals[i], {id})
 
       /*
       insertPromise.on('transactionHash', (hash) => {

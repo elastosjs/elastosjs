@@ -112,7 +112,7 @@ const DatabaseData = (props) => {
                 {i}
               </td>
               {row.map((colData, j) => {
-                return <td key={j}>
+                return <td className="text-monospace" key={j}>
                   {j === 0 ? colData : getColData(tableSchema[j-1], colData)}
                 </td>
               })}

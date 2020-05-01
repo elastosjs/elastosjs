@@ -56,7 +56,7 @@ const initialState = {
   username: '',
 
   userId: '',
-  isAdmin: 0,
+  isAdmin: false,
 
   selectedDbContract: null
 }
@@ -169,7 +169,7 @@ export default {
           username: action.username,
           userId: action.userId,
           ethAddress: action.ethAddress,
-          isAdmin: action.isAdmin || 0
+          isAdmin: action.isAdmin || false
         }
 
       case ProfileActionTypes.SET_ETH_ADDRESS:

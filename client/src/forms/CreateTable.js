@@ -213,9 +213,6 @@ const CreateTable = (props) => {
       const colsRaw = _.map(cols, 'name')
       const typesRaw = _.map(cols, 'type')
 
-      let colsHashed = colsRaw.map((colName) => Web3.utils.stringToHex(colName))
-      let types = typesRaw.map((type) => Web3.utils.stringToHex(type))
-
       // set the database
       await ethConfig.elajsDbUser.defaultWeb3.currentProvider.baseProvider.enable()
 
@@ -224,7 +221,7 @@ const CreateTable = (props) => {
       ethConfig.elajsDbUser.setDatabase(props.selectedDb.contractAddress)
 
       // only the owner can create the table
-      await ethConfig.elajsDbUser.createTable(tableName, tablePermission, colsHashed, types, walletAddress)
+      await ethConfig.elajsDbUser.createTable(tableName, tablePermission, colsRaw, typesRaw, walletAddress)
 
       toastr.success('Table created successfully')
 

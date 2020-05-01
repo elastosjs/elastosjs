@@ -29,8 +29,6 @@ import {
 import Loading from '../Pages/Loading'
 import Web3 from 'web3'
 
-import { EthContext } from '../../context/EthContext'
-import { NetworkContext } from '../../context/NetworkContext'
 import { connect } from 'react-redux'
 import { ProfileActionTypes } from '../../store/redux/profile'
 
@@ -38,17 +36,12 @@ import CreateDb from '../../forms/CreateDb'
 import WithdrawFundsDb from '../../forms/WithdrawFundsDb'
 import AddFundsAcct from '../../forms/AddFundsAcct'
 import _ from 'lodash'
+import { useGsnBalanceMap } from '../../hooks/useGsnBalanceMap'
 
 // TODO: remove the concept of having gsnBalance on databases from admin db
 const Dashboard = (props) => {
 
-  const [ethConfig, ] = useContext(EthContext)
-
-  const [network, setNetwork] = useContext(NetworkContext)
-
   const [card1, setCard1] = useState(false)
-
-  const [gsnBalanceMap, setGsnBalanceMap] = useState({})
 
   const [dbCreateOpen, setDbCreateOpen] = useState( false)
 
@@ -80,29 +73,7 @@ const Dashboard = (props) => {
     window.location.hash = 'databases'
   })
 
-  // this works fine for admin db too because it's only a public call
-  useEffect(() => {
-    (async () => {
-
-      const gsnBalanceMap = {}
-      const elajsDbUser = ethConfig.elajsDbUser
-
-      for (let i = 0, len = databases.length; i < len; i++){
-        const db = databases[i]
-
-        try {
-          elajsDbUser.setDatabase(db.contractAddress)
-          await elajsDbUser.defaultWeb3.currentProvider.baseProvider.enable() // we should call enable for each setDatabase change
-
-          gsnBalanceMap[db.contractAddress] = await elajsDbUser.getGSNBalance()
-          setGsnBalanceMap(Object.assign({}, gsnBalanceMap))
-        } catch (err){
-          console.error(`Error fetching GSNBalance for contract address: ${db.contractAddress}`, err)
-        }
-      }
-
-    })()
-  }, [databases, setGsnBalanceMap, effectTrigger])
+  const gsnBalanceMap = useGsnBalanceMap(databases, effectTrigger)
 
   const [selectedDb, setSelectedDb] = useState({})
 

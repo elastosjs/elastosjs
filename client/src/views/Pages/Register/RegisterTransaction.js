@@ -70,11 +70,12 @@ const RegisterTransaction = (props) => {
         Web3.utils.numberToHex(0)
       ]
 
-      // await elajs.insertRow(USER_TABLE, cols, values, {id: id})
       let curTransactions = {}
 
       for (let i = 0; i < cols.length; i++){
-        let insertPromise = elajsDb.insertVal(USER_TABLE, cols[i], values[i], {id: id})
+
+        // we insert individually for cooler UX
+        let insertPromise = elajsDb._insertVal(USER_TABLE, cols[i], values[i], {id: id})
 
         curTransactions[i] = {
           promise: insertPromise

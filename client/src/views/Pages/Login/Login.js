@@ -245,13 +245,7 @@ const Login = (props) => {
       }
 
       // check for admin
-      let isAdmin = 0
-
-      try {
-        isAdmin = Web3.utils.hexToNumber(await elajsDb._getVal(constants.SCHEMA.USER_TABLE, id, 'admin'))
-      } catch (err){
-        // pass
-      }
+      const isAdmin = await elajsDb.getVal(constants.SCHEMA.USER_TABLE, id, 'admin')
 
       props.dispatch({
         type: ProfileActionTypes.SET_CREDENTIALS,

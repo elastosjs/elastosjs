@@ -29,9 +29,9 @@ export const useTableData = (tableName, tableSchema, isAdmin) => {
       const rowQueries = tableIds.map((id) => {
         return tableSchema.map((col) => {
           if (isAdmin){
-            return ethConfig.elajsDb._getVal(tableName, id, col.name)
+            return ethConfig.elajsDb.getVal(tableName, id, col.name)
           } else {
-            return ethConfig.elajsDbUser._getVal(tableName, id, col.name)
+            return ethConfig.elajsDbUser.getVal(tableName, id, col.name)
           }
         })
       })

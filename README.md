@@ -3,6 +3,13 @@
 
 ## Documentation: https://docs.elastosjs.com
 
+# Deploying (Testnet)
+
+1. `sh deploy-testnet.sh`
+
+    Double check:
+    - it should copy and update `client/src/contracts/ELAJSStore-testnet.json`
+
 # Running Tests
 
 Instructions for MacOS
