@@ -83,25 +83,6 @@ const DatabaseView = (props) => {
 
   const {tableMetadata, tableSchema} = useTable(selectedTable, props.profile.isAdmin)
 
-  /*
-  useEffect(() => {
-
-    if (!databases){
-      return
-    }
-
-    // for admin there is only 1 DB
-    if (!props.profile.selectedDbContract && props.profile.isAdmin){
-      props.dispatch({
-        type: ProfileActionTypes.SET_SELECTED_DB,
-        selectedDbContract: databases[0].contractAddress
-      })
-      return
-    }
-
-  }, [props.profile.selectedDbContract, databases])
-   */
-
   /**
    * Any scenario where we are selecting databases is not in admin mode, in this case
    * we are connecting our secondary ela-js instance to each contract

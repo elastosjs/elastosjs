@@ -261,7 +261,7 @@ const RegisterTransaction = (props) => {
                     <ol start="2">
                       <li>
                         elajs stores no data, uses any cookies or tracking in the spirit of decentralization.<br/>
-                        However Fortmatic has their own privacy policy, you can view this on their website at https://fortmatic.com.
+                        However Fortmatic has their own privacy policy, you can view this on their website at <b>https://fortmatic.com</b>.
                       </li>
                     </ol>
                   </h3>

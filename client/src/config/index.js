@@ -21,8 +21,8 @@ const contracts = {
 }
 
 const FortmaticAPIKey = {
-  [constants.NETWORK.LOCAL]: 'pk_test_0E66799043CB51BC',
-  [constants.NETWORK.TESTNET]: 'pk_test_0E66799043CB51BC',
+  [constants.NETWORK.LOCAL]: 'pk_test_55B6D44CB39F9CD8',
+  [constants.NETWORK.TESTNET]: 'pk_test_55B6D44CB39F9CD8',
   [constants.NETWORK.MAINNET]: 'pk_live_CB781950FDA18ED6'
 }
 

@@ -1,12 +1,10 @@
-import React, { useCallback, useState, useMemo } from 'react'
-import { CardGroup, Card, CardBody, CardHeader, Col, Progress, Row, Popover, PopoverBody } from 'reactstrap';
+import React, { useCallback, useMemo } from 'react'
+import { CardGroup, Card, CardBody, CardHeader, Col, Progress, Row } from 'reactstrap';
 import styled from 'styled-components'
 import copy from 'copy-to-clipboard'
-import ReduxToastr from 'react-redux-toastr'
-import { toastr } from 'react-redux-toastr'
 
 import ElastosMergeImg from '../../../assets/img/elastos_merge_2.png'
-import MetamaskLogo from '../../../assets/img/metamask-logo-eyes.png'
+// import MetamaskLogo from '../../../assets/img/metamask-logo-eyes.png'
 
 const TESTNET_RPC = 'https://rpc.elaeth.io'
 const MAINNET_RPC = 'https://mainrpc.elaeth.io'
@@ -116,7 +114,7 @@ const SplashCover = () => {
                   &nbsp;&nbsp;contract: '0xfD...Df'<br/>
                   {'}'})<br/>
                   <br/>
-                  elajs.select('...<br/>
+                  elajsDb.select('...<br/>
                   &nbsp;&nbsp;.from('<br/>
                   &nbsp;&nbsp;.where('
                 </code>

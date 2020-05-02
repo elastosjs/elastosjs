@@ -41,6 +41,7 @@ const AddFundsDb = (props) => {
     }
 
     // we send the funds from our Fortmatic account which has funds
+    await elajsDb.defaultWeb3.currentProvider.baseProvider.enable() //fail-safe to check if logged in
     await elajsDb.addFunds(walletAddress, props.selectedDb.contractAddress, amt.toString())
 
     toastr.success('Funds added successfully')

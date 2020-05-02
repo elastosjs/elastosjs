@@ -22,6 +22,7 @@ import { useEthBalance } from '../hooks/useEthBalance'
 import { EthContext } from '../context/EthContext'
 import { connect } from 'react-redux'
 import Web3 from 'web3'
+import { ProfileActionTypes } from '../store/redux/profile'
 
 
 const CreateDb = (props) => {
@@ -93,13 +94,16 @@ const CreateDb = (props) => {
 
       elajsDbUser.setDatabase(contractAddress)
 
-      const initResult = await elajsDbUser.initializeContract(ethAddress)
-
-      // console.log('initResult', initResult)
+      await elajsDbUser.initializeContract(ethAddress)
 
       await insertDatabaseRecord(dbName, contractAddress, userId)
 
       setPendingCreate(false)
+
+      props.dispatch({
+        type: ProfileActionTypes.SET_SELECTED_DB,
+        selectedDbContract: contractAddress
+      })
 
       toastr.success(`Database "${dbName}" Created`)
 

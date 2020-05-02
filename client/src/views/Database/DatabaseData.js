@@ -113,7 +113,7 @@ const DatabaseData = (props) => {
               </td>
               {row.map((colData, j) => {
                 return <td className="text-monospace" key={j}>
-                  {j === 0 ? colData : getColData(tableSchema[j-1], colData)}
+                  {colData.toString()}
                 </td>
               })}
             </tr>
@@ -133,21 +133,3 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps)(DatabaseData)
-
-const getColData = (col, val) => {
-
-  // TODO: fix this
-  if (col && col.type){
-    switch (col.type){
-      case 'BOOL':
-        val = Web3.utils.hexToNumber(val)
-        break
-
-      case 'STRING':
-        val = Web3.utils.hexToString(val)
-        break
-    }
-  }
-
-  return val
-}

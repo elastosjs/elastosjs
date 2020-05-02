@@ -9,7 +9,7 @@ import storage from 'redux-persist/lib/storage' // defaults to localStorage for 
 import {reducer as toastrReducer} from 'react-redux-toastr'
 
 import Fortmatic from 'fortmatic'
-import Web3 from "web3"
+import Web3 from 'web3'
 import { GSNProvider } from '@openzeppelin/gsn-provider'
 
 import { fromConnection, ephemeral } from "@openzeppelin/network"
@@ -99,7 +99,7 @@ const getEthConfig = async (network) => {
     // drizzleOptions,
     appReducers,
     appMiddlewares,
-    disableReduxDevTools: false // enable ReduxDevTools!
+    disableReduxDevTools: true
   }
   const store = generateStore(config)
 
