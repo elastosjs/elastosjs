@@ -153,7 +153,7 @@ const SplashCover = () => {
       <Row>
         <Col>
           <span className="normal" style={{textTransform: 'uppercase', 'fontSize': '20px'}}>
-            A Cheaper, More Secure, Ethereum-Based Blockchain
+            Elastos ETH Sidechain - A Cheaper, More Secure, Ethereum-Based Blockchain
           </span>
         </Col>
       </Row>
@@ -193,7 +193,7 @@ const SplashCover = () => {
       </Row>
       <Row>
         <Col>
-          Our ETH Sidechain is only one component of an ecosystem of decentralized solutions.
+          Our ETH Sidechain is only one component of an ecosystem of decentralized solution -> <a href="https://github.com/elastos/elastos" target="_blank" style={{textDecoration: 'underline', color: '#fff'}}>https://github.com/elastos/elastos</a>
         </Col>
       </Row>
       {/*
@@ -209,21 +209,21 @@ const SplashCover = () => {
   const ElastosETHContainer = styled.div`
     background-position: center;
     background-image: url('/assets/bg/footer_bg_3.png');
-  
+
     font-family: "Bio Sans", sans-serif;
     font-weight: 400;
     color: white;
-  
+
     font-size: 16px;
-  
+
     .row {
       margin-bottom: 16px;
     }
-    
+
     .card {
       text-align: center;
       color: #666;
-      
+
       h2 {
         color: #222;
       }
@@ -365,7 +365,7 @@ const SplashCover = () => {
 
         <TitleMarkdownBlock className="my-5 pl-3">
 
-          A decentralized storage and Javascript SDK to get started on Elastos
+          A decentralized database and Javascript SDK to get started on Elastos
           <br/>
           <br/>
 

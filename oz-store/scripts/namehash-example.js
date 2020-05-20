@@ -116,7 +116,7 @@ console.log(node2)
 console.log(web3.utils.bytesToHex(node2))
 // 0xde9b09fd7c5f901e23a3f19fecc54828e9c848539801e86591bd9801b019f84f
 console.log(namehash.hash('foo.eth'))
-// 0xde9b09fd7c5f901e23a3f19fecc54828e9c848539801e86591bd9801b019f84f
+//
 
 
 console.log(namehash.hash('sub.foo.eth'))
