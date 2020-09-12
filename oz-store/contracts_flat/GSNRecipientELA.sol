@@ -1,9 +1,9 @@
 pragma solidity ^0.5.0;
 
-import "../oz/Initializable.sol";
+import "./InitializableELA.sol";
 import "./IRelayRecipientELA.sol";
 import "./GSNContextELA.sol";
-import "./bouncers/GSNBouncerBaseELA.sol";
+import "./GSNBouncerBaseELA.sol";
 import "./IRelayHubELA.sol";
 
 /*
@@ -11,7 +11,7 @@ import "./IRelayHubELA.sol";
  * GSN support. Not all interface methods are implemented, derived contracts
  * must do so themselves.
  */
-contract GSNRecipientELA is Initializable, IRelayRecipientELA, GSNContextELA, GSNBouncerBaseELA {
+contract GSNRecipientELA is InitializableELA, IRelayRecipientELA, GSNContextELA, GSNBouncerBaseELA {
     function initialize(address relayHubAddr) public initializer {
         GSNContextELA.initialize(relayHubAddr);
     }
