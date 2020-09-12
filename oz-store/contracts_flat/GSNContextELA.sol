@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
-import "../oz/Initializable.sol";
-import "../oz/Context.sol";
+import "./InitializableELA.sol";
+import "./ContextELA.sol";
 
 /*
  * @dev Enables GSN support on `Context` contracts by recognizing calls from
@@ -11,7 +11,7 @@ import "../oz/Context.sol";
  * > This contract does not perform all required tasks to implement a GSN
  * recipient contract: end users should use `GSNRecipient` instead.
  */
-contract GSNContextELA is Initializable, Context {
+contract GSNContextELA is InitializableELA, ContextELA {
     // We use a random storage slot to allow proxy contracts to enable GSN support in an upgrade without changing their
     // storage layout. This value is calculated as: keccak256('gsn.relayhub.address'), minus 1.
     bytes32 private constant RELAY_HUB_ADDRESS_STORAGE_SLOT = 0x06b7792c761dcc05af1761f0315ce8b01ac39c16cc934eb0b2f7a8e71414f262;

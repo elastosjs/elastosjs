@@ -1,22 +1,22 @@
 pragma solidity ^0.5.0;
 // pragma experimental ABIEncoderV2;
 
-import "sol-datastructs/src/contracts/PolymorphicDictionaryLib.sol";
+import "./PolymorphicDictionaryLib.sol";
 
 // import "sol-datastructs/src/contracts/Bytes32DictionaryLib.sol";
-import "sol-datastructs/src/contracts/Bytes32SetDictionaryLib.sol";
+import "./Bytes32SetDictionaryLib.sol";
 
 // import "./oz/EnumerableSetDictionary.sol";
 
-import "sol-sql/src/contracts/src/structs/TableLib.sol";
+import "./TableLib.sol";
 
-import "./oz/Ownable.sol";
-import "./gsnEla/GSNRecipientELA.sol";
-import "./gsnEla/IRelayHubELA.sol";
+import "./OwnableELA.sol";
+import "./GSNRecipientELA.sol";
+import "./IRelayHubELA.sol";
 
 // TODO: move schema methods to another contract, we're hitting limits for this
 // TODO: good practice to have functions not callable externally and internally
-contract ELAJSStore is Ownable, GSNRecipientELA {
+contract ELAJSStore is OwnableELA, GSNRecipientELA {
 
     uint constant DAY_IN_SECONDS = 86400;
 
@@ -58,7 +58,7 @@ contract ELAJSStore is Ownable, GSNRecipientELA {
 
     // ************************************* SETUP FUNCTIONS *************************************
     function initialize(address relayHubAddr) public initializer {
-        Ownable.initialize(msg.sender);
+        OwnableELA.initialize(msg.sender);
         GSNRecipientELA.initialize(relayHubAddr);
         _initialize();
     }

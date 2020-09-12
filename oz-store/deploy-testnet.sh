@@ -12,7 +12,7 @@ print_success () {
   printf "\e[4;32m$1\e[0m\n"
 }
 
-npx oz compile --solc-version 0.5.0 --evm-version byzantium --optimizer on
+npx oz compile --solc-version 0.5.0 --evm-version byzantium
 
 contractAddr=`npx oz deploy ELAJSStore --network elaethtest --kind regular`
 
